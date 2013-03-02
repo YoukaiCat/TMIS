@@ -1,7 +1,7 @@
 class CreateStudies < ActiveRecord::Migration
   def change
     create_table :studies do |t|
-      t.integer :groupable_id
+      t.references :groupable, :polymorphic => true
       t.integer :subject_id
       t.integer :lecturer_id
       t.integer :cabinet_id
