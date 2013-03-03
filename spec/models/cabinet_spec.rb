@@ -18,5 +18,4 @@ describe Cabinet do
       @study.cabinet.should eq(@cabinet)
     end
   end
-
 end
