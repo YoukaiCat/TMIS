@@ -17,4 +17,8 @@ describe Semester do
       @speciality_subject.semester.should eq(@semester)
     end
   end
+
+  after(:all) do
+    Semester.delete_all
+  end
 end

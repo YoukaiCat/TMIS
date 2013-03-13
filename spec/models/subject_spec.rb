@@ -24,4 +24,8 @@ describe Subject do
       @speciality_subject.subject.should eq(@subject)
     end
   end
+
+  after(:all) do
+    Subject.delete_all
+  end
 end

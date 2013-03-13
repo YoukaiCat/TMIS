@@ -17,4 +17,8 @@ describe Lecturer do
       @study.lecturer.should eq(@lecturer)
     end
   end
+
+  after(:all) do
+    Lecturer.delete_all
+  end
 end

@@ -17,4 +17,8 @@ describe Subgroup do
       @study.groupable.should eq(@subgroup)
     end
   end
+
+  after(:all) do
+    Subgroup.delete_all
+  end
 end

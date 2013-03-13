@@ -18,4 +18,8 @@ describe Cabinet do
       @study.cabinet.should eq(@cabinet)
     end
   end
+
+  after(:all) do
+    Cabinet.delete_all
+  end
 end

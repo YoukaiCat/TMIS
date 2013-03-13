@@ -18,21 +18,42 @@
 #
 
 require 'active_record'
+require 'singleton'
 
 class Database
 
-  def initialize(adapter, path)
-    @params = { :adapter => adapter, :database  => path }
-    ActiveRecord::Base.timestamped_migrations = false
+  include Singleton
+
+  attr_reader :path
+
+  def connect_to(path)
+    @path = path
+    if ActiveRecord::Base.connected?
+      connect(path)
+    else
+      ActiveRecord::Base.remove_connection
+      connect(path)
+    end
+    self
   end
 
-  def connect
-    ActiveRecord::Base.establish_connection(@params)
-    migrate
+  def connected?
+    ActiveRecord::Base.connected?
+  end
+
+  def disconnect
+    ActiveRecord::Base.remove_connection
+  end
+
+  def transaction(&block)
+    ActiveRecord::Base.transaction(&block)
   end
 
 private
-  def migrate
+
+  def connect(path)
+    ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
+    ActiveRecord::Base.timestamped_migrations = false
     ActiveRecord::Migrator.up("src/engine/migrations")
   end
 

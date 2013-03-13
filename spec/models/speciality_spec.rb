@@ -17,4 +17,8 @@ describe Speciality do
       @speciality_subject.speciality.should eq(@speciality)
     end
   end
+
+  after(:all) do
+    Speciality.delete_all
+  end
 end

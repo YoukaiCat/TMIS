@@ -12,6 +12,6 @@ describe MainWindow do
 
   it "must print 'Sayonara!'" do
     $stdout.should_receive(:puts).with("Sayonara!")
-    @mw.on_menuQuit_triggered
+    @mw.on_quitAction_triggered
   end
 end

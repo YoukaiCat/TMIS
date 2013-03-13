@@ -17,4 +17,8 @@ describe Course do
       @semester.course.should eq(@course)
     end
   end
+
+  after(:all) do
+    Course.delete_all
+  end
 end

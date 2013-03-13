@@ -50,7 +50,7 @@ FactoryGirl.define do
   end
 
   factory :speciality do |t|
-    speciality %w[ АСОИиУ ВКСС ].sample
+    title %w[ АСОИиУ ВКСС ].sample
   end
 
   factory :semester do |t|

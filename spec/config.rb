@@ -12,8 +12,8 @@ SimpleCov.start do
 end
 
 RSpec.configure do |config|
-  config.color_enabled = true
   config.tty = true
+  config.color_enabled = true
   config.formatter = :documentation
   config.include FactoryGirl::Syntax::Methods
 end

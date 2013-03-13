@@ -24,4 +24,8 @@ describe Group do
       @study.groupable.should eq(@group)
     end
   end
+
+  after(:all) do
+    Group.delete_all
+  end
 end

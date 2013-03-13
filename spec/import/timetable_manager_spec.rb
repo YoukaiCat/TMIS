@@ -16,7 +16,7 @@ describe TimetableManager do
 
   it "mustn't raise exception" do
     expect do
-     TimetableManager.new(TimetableReader.new(SpreadsheetRoo.new("./spec/import/test_data/raspisanie_2013.csv"))).save_to_db
+      TimetableManager.new(TimetableReader.new(SpreadsheetRoo.new("./spec/import/test_data/raspisanie_2013.csv"))).save_to_db
     end.to_not raise_error
   end
 
