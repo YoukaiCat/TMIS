@@ -46,10 +46,16 @@ private
 
   def get_study_options(study, study_number, groupable)
     { subject: add(Subject, title: study[:info][:subject]),
-      cabinet: study[:cabinet].nil? ? Cabinet.last : add(Cabinet, title: study[:cabinet]),
-      lecturer: add(Lecturer, surname: study[:info][:lecturer][:surname]),
+      cabinet: study[:cabinet].nil? ? Cabinet.last : add(Cabinet, title: fix_cabinet(study[:cabinet])),
+      lecturer: add(Lecturer, { surname: study[:info][:lecturer][:surname],
+                                name: study[:info][:lecturer][:name],
+                                patronymic: study[:info][:lecturer][:patronymic] }),
       number: study_number,
       groupable: groupable }
+  end
+
+  def fix_cabinet(title)
+    title.is_a?(Float) ? title.ceil.to_s : title
   end
 
 end

@@ -45,6 +45,7 @@ class MainWindow < Qt::MainWindow
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
     @db = Database.instance
+    @temp_file_name = 'NewTimetable.sqlite'
   end
 
   def on_newAction_triggered
@@ -65,13 +66,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_importAction_triggered
-    @ui.statusbar.showMessage("Please, wait...")
-    filename = Qt::FileDialog::getOpenFileName(self, "Open File", "", "Spreadsheets(*.xls *.xlsx *.ods *.csv)")
+    @ui.statusbar.showMessage('Please, wait...')
+    filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)')
     unless filename.nil?
       sheet = SpreadsheetRoo.new(filename)
       reader = TimetableReader.new(sheet, :even)
-      FileUtils.rm_f('NewTimetable.sqlite')
-      @db.connect_to('NewTimetable.sqlite')
+      FileUtils.rm_f(@temp_file_name)
+      @db.connect_to(@temp_file_name)
       TimetableManager.new(reader).save_to_db
       show_studies
     end
@@ -82,13 +83,14 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_closeAction_triggered
+    @ui.studiesTableView.model = nil
     #@db.disconnect
-    FileUtils.rm_f('NewTimetable.sqlite')
+    FileUtils.rm_f(@temp_file_name)
   end
 
   def on_quitAction_triggered
     on_closeAction_triggered
-    puts "Sayonara!"
+    puts 'Sayonara!'
     Qt::Application.quit
   end
 
