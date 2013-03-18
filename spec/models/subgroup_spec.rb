@@ -1,8 +1,10 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/engine/database'
 require './src/engine/models/subgroup'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Subgroup do
   before(:all) do
     @subgroup = create(:subgroup)

@@ -1,4 +1,5 @@
-##
+# coding: UTF-8
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Copyright (C) 2013 Vladislav Mileshkin
 #
 # This file is part of TMIS.
@@ -15,13 +16,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with TMIS. If not, see <http://www.gnu.org/licenses/>.
-#
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'active_record'
 require 'singleton'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Database
-
   include Singleton
 
   attr_reader :path
@@ -50,11 +49,9 @@ class Database
   end
 
 private
-
   def connect(path)
     ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
     ActiveRecord::Base.timestamped_migrations = false
     ActiveRecord::Migrator.up("src/engine/migrations")
   end
-
 end

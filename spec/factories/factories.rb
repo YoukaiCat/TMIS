@@ -1,11 +1,10 @@
 # coding: UTF-8
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 def random_date()
   "#{rand(1..12)}.#{rand(1..32)}.2013"
 end
 
 FactoryGirl.define do
-
   factory :group do
     title %w[ А-11 А-22 А-32 А-42 В-42 В-31 ].sample
     speciality
@@ -18,17 +17,17 @@ FactoryGirl.define do
   end
 
   factory :subject do |t|
-    title %w[ АИС, Математика, Русский, ООП, СУБД, Физкультура ].sample
+    title %w[ АИС Математика Русский ООП СУБД Физкультура ].sample
   end
 
   factory :cabinet do |t|
-    title %w[ Физ.Зал, 403, 301, 404, 118, 408 ].sample
+    title %w[ Физ.Зал 403 301 404 118 408 ].sample
   end
 
   factory :lecturer do |t|
-    surname %w[ Иванов, Петров, Сидоров ].sample
-    name %w[ Иван, Петр, Алесей ].sample
-    patronymic %w[ Иванович, Петрович, Алексеевич ].sample
+    surname %w[ Иванов Петров Сидоров ].sample
+    name %w[ Иван Петр Алесей ].sample
+    patronymic %w[ Иванович Петрович Алексеевич ].sample
   end
 
   factory :study do |t|
@@ -64,5 +63,4 @@ FactoryGirl.define do
     speciality
     hours { rand(20..300) }
   end
-
 end

@@ -1,8 +1,10 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/engine/database'
 require './src/engine/models/lecturer'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Lecturer do
   before(:all) do
     @lecturer = create(:lecturer)
@@ -13,9 +15,14 @@ describe Lecturer do
     it "Lecturer.studies" do
       @lecturer.studies.last.should eq(@study)
     end
+
     it "Study.lecturer" do
       @study.lecturer.should eq(@lecturer)
     end
+  end
+
+  it "should print surname with initials" do
+    @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\s[[:alpha:]]+/
   end
 
   after(:all) do

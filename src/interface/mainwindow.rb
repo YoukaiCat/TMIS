@@ -1,6 +1,5 @@
 # coding: UTF-8
-
-##
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Copyright (C) 2013 Vladislav Mileshkin
 #
 # This file is part of TMIS.
@@ -17,17 +16,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with TMIS. If not, see <http://www.gnu.org/licenses/>.
-#
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'Qt'
+require 'mail'
+require 'fileutils'
+require 'contracts'
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/engine/database'
-require './src/interface/ui_mainwindow'
 require './src/engine/import/timetable_manager'
 require './src/engine/import/timetable_reader'
 require './src/engine/import/spreadsheet_roo'
+require './src/engine/export/timetable_exporter.rb'
+require './src/engine/mailer/mailer'
+require './src/interface/ui_mainwindow'
+require './src/interface/forms/settings'
 require './src/interface/models/study_table_model'
-require 'fileutils'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MainWindow < Qt::MainWindow
 
   slots 'on_newAction_triggered()'
@@ -39,6 +43,7 @@ class MainWindow < Qt::MainWindow
   slots 'on_exportAction_triggered()'
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
+  slots 'on_settingsAction_triggered()'
 
   def initialize(parent = nil)
     super(parent)
@@ -69,8 +74,8 @@ class MainWindow < Qt::MainWindow
     @ui.statusbar.showMessage('Please, wait...')
     filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)')
     unless filename.nil?
-      sheet = SpreadsheetRoo.new(filename)
-      reader = TimetableReader.new(sheet, :even)
+      sheet = SpreadsheetCreater.create(filename)
+      reader = TimetableReader.new(sheet, :first!)
       FileUtils.rm_f(@temp_file_name)
       @db.connect_to(@temp_file_name)
       TimetableManager.new(reader).save_to_db
@@ -99,6 +104,30 @@ class MainWindow < Qt::MainWindow
     model = StudyTableModel.new(studies)
     @ui.studiesTableView.model = model
     @ui.studiesTableView.show
+  end
+
+  def timetable_for_lecturer(lecturer)
+    text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
+    grouped = lecturer.studies.group(:date, :number).group_by(&:date)
+    grouped.each do |date, studies|
+      text += "Дата: #{date}\n\n"
+      studies.each do |s|
+        text += "\t Номер: #{s.number}, группа: #{s.groupable.title}, предмет #{s.subject.title}, кабинет: #{s.cabinet.title}\n"
+      end
+    end
+    text += "\nИтого пар: #{lecturer.studies.count}\n"
+
+    Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
+      from    'tmis@kp11.ru'
+      to      'noein93@gmail.com'
+      subject 'Расписание'
+      body     text
+      add_file :filename => 'timetable.xls', :content => File.read(filename)
+    end.send!
+  end
+
+  def on_settingsAction_triggered
+    SettingsDialog.new.exec
   end
 
 end

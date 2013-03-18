@@ -1,8 +1,10 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/engine/database'
 require './src/engine/models/course'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Course do
   before(:all) do
     @course = create(:course)

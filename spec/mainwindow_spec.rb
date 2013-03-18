@@ -1,9 +1,10 @@
 # coding: UTF-8
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/interface/mainwindow'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe MainWindow do
   before(:all) do
     @app = Qt::Application.new(ARGV)

@@ -14,19 +14,15 @@
    <string>Timetable management information system</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTableView" name="studiesTableView">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>711</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <property name="sortingEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableView" name="studiesTableView">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -83,6 +79,7 @@
     <property name="title">
      <string>Инструменты</string>
     </property>
+    <addaction name="settingsAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -169,6 +166,11 @@
   <action name="selectAllAction">
    <property name="text">
     <string>Выделить всё</string>
+   </property>
+  </action>
+  <action name="settingsAction">
+   <property name="text">
+    <string>Настройки</string>
    </property>
   </action>
  </widget>

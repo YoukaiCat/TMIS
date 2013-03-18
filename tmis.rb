@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
-
-##
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Copyright (C) 2013 Vladislav Mileshkin
 #
 # This file is part of TMIS.
@@ -18,11 +17,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with TMIS. If not, see <http://www.gnu.org/licenses/>.
-#
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'Qt'
 require './src/interface/mainwindow'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Qt::Application.new(ARGV) do
   MainWindow.new.show
   exec
