@@ -37,9 +37,15 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <widget class="QMenu" name="recentMenu">
+     <property name="title">
+      <string>Недавние</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="newAction"/>
     <addaction name="openAction"/>
-    <addaction name="recentAction"/>
+    <addaction name="recentMenu"/>
     <addaction name="separator"/>
     <addaction name="saveAction"/>
     <addaction name="saveAsAction"/>
@@ -116,11 +122,6 @@
   <action name="saveAction">
    <property name="text">
     <string>Сохранить</string>
-   </property>
-  </action>
-  <action name="recentAction">
-   <property name="text">
-    <string>Недавние</string>
    </property>
   </action>
   <action name="saveAsAction">

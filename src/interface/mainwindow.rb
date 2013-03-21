@@ -19,6 +19,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'Qt'
 require 'mail'
+require 'tmpdir'
 require 'fileutils'
 require 'contracts'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,69 +35,66 @@ require './src/interface/models/study_table_model'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MainWindow < Qt::MainWindow
 
+  # File menu
   slots 'on_newAction_triggered()'
   slots 'on_openAction_triggered()'
-  slots 'on_recentAction_triggered()'
   slots 'on_saveAction_triggered()'
   slots 'on_saveAsAction_triggered()'
   slots 'on_importAction_triggered()'
   slots 'on_exportAction_triggered()'
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
+  # Tools menu
   slots 'on_settingsAction_triggered()'
+  # Self
+  slots 'open_file()'
+  slots 'clear_recent_files()'
 
   def initialize(parent = nil)
     super(parent)
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
-    @db = Database.instance
-    @temp_file_name = 'NewTimetable.sqlite'
-  end
-
-  def on_newAction_triggered
-    @db.connect_to(':memory:')
-  end
-
-  def on_openAction_triggered
-    @db.connect_to(':memory:')
-  end
-
-  def on_recentAction_triggered
-  end
-
-  def on_saveAction_triggered
-  end
-
-  def on_saveAsAction_triggered
-  end
-
-  def on_importAction_triggered
-    @ui.statusbar.showMessage('Please, wait...')
-    filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)')
-    unless filename.nil?
-      sheet = SpreadsheetCreater.create(filename)
-      reader = TimetableReader.new(sheet, :first!)
-      FileUtils.rm_f(@temp_file_name)
-      @db.connect_to(@temp_file_name)
-      TimetableManager.new(reader).save_to_db
-      show_studies
+    @ui.studiesTableView.visible = false
+    @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
+    add_clear_action = ->() do
+      clear_recent = Qt::Action.new('Очистить', self)
+      clear_recent.setData(Qt::Variant.new('clear'))
+      connect(clear_recent, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
+      @ui.recentMenu.addAction(clear_recent)
+      clear_recent
     end
+    if Settings[:recent, :files].split.size > 0
+      @recent = Settings[:recent, :files].split.map do |path|
+        action = Qt::Action.new(path[path.size-10..path.size], self)
+        action.setData(Qt::Variant.new(path))
+        connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
+        action
+      end
+      @recent = [add_clear_action.()] + @recent
+      @recent.each_cons(2) { |before, action| @ui.recentMenu.insertAction(before, action) }
+    else
+      @recent = [add_clear_action.()]
+    end
+  end
+
+  def clear_recent_files
+    @ui.recentMenu.clear
+    clear_recent = Qt::Action.new('Очистить', self)
+    clear_recent.setData(Qt::Variant.new('clear'))
+    connect(clear_recent, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
+    @ui.recentMenu.addAction(clear_recent)
+    @recent.clear.push(clear_recent)
+  end
+
+  def please_wait(&block)
+    @ui.statusbar.showMessage('Please, wait...')
+    yield block
     @ui.statusbar.clearMessage
   end
 
-  def on_exportAction_triggered
-  end
-
-  def on_closeAction_triggered
-    @ui.studiesTableView.model = nil
-    #@db.disconnect
-    FileUtils.rm_f(@temp_file_name)
-  end
-
-  def on_quitAction_triggered
-    on_closeAction_triggered
-    puts 'Sayonara!'
-    Qt::Application.quit
+  def on_newAction_triggered
+    Database.instance.connect_to(@temp.())
+    show_studies
   end
 
   def show_studies
@@ -104,6 +102,80 @@ class MainWindow < Qt::MainWindow
     model = StudyTableModel.new(studies)
     @ui.studiesTableView.model = model
     @ui.studiesTableView.show
+  end
+
+  Contract String => Any
+  def update_recent(filename)
+    action = Qt::Action.new(filename[filename.size-10..filename.size], self)
+    action.setData(Qt::Variant.new(filename))
+    connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
+    general = ->() do
+      repeated_action = @recent.select{ |f| f.data.value.to_s == action.data.value.to_s }
+      @ui.recentMenu.removeAction(repeated_action.first) unless repeated_action.empty?
+      @recent = @recent.delete_if{ |f| f.data.value.to_s == action.data.value.to_s }.push(action)
+    end
+    case
+    when @recent.size == 1
+      @recent = @recent.push(action)
+    when @recent.size > 4
+      @ui.recentMenu.removeAction(@recent.shift)
+      general.()
+    else
+      general.()
+    end
+    @ui.recentMenu.insertAction(@recent[-2], action)
+  end
+
+  def open_file()
+    Database.instance.connect_to(sender.data.value.to_s)
+    update_recent(sender.data.value.to_s)
+    show_studies
+  end
+
+  def on_openAction_triggered
+    if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'TMIS databases (SQLite3)(*.sqlite)'))
+      Database.instance.connect_to(filename)
+      update_recent(filename)
+      show_studies
+    end
+  end
+
+  def on_saveAction_triggered
+  end
+
+  def on_saveAsAction_triggered
+    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
+      FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
+      Database.instance.connect_to(filename)
+      update_recent(filename)
+      show_studies
+    end
+  end
+
+  def on_importAction_triggered
+    if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
+      sheet = SpreadsheetCreater.create(filename)
+      reader = TimetableReader.new(sheet, :first!)
+      Database.instance.connect_to(@temp.())
+      TimetableManager.new(reader).save_to_db
+      show_studies
+    end
+  end
+
+  def on_exportAction_triggered
+  end
+
+  def on_closeAction_triggered
+    @ui.studiesTableView.hide
+    #@db.disconnect
+  end
+
+  def on_quitAction_triggered
+    on_closeAction_triggered
+    @recent.shift
+    Settings[:recent, :files] = @recent.map{ |a| a.data.value.to_s }.join(' ')
+    puts 'Sayonara!'
+    Qt::Application.quit
   end
 
   def timetable_for_lecturer(lecturer)

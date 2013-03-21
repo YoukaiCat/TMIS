@@ -16,7 +16,7 @@ class Settings
     @@settings.beginGroup(group.to_s)
     result = @@settings.value(key.to_s)
     @@settings.endGroup()
-    result.value
+    result.value.to_s
   end
 
   Contract Symbol, Symbol, Any => Any
@@ -24,6 +24,7 @@ class Settings
     @@settings.beginGroup(group.to_s)
     @@settings.setValue(key.to_s, Qt::Variant.new(value))
     @@settings.endGroup()
+    @@settings.sync
   end
 end
 

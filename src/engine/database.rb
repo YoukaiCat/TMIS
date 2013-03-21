@@ -28,9 +28,9 @@ class Database
   def connect_to(path)
     @path = path
     if ActiveRecord::Base.connected?
+      ActiveRecord::Base.remove_connection
       connect(path)
     else
-      ActiveRecord::Base.remove_connection
       connect(path)
     end
     self
@@ -41,11 +41,11 @@ class Database
   end
 
   def disconnect
-    ActiveRecord::Base.remove_connection
+    ActiveRecord::Base.remove_connection; self
   end
 
   def transaction(&block)
-    ActiveRecord::Base.transaction(&block)
+    ActiveRecord::Base.transaction(&block); self
   end
 
 private
@@ -53,5 +53,6 @@ private
     ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
     ActiveRecord::Base.timestamped_migrations = false
     ActiveRecord::Migrator.up("src/engine/migrations")
+    self
   end
 end
