@@ -12,7 +12,7 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def columnCount(parent)
-    4
+    7
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -31,6 +31,10 @@ class StudyTableModel < Qt::AbstractTableModel
           study.number.to_s
         when 4
           study.date.to_s
+        when 5
+          study.groupable.subgroup? ? study.groupable.group.title : study.groupable.title
+        when 6
+          study.groupable.subgroup? ? study.groupable.number : '--'
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -42,7 +46,7 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Subject Lecturer Cabinet Number Date)[section]
+          %w(Subject Lecturer Cabinet Number Date Group Subgroup)[section]
         else
           ''
         end
@@ -53,7 +57,7 @@ class StudyTableModel < Qt::AbstractTableModel
     Qt::ItemIsEditable | super(index)
   end
 
-  def setData(index, variant, role=Qt::EditRole)
+  def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
       s = variant.toString
       study = @studies[index.row]
@@ -68,6 +72,10 @@ class StudyTableModel < Qt::AbstractTableModel
         study.number = s.to_i
       when 4
         study.date = s
+      when 5
+        study.groupable.group.title = s
+      when 6
+        study.groupable.subgroup? ? study.groupable.number = s.to_i : '--'
       else
         raise "invalid column #{index.column}"
       end

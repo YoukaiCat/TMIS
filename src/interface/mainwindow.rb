@@ -127,9 +127,12 @@ class MainWindow < Qt::MainWindow
   end
 
   def open_file()
-    Database.instance.connect_to(sender.data.value.to_s)
-    update_recent(sender.data.value.to_s)
-    show_studies
+    filename = sender.data.value.to_s
+    if File.exist? filename
+      Database.instance.connect_to(filename)
+      update_recent(filename)
+      show_studies
+    end
   end
 
   def on_openAction_triggered

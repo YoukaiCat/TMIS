@@ -53,8 +53,10 @@ private
   def parse_info(info)
     unless info.nil?
       info[/(.*)\s{2,}(([[:alpha:]]+)\s+([[:alpha:]]).\s?([[:alpha:]])|вакансия)/i]
-      if $1 && $2 && $3 && $4
-        { subject: ($1.strip!), lecturer: { surname: $3, name: $4, patronymic: $5 } }
+      if $1 && $3 && $4 && $5
+        { subject: ($1.strip), lecturer: { surname: $3, name: $4, patronymic: $5 } }
+      elsif $1 && $2
+        { subject: ($1.strip), lecturer: { surname: $2, name: nil, patronymic: nil } }
       end
     end
   end
