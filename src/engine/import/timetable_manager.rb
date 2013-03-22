@@ -7,6 +7,8 @@ require './src/engine/models/subject'
 require './src/engine/models/lecturer'
 require './src/engine/models/cabinet'
 require './src/engine/models/study'
+require './src/engine/models/course'
+require './src/engine/models/semester'
 require './src/engine/import/timetable_reader'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
@@ -22,7 +24,11 @@ class TimetableManager
 
   Contract None => Any
   def save_to_db
-    Database.instance.transaction { create_subgroups }
+    Database.instance.transaction do
+      create_subgroups
+      (1..4).each{ |n| Course.create(number: n) }
+      Course.all.zip(Course.all).flatten.each_with_index { |c, i| Semester.create(title: i, course: c) }
+    end
   end
 
 private
