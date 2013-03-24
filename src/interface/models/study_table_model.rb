@@ -1,5 +1,7 @@
+# encoding: UTF-8
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 require './src/engine/models/study'
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~
 class StudyTableModel < Qt::AbstractTableModel
 
   def initialize(studies)
@@ -46,7 +48,7 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Subject Lecturer Cabinet Number Date Group Subgroup)[section]
+          %w(Предмет Предмет Кабинет Номер Дата Группа Подгруппа)[section]
         else
           ''
         end

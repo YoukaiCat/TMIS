@@ -1,16 +1,16 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/lecturer'
+require './src/engine/models/group'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-class LecturerTableModel < Qt::AbstractTableModel
+class GroupTableModel < Qt::AbstractTableModel
 
-  def initialize(lecturers)
+  def initialize(groups)
     super()
-    @lecturers = lecturers
+    @groups = groups
   end
 
   def rowCount(parent)
-    @lecturers.size
+    @groups.size
   end
 
   def columnCount(parent)
@@ -20,15 +20,15 @@ class LecturerTableModel < Qt::AbstractTableModel
   def data(index, role = Qt::DisplayRole)
     invalid = Qt::Variant.new
     return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
-    lecturer = @lecturers[index.row]
-    return invalid if lecturer.nil?
+    group = @groups[index.row]
+    return invalid if group.nil?
     v = case index.column
         when 0
-          lecturer.surname
+          group.title
         when 1
-          lecturer.name
+          group.speciality ? group.speciality.title : group.speciality_id
         when 2
-          lecturer.patronymic
+          group.course ?  group.course.number :  group.course_id
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -40,7 +40,7 @@ class LecturerTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Фамилия Имя Отчество)[section]
+          %w(Название Специальность Курс)[section]
         else
           ''
         end
@@ -54,18 +54,18 @@ class LecturerTableModel < Qt::AbstractTableModel
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
       s = variant.toString
-      lecturer = @lecturers[index.row]
+      group = @groups[index.row]
       case index.column
       when 0
-        lecturer.surname = s
+        group.title
       when 1
-        lecturer.name = s
+        group.speciality_id
       when 2
-        lecturer.patronymic = s
+        group.course_id
       else
         raise "invalid column #{index.column}"
       end
-      lecturer.save
+      group.save
       emit dataChanged(index, index)
       true
     else

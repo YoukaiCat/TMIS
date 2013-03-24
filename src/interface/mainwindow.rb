@@ -31,7 +31,26 @@ require './src/engine/export/timetable_exporter.rb'
 require './src/engine/mailer/mailer'
 require './src/interface/ui_mainwindow'
 require './src/interface/forms/settings'
+require './src/engine/models/cabinet'
+require './src/engine/models/course'
+require './src/engine/models/group'
+require './src/engine/models/lecturer'
+require './src/engine/models/semester'
+require './src/engine/models/speciality'
+require './src/engine/models/speciality_subject'
+require './src/engine/models/study'
+require './src/engine/models/subject'
+require './src/engine/models/subgroup'
+require './src/interface/models/cabinet_table_model'
+require './src/interface/models/course_table_model'
+require './src/interface/models/group_table_model'
+require './src/interface/models/lecturer_table_model'
+require './src/interface/models/semester_table_model'
+require './src/interface/models/speciality_table_model'
+require './src/interface/models/speciality_subject_table_model'
 require './src/interface/models/study_table_model'
+require './src/interface/models/subject_table_model'
+require './src/interface/models/subgroup_table_model'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MainWindow < Qt::MainWindow
 
@@ -54,7 +73,16 @@ class MainWindow < Qt::MainWindow
     super(parent)
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
+    @ui.cabinetsTableView.visible = false
+    @ui.coursesTableView.visible = false
+    @ui.groupsTableView.visible = false
+    @ui.lecturersTableView.visible = false
+    @ui.semestersTableView.visible = false
+    @ui.specialitySubjectsTableView.visible = false
+    @ui.specialitiesTableView.visible = false
     @ui.studiesTableView.visible = false
+    @ui.subgroupsTableView.visible = false
+    @ui.subjectsTableView.visible = false
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     add_clear_action = ->() do
       clear_recent = Qt::Action.new('Очистить', self)
@@ -94,14 +122,42 @@ class MainWindow < Qt::MainWindow
 
   def on_newAction_triggered
     Database.instance.connect_to(@temp.())
-    show_studies
+    show_tables
   end
 
-  def show_studies
-    studies = Study.all
-    model = StudyTableModel.new(studies)
-    @ui.studiesTableView.model = model
+  def show_tables
+    # Переменные экземпляра используются для обхода бага:
+    # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
+    @cabinet_model = CabinetTableModel.new(Cabinet.all)
+    @ui.cabinetsTableView.setModel(@cabinet_model)
+    @ui.cabinetsTableView.show
+    @course_model = CourseTableModel.new(Course.all)
+    @ui.coursesTableView.setModel(@course_model)
+    @ui.coursesTableView.show
+    @group_model = GroupTableModel.new(Group.all)
+    @ui.groupsTableView.model = @group_model
+    @ui.groupsTableView.show
+    @lecturer_model = LecturerTableModel.new(Lecturer.all)
+    @ui.lecturersTableView.model = @lecturer_model
+    @ui.lecturersTableView.show
+    @semester_model = SemesterTableModel.new(Semester.all)
+    @ui.semestersTableView.model = @semester_model
+    @ui.semestersTableView.show
+    @speciality_model = SpecialityTableModel.new(Speciality.all)
+    @ui.specialitiesTableView.model = @speciality_model
+    @ui.specialitiesTableView.show
+    @speciality_subject_model = SpecialitySubjectTableModel.new(SpecialitySubject.all)
+    @ui.specialitySubjectsTableView.model = @speciality_subject_model
+    @ui.specialitySubjectsTableView.show
+    @study_model = StudyTableModel.new(Study.all)
+    @ui.studiesTableView.setModel(@study_model)
     @ui.studiesTableView.show
+    @subgroup_modle = SubgroupTableModel.new(Subgroup.all)
+    @ui.subgroupsTableView.model = @subgroup_modle
+    @ui.subgroupsTableView.show
+    @subject_model = SubjectTableModel.new(Subject.all)
+    @ui.subjectsTableView.model = @subject_model
+    @ui.subjectsTableView.show
   end
 
   Contract String => Any
@@ -126,12 +182,12 @@ class MainWindow < Qt::MainWindow
     @ui.recentMenu.insertAction(@recent[-2], action)
   end
 
-  def open_file()
+  def open_file
     filename = sender.data.value.to_s
     if File.exist? filename
       Database.instance.connect_to(filename)
       update_recent(filename)
-      show_studies
+      show_tables
     end
   end
 
@@ -139,7 +195,7 @@ class MainWindow < Qt::MainWindow
     if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'TMIS databases (SQLite3)(*.sqlite)'))
       Database.instance.connect_to(filename)
       update_recent(filename)
-      show_studies
+      show_tables
     end
   end
 
@@ -151,17 +207,19 @@ class MainWindow < Qt::MainWindow
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to(filename)
       update_recent(filename)
-      show_studies
+      show_tables
     end
   end
 
   def on_importAction_triggered
-    if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
-      sheet = SpreadsheetCreater.create(filename)
-      reader = TimetableReader.new(sheet, :first!)
-      Database.instance.connect_to(@temp.())
-      TimetableManager.new(reader).save_to_db
-      show_studies
+    please_wait do
+      if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
+        sheet = SpreadsheetCreater.create(filename)
+        reader = TimetableReader.new(sheet, :first!)
+        Database.instance.connect_to(@temp.())
+        TimetableManager.new(reader).save_to_db
+        show_tables
+      end
     end
   end
 
@@ -169,7 +227,16 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_closeAction_triggered
+    @ui.cabinetsTableView.hide
+    @ui.coursesTableView.hide
+    @ui.groupsTableView.hide
+    @ui.lecturersTableView.hide
+    @ui.semestersTableView.hide
+    @ui.specialitiesTableView.hide
+    @ui.specialitySubjectsTableView.hide
     @ui.studiesTableView.hide
+    @ui.subgroupsTableView.hide
+    @ui.subjectsTableView.hide
     #@db.disconnect
   end
 

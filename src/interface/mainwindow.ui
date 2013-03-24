@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
+    <width>721</width>
     <height>570</height>
    </rect>
   </property>
@@ -16,10 +16,128 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QTableView" name="studiesTableView">
-      <property name="sortingEnabled">
-       <bool>true</bool>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
+      <widget class="QWidget" name="timetableTab">
+       <attribute name="title">
+        <string>Расписание</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QTableView" name="studiesTableView">
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="referencesTab">
+       <attribute name="title">
+        <string>Справочники</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="cabinetsTab">
+           <attribute name="title">
+            <string>Кабинеты</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QTableView" name="cabinetsTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="coursesTab">
+           <attribute name="title">
+            <string>Курсы</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QTableView" name="coursesTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="groupsTab">
+           <attribute name="title">
+            <string>Группы</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QTableView" name="groupsTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="lecturersTab">
+           <attribute name="title">
+            <string>Преподаватели</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QTableView" name="lecturersTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="semestersTab">
+           <attribute name="title">
+            <string>Семестры</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QTableView" name="semestersTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="specialitiesTab">
+           <attribute name="title">
+            <string>Специальности</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QTableView" name="specialitiesTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="specialitySubjects">
+           <attribute name="title">
+            <string>Предметы специальностей</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QTableView" name="specialitySubjectsTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="subgroupsTab">
+           <attribute name="title">
+            <string>Подгруппы</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_11">
+            <item row="0" column="0">
+             <widget class="QTableView" name="subgroupsTableView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="subjectsTab">
+           <attribute name="title">
+            <string>Предметы</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_12">
+            <item row="0" column="0">
+             <widget class="QTableView" name="subjectsTableView"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -29,7 +147,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>776</width>
+     <width>721</width>
      <height>20</height>
     </rect>
    </property>

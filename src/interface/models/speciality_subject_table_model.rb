@@ -1,34 +1,36 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/lecturer'
+require './src/engine/models/speciality_subject'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-class LecturerTableModel < Qt::AbstractTableModel
+class SpecialitySubjectTableModel < Qt::AbstractTableModel
 
-  def initialize(lecturers)
+  def initialize(speciality_subjects)
     super()
-    @lecturers = lecturers
+    @speciality_subjects = speciality_subjects
   end
 
   def rowCount(parent)
-    @lecturers.size
+    @speciality_subjects.size
   end
 
   def columnCount(parent)
-    3
+    4
   end
 
   def data(index, role = Qt::DisplayRole)
     invalid = Qt::Variant.new
     return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
-    lecturer = @lecturers[index.row]
-    return invalid if lecturer.nil?
+    speciality_subject = @speciality_subjects[index.row]
+    return invalid if speciality_subject.nil?
     v = case index.column
         when 0
-          lecturer.surname
+          speciality_subject.subject.title
         when 1
-          lecturer.name
+          speciality_subject.semester.number
         when 2
-          lecturer.patronymic
+          speciality_subject.speciality.title
+        when 3
+          speciality_subject.hours
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -40,7 +42,7 @@ class LecturerTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Фамилия Имя Отчество)[section]
+          %w(Название_предмета Номер_семестра Название_специальноси Часов)[section]
         else
           ''
         end
@@ -54,18 +56,20 @@ class LecturerTableModel < Qt::AbstractTableModel
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
       s = variant.toString
-      lecturer = @lecturers[index.row]
+      speciality_subject = @speciality_subjects[index.row]
       case index.column
       when 0
-        lecturer.surname = s
+        speciality_subject.subject.title
       when 1
-        lecturer.name = s
+        speciality_subject.semester.number
       when 2
-        lecturer.patronymic = s
+        speciality_subject.speciality.title
+      when 3
+        speciality_subject.hours
       else
         raise "invalid column #{index.column}"
       end
-      lecturer.save
+      speciality_subject.save
       emit dataChanged(index, index)
       true
     else
