@@ -18,4 +18,17 @@ describe TimetableReader do
   it "must raise exception" do
     expect { TimetableReader.new(@sheet, :test) }.to raise_error
   end
+
+  it "must parse info right" do
+    TimetableReader.new(@sheet, :first!).parse_info('').should eq(nil)
+    TimetableReader.new(@sheet, :first!).parse_info('invalid').should eq(nil)
+    res = TimetableReader.new(@sheet, :first!).parse_info('Информатика и ИКТ   Куплинова Е.Д.(2п)')
+    res.should eq({ subject: 'Информатика и ИКТ', lecturer: { surname: 'Куплинова', name: 'Е', patronymic: 'Д' }, subgroup: '2' })
+    res = TimetableReader.new(@sheet, :first!).parse_info('Информатика и ИКТ   Куплинова Е.Д.')
+    res.should eq({ subject: 'Информатика и ИКТ', lecturer: { surname: 'Куплинова', name: 'Е', patronymic: 'Д' }, subgroup: nil })
+    res = TimetableReader.new(@sheet, :first!).parse_info('Информатика и ИКТ   вакансия (2п)')
+    res.should eq({ subject: 'Информатика и ИКТ', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: '2' })
+    res = TimetableReader.new(@sheet, :first!).parse_info('Информатика и ИКТ   вакансия')
+    res.should eq({ subject: 'Информатика и ИКТ', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: nil })
+  end
 end

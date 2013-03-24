@@ -52,11 +52,11 @@ private
   Contract Maybe[String] => Maybe[Hash]
   def parse_info(info)
     unless info.nil?
-      info[/(.*)\s{2,}(([[:alpha:]]+)\s+([[:alpha:]]).\s?([[:alpha:]])|вакансия)/i]
+      info[/(.*)\s{2,}(([[:alpha:]]+)\s+([[:alpha:]]).\s?([[:alpha:]])|вакансия)(.+?(\d))?/i]
       if $1 && $3 && $4 && $5
-        { subject: ($1.strip), lecturer: { surname: $3, name: $4, patronymic: $5 } }
+        { subject: ($1.strip), lecturer: { surname: $3, name: $4, patronymic: $5 }, subgroup: $7 }
       elsif $1 && $2
-        { subject: ($1.strip), lecturer: { surname: $2, name: nil, patronymic: nil } }
+        { subject: ($1.strip), lecturer: { surname: $2, name: nil, patronymic: nil }, subgroup: $7 }
       end
     end
   end

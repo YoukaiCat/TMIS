@@ -46,7 +46,11 @@ private
     data[:days].each do |day|
       day[:studies].each_with_index do |study, number|
         if study.size == 1
-          Study.create( get_study_options(study[0], day[:name], number.succ, group) )
+          if (s = study.first[:info][:subgroup])
+            Study.create( get_study_options(study[0], day[:name], number.succ, subgroups[s.to_i - 1]) )
+          else
+            Study.create( get_study_options(study[0], day[:name], number.succ, group) )
+          end
         else
           study.each_with_index do |sepstudy, subgroup_number|
             Study.create( get_study_options(sepstudy, day[:name], number.succ, subgroups[subgroup_number]) )
