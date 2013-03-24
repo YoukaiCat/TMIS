@@ -234,6 +234,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_exportAction_triggered
+    timetable_for_lecturer(Lecturer.find(1))
   end
 
   def on_closeAction_triggered
@@ -269,13 +270,16 @@ class MainWindow < Qt::MainWindow
     end
     text += "\nИтого пар: #{lecturer.studies.count}\n"
 
+    spreadsheet = SpreadsheetCreater.create('Timetable.xls')
+    LecturerWeekTimetableExporter.new(lecturer, spreadsheet).export.save
     Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
       from    'tmis@kp11.ru'
       to      'noein93@gmail.com'
       subject 'Расписание'
       body     text
-      add_file :filename => 'timetable.xls', :content => File.read(filename)
+      add_file :filename => 'timetable.xls', :content => File.read('Timetable.xls')
     end.send!
+    File.delete('Timetable.xls')
   end
 
   def on_settingsAction_triggered

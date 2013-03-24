@@ -32,14 +32,16 @@ class LecturerWeekTimetableExporter < AbstractTimetableExporter
     @table[1, 3] = "Группа"
     @table[1, 4] = "Предмет"
     @table[1, 5] = "Кабинет"
-    data.each_with_index do |date_studies, index_date|
-      @table[index_date + 2, 1] = date_studies.first.to_s
-      date_studies.last.each_with_index do |s, index|
-        @table[index_date + index + 2, 2] = s.number
-        @table[index_date + index + 2, 3] = s.groupable.title
-        @table[index_date + index + 2, 4] = s.subject.title
-        @table[index_date + index + 2, 5] = s.cabinet.title
+    index = 2
+    for date_studies in data
+      @table[index, 1] = date_studies.first.to_s
+      date_studies.last.each_with_index do |s, sindex|
+        @table[index + sindex, 2] = s.number
+        @table[index + sindex, 3] = s.groupable.title
+        @table[index + sindex, 4] = s.subject.title
+        @table[index + sindex, 5] = s.cabinet.title
       end
+      index += date_studies.last.size
     end
     @table
   end
