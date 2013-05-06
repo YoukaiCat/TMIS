@@ -73,23 +73,16 @@ class MainWindow < Qt::MainWindow
     super(parent)
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
-    @ui.cabinetsTableView.visible = false
-    @ui.coursesTableView.visible = false
-    @ui.groupsTableView.visible = false
-    @ui.lecturersTableView.visible = false
-    @ui.semestersTableView.visible = false
-    @ui.specialitySubjectsTableView.visible = false
-    @ui.specialitiesTableView.visible = false
-    @ui.studiesTableView.visible = false
-    @ui.subgroupsTableView.visible = false
-    @ui.subjectsTableView.visible = false
+    [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
+     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView,
+     @ui.subjectsTableView].each{ |x| x.visible = false }
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
+    @clear_recent_action = Qt::Action.new('Очистить', self)
+    @clear_recent_action.setData(Qt::Variant.new('clear'))
+    connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
     add_clear_action = ->() do
-      clear_recent = Qt::Action.new('Очистить', self)
-      clear_recent.setData(Qt::Variant.new('clear'))
-      connect(clear_recent, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
-      @ui.recentMenu.addAction(clear_recent)
-      clear_recent
+      @ui.recentMenu.addAction(@clear_recent_action)
+      @clear_recent_action
     end
     if Settings[:recent, :files].split.size > 0
       @recent = Settings[:recent, :files].split.map do |path|
@@ -107,11 +100,8 @@ class MainWindow < Qt::MainWindow
 
   def clear_recent_files
     @ui.recentMenu.clear
-    clear_recent = Qt::Action.new('Очистить', self)
-    clear_recent.setData(Qt::Variant.new('clear'))
-    connect(clear_recent, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
-    @ui.recentMenu.addAction(clear_recent)
-    @recent.clear.push(clear_recent)
+    @ui.recentMenu.addAction(@clear_recent_action)
+    @recent.clear.push(@clear_recent_action)
   end
 
   def please_wait(&block)
