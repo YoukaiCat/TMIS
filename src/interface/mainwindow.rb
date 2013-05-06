@@ -73,9 +73,10 @@ class MainWindow < Qt::MainWindow
     super(parent)
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
-    [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
+    @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
      @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView,
-     @ui.subjectsTableView].each{ |x| x.visible = false }
+     @ui.subjectsTableView]
+    @tables_views.each{ |x| x.visible = false }
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData(Qt::Variant.new('clear'))
@@ -196,16 +197,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_closeAction_triggered
-    @ui.cabinetsTableView.hide
-    @ui.coursesTableView.hide
-    @ui.groupsTableView.hide
-    @ui.lecturersTableView.hide
-    @ui.semestersTableView.hide
-    @ui.specialitiesTableView.hide
-    @ui.specialitySubjectsTableView.hide
-    @ui.studiesTableView.hide
-    @ui.subgroupsTableView.hide
-    @ui.subjectsTableView.hide
+    @tables_views.each{ |x| x.hide }
     #@db.disconnect
   end
 
