@@ -118,46 +118,14 @@ class MainWindow < Qt::MainWindow
   def show_tables
     # Переменные экземпляра используются для обхода бага:
     # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
-    @cabinet_model = CabinetTableModel.new(Cabinet.all)
-    @ui.cabinetsTableView.model = @cabinet_model
-    @ui.cabinetsTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.cabinetsTableView.show
-    @course_model = CourseTableModel.new(Course.all)
-    @ui.coursesTableView.model = @course_model
-    @ui.coursesTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.coursesTableView.show
-    @group_model = GroupTableModel.new(Group.all)
-    @ui.groupsTableView.model = @group_model
-    @ui.groupsTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.groupsTableView.show
-    @lecturer_model = LecturerTableModel.new(Lecturer.all)
-    @ui.lecturersTableView.model = @lecturer_model
-    @ui.lecturersTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.lecturersTableView.show
-    @semester_model = SemesterTableModel.new(Semester.all)
-    @ui.semestersTableView.model = @semester_model
-    @ui.semestersTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.semestersTableView.show
-    @speciality_model = SpecialityTableModel.new(Speciality.all)
-    @ui.specialitiesTableView.model = @speciality_model
-    @ui.specialitiesTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.specialitiesTableView.show
-    @speciality_subject_model = SpecialitySubjectTableModel.new(SpecialitySubject.all)
-    @ui.specialitySubjectsTableView.model = @speciality_subject_model
-    @ui.specialitySubjectsTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.specialitySubjectsTableView.show
-    @study_model = StudyTableModel.new(Study.all)
-    @ui.studiesTableView.model = @study_model
-    @ui.studiesTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.studiesTableView.show
-    @subgroup_modle = SubgroupTableModel.new(Subgroup.all)
-    @ui.subgroupsTableView.model = @subgroup_modle
-    @ui.subgroupsTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.subgroupsTableView.show
-    @subject_model = SubjectTableModel.new(Subject.all)
-    @ui.subjectsTableView.model = @subject_model
-    @ui.subjectsTableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)
-    @ui.subjectsTableView.show
+    tables = { Cabinet: :cabinets, Course: :courses, Group: :groups, Lecturer: :lecturers, Semester: :semesters,
+               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Study: :studies, Subgroup: :subgroups, Subject: :subjects }
+    tables.each_pair do |model, entities|
+      eval("@#{model.downcase}_model = #{model}TableModel.new(#{model}.all)\n\
+            @ui.#{entities}TableView.model = @#{model.downcase}_model\n\
+            @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
+            @ui.#{entities}TableView.show")
+    end
   end
 
   Contract String => Any
