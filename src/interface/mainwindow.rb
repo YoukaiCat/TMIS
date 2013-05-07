@@ -74,35 +74,25 @@ class MainWindow < Qt::MainWindow
     @ui = Ui::MainWindow.new
     @ui.setup_ui(self)
     @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
-     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView,
-     @ui.subjectsTableView]
+                     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView]
     @tables_views.each{ |x| x.visible = false }
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData(Qt::Variant.new('clear'))
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
-    add_clear_action = ->() do
-      @ui.recentMenu.addAction(@clear_recent_action)
-      @clear_recent_action
-    end
-    if Settings[:recent, :files].split.size > 0
-      @recent = Settings[:recent, :files].split.map do |path|
-        action = Qt::Action.new(path[path.size-10..path.size], self)
-        action.setData(Qt::Variant.new(path))
-        connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
-        action
-      end
-      @recent = [add_clear_action.()] + @recent
-      @recent.each_cons(2) { |before, action| @ui.recentMenu.insertAction(before, action) }
-    else
-      @recent = [add_clear_action.()]
-    end
+    @ui.recentMenu.clear
+    @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
+  end
+
+  def create_recent_action(path)
+    action = Qt::Action.new(path[path.size-10..path.size], self)
+    connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
+    action.setData(Qt::Variant.new(path)); action
   end
 
   def clear_recent_files
     @ui.recentMenu.clear
     @ui.recentMenu.addAction(@clear_recent_action)
-    @recent.clear.push(@clear_recent_action)
   end
 
   def please_wait(&block)
@@ -131,24 +121,13 @@ class MainWindow < Qt::MainWindow
 
   Contract String => Any
   def update_recent(filename)
-    action = Qt::Action.new(filename[filename.size-10..filename.size], self)
-    action.setData(Qt::Variant.new(filename))
-    connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
-    general = ->() do
-      repeated_action = @recent.select{ |f| f.data.value.to_s == action.data.value.to_s }
-      @ui.recentMenu.removeAction(repeated_action.first) unless repeated_action.empty?
-      @recent = @recent.delete_if{ |f| f.data.value.to_s == action.data.value.to_s }.push(action)
-    end
-    case
-    when @recent.size == 1
-      @recent = @recent.push(action)
-    when @recent.size > 4
-      @ui.recentMenu.removeAction(@recent.shift)
-      general.()
+    actions = @ui.recentMenu.actions
+    if actions.size > 5
+      @ui.recentMenu.clear
+      @ui.recentMenu.addActions([@clear_recent_action] + actions[1..actions.size-1])
     else
-      general.()
+      @ui.recentMenu.addAction(create_recent_action(filename))
     end
-    @ui.recentMenu.insertAction(@recent[-2], action)
   end
 
   def open_file
@@ -203,8 +182,8 @@ class MainWindow < Qt::MainWindow
 
   def on_quitAction_triggered
     on_closeAction_triggered
-    @recent.shift
-    Settings[:recent, :files] = @recent.map{ |a| a.data.value.to_s }.join(' ')
+    recent = @ui.recentMenu.actions
+    Settings[:recent, :files] = recent[1..recent.size-1].map{ |a| a.data.value.to_s }.join(' ')
     puts 'Sayonara!'
     Qt::Application.quit
   end
