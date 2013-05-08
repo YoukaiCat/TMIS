@@ -22,6 +22,9 @@ require 'Qt'
 require_relative 'src/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Qt::Application.new(ARGV) do
+  codec = Qt::TextCodec::codecForName "UTF-8"
+  Qt::TextCodec::setCodecForTr codec
+  Qt::TextCodec::setCodecForLocale codec
   MainWindow.new.show
   exec
 end
