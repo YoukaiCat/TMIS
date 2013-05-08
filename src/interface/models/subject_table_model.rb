@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/subject'
+require_relative '../../engine/models/subject'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SubjectTableModel < Qt::AbstractTableModel
 

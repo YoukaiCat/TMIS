@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/cabinet'
+require_relative '../../engine/models/cabinet'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CabinetTableModel < Qt::AbstractTableModel
 

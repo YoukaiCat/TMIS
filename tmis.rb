@@ -19,7 +19,7 @@
 # along with TMIS. If not, see <http://www.gnu.org/licenses/>.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'Qt'
-require './src/interface/mainwindow'
+require_relative 'src/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Qt::Application.new(ARGV) do
   MainWindow.new.show

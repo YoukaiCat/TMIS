@@ -1,18 +1,18 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'active_record'
-require './src/engine/models/group'
-require './src/engine/models/subgroup'
-require './src/engine/models/subject'
-require './src/engine/models/lecturer'
-require './src/engine/models/cabinet'
-require './src/engine/models/study'
-require './src/engine/models/course'
-require './src/engine/models/semester'
-require './src/engine/import/timetable_reader'
+require_relative '../models/group'
+require_relative '../models/subgroup'
+require_relative '../models/subject'
+require_relative '../models/lecturer'
+require_relative '../models/cabinet'
+require_relative '../models/study'
+require_relative '../models/course'
+require_relative '../models/semester'
+require_relative 'timetable_reader'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
-require './src/engine/import/abstract_spreadsheet'
+require_relative 'abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TimetableManager

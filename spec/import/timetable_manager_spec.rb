@@ -3,9 +3,9 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/import/timetable_manager'
-require './src/engine/import/timetable_reader'
-require './src/engine/import/spreadsheet_roo'
+require_relative '../../src/engine/import/timetable_manager'
+require_relative '../../src/engine/import/timetable_reader'
+require_relative '../../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 #describe TimetableManager do
 #  it "mustn't raise exception" do

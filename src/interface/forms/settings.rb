@@ -1,8 +1,8 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'Qt'
-require './src/interface/forms/ui_settings'
-require './src/engine/mailer/mailer.rb'
+require_relative 'ui_settings'
+require_relative '../../engine/mailer/mailer.rb'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
 include Contracts

@@ -3,8 +3,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/export/timetable_exporter'
-require './spec/export/timetable_exporter_mocks'
+require_relative '../../src/engine/export/timetable_exporter'
+require_relative 'timetable_exporter_mocks'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe AbstractTimetableExporter do
   it "should raise exception if methods not imlemented" do

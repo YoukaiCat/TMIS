@@ -3,8 +3,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './spec/import/timetable_importer_mocks'
-require './src/engine/import/spreadsheet_roo'
+require_relative 'timetable_importer_mocks'
+require_relative '../../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe MockNotImplementedSpreadsheet do
   let(:ssheet) { MockNotImplementedSpreadsheet.new('') }

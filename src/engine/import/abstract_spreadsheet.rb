@@ -1,7 +1,6 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
-require './src/engine/import/abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class AbstractSpreadsheet

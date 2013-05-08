@@ -2,8 +2,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/database'
-require './src/engine/models/speciality'
+require_relative '../../src/engine/database'
+require_relative '../../src/engine/models/speciality'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Speciality do
   before(:all) do

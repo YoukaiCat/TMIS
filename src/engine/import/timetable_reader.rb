@@ -1,7 +1,7 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
-require './src/engine/import/abstract_spreadsheet'
+require_relative 'abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TimetableReader

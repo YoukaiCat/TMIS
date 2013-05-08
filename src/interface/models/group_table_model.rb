@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/group'
+require_relative '../../engine/models/group'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class GroupTableModel < Qt::AbstractTableModel
 

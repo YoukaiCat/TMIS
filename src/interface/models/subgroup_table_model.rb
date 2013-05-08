@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/subgroup'
+require_relative '../../engine/models/subgroup'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SubgroupTableModel < Qt::AbstractTableModel
 

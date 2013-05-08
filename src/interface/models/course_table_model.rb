@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/course'
+require_relative '../../engine/models/course'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CourseTableModel < Qt::AbstractTableModel
 

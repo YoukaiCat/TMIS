@@ -3,7 +3,7 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/interface/mainwindow'
+require_relative '../src/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe MainWindow do
   before(:all) do

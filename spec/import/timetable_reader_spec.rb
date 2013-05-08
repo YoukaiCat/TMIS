@@ -3,8 +3,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/import/timetable_reader'
-require './src/engine/import/spreadsheet_roo'
+require_relative '../../src/engine/import/timetable_reader'
+require_relative '../../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe TimetableReader do
   before(:all) do

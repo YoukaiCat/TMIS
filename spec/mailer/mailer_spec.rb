@@ -3,7 +3,7 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/mailer/mailer'
+require_relative '../../src/engine/mailer/mailer'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Mailer do
   it "should initialize" do

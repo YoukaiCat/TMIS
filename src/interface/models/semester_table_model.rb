@@ -1,6 +1,6 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/models/semester'
+require_relative '../../engine/models/semester'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SemesterTableModel < Qt::AbstractTableModel
 

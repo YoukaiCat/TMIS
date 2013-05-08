@@ -2,7 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
-require './src/engine/database'
+require_relative '../src/engine/database'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 FactoryGirl.find_definitions
 

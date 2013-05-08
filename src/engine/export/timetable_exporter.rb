@@ -1,8 +1,8 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
-require './src/engine/import/abstract_spreadsheet'
-require './src/engine/models/lecturer'
+require_relative '../import/abstract_spreadsheet'
+require_relative '../models/lecturer'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class AbstractTimetableExporter

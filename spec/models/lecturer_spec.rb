@@ -2,8 +2,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/database'
-require './src/engine/models/lecturer'
+require_relative '../../src/engine/database'
+require_relative '../../src/engine/models/lecturer'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Lecturer do
   before(:all) do

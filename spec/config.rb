@@ -4,10 +4,10 @@ require 'rspec'
 require 'simplecov'
 require 'factory_girl'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/database'
-require './src/engine/import/timetable_manager'
-require './src/engine/import/timetable_reader'
-require './src/engine/import/spreadsheet_roo'
+require_relative '../src/engine/database'
+require_relative '../src/engine/import/timetable_manager'
+require_relative '../src/engine/import/timetable_reader'
+require_relative '../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 SimpleCov.command_name('Rspec')
 SimpleCov.start do

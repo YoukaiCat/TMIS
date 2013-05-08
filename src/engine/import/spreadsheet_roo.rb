@@ -3,10 +3,9 @@
 require 'roo'
 require 'fileutils'
 require 'spreadsheet'
-require './src/engine/import/abstract_spreadsheet'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
-require './src/engine/import/abstract_spreadsheet'
+require_relative 'abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SpreadsheetRoo < AbstractSpreadsheet

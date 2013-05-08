@@ -2,8 +2,8 @@
 require 'rspec'
 require 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require './src/engine/database'
-require './src/engine/models/subgroup'
+require_relative '../../src/engine/database'
+require_relative '../../src/engine/models/subgroup'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Subgroup do
   before(:all) do
