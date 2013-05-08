@@ -84,59 +84,9 @@ class MainWindow < Qt::MainWindow
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
   end
 
-  def create_recent_action(path)
-    action = Qt::Action.new(path[path.size-10..path.size], self)
-    connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
-    action.setData(Qt::Variant.new(path)); action
-  end
-
-  def clear_recent_files
-    @ui.recentMenu.clear
-    @ui.recentMenu.addAction(@clear_recent_action)
-  end
-
-  def please_wait(&block)
-    @ui.statusbar.showMessage('Please, wait...')
-    yield block
-    @ui.statusbar.clearMessage
-  end
-
   def on_newAction_triggered
     Database.instance.connect_to(@temp.())
     show_tables
-  end
-
-  def show_tables
-    # Переменные экземпляра используются для обхода бага:
-    # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
-    tables = { Cabinet: :cabinets, Course: :courses, Group: :groups, Lecturer: :lecturers, Semester: :semesters,
-               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Study: :studies, Subgroup: :subgroups, Subject: :subjects }
-    tables.each_pair do |model, entities|
-      eval("@#{model.downcase}_model = #{model}TableModel.new(#{model}.all)\n\
-            @ui.#{entities}TableView.model = @#{model.downcase}_model\n\
-            @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
-            @ui.#{entities}TableView.show")
-    end
-  end
-
-  Contract String => Any
-  def update_recent(filename)
-    actions = @ui.recentMenu.actions
-    if actions.size > 5
-      @ui.recentMenu.clear
-      @ui.recentMenu.addActions([@clear_recent_action] + actions[1..actions.size-1])
-    else
-      @ui.recentMenu.addAction(create_recent_action(filename))
-    end
-  end
-
-  def open_file
-    filename = sender.data.value.to_s
-    if File.exist? filename
-      Database.instance.connect_to(filename)
-      update_recent(filename)
-      show_tables
-    end
   end
 
   def on_openAction_triggered
@@ -188,6 +138,10 @@ class MainWindow < Qt::MainWindow
     Qt::Application.quit
   end
 
+  def on_settingsAction_triggered
+    SettingsDialog.new.exec
+  end
+
   def timetable_for_lecturer(lecturer)
     text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
     grouped = lecturer.studies.group(:date, :number).group_by(&:date)
@@ -211,8 +165,55 @@ class MainWindow < Qt::MainWindow
     File.delete('Timetable.xls')
   end
 
-  def on_settingsAction_triggered
-    SettingsDialog.new.exec
+  def show_tables
+    # Переменные экземпляра используются для обхода бага:
+    # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
+    tables = { Cabinet: :cabinets, Course: :courses, Group: :groups, Lecturer: :lecturers, Semester: :semesters,
+               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Study: :studies, Subgroup: :subgroups, Subject: :subjects }
+    tables.each_pair do |model, entities|
+      eval("@#{model.downcase}_model = #{model}TableModel.new(#{model}.all)\n\
+            @ui.#{entities}TableView.model = @#{model.downcase}_model\n\
+            @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
+            @ui.#{entities}TableView.show")
+    end
+  end
+
+  def open_file
+    filename = sender.data.value.to_s
+    if File.exist? filename
+      Database.instance.connect_to(filename)
+      update_recent(filename)
+      show_tables
+    end
+  end
+
+  Contract String => Qt::Action
+  def create_recent_action(path)
+    action = Qt::Action.new(path[path.size-10..path.size], self)
+    connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
+    action.setData(Qt::Variant.new(path)); action
+  end
+
+  Contract String => Any
+  def update_recent(filename)
+    actions = @ui.recentMenu.actions
+    if actions.size > 5
+      @ui.recentMenu.clear
+      @ui.recentMenu.addActions([@clear_recent_action] + actions[1..actions.size-1])
+    else
+      @ui.recentMenu.addAction(create_recent_action(filename))
+    end
+  end
+
+  def clear_recent_files
+    @ui.recentMenu.clear
+    @ui.recentMenu.addAction(@clear_recent_action)
+  end
+
+  def please_wait(&block)
+    @ui.statusbar.showMessage('Please, wait...')
+    yield block
+    @ui.statusbar.clearMessage
   end
 
 end
