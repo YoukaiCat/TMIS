@@ -21,6 +21,8 @@
 require 'Qt'
 require_relative 'src/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Encoding.default_external = 'utf-8'
+
 Qt::Application.new(ARGV) do
   codec = Qt::TextCodec::codecForName "UTF-8"
   Qt::TextCodec::setCodecForTr codec

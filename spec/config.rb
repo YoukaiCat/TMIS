@@ -9,6 +9,8 @@ require_relative '../src/engine/import/timetable_manager'
 require_relative '../src/engine/import/timetable_reader'
 require_relative '../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
+Encoding.default_external = 'utf-8'
+
 SimpleCov.command_name('Rspec')
 SimpleCov.start do
   add_filter 'spec/'
