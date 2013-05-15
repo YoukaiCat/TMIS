@@ -29,9 +29,9 @@ class Database
     @path = path
     if ActiveRecord::Base.connected?
       ActiveRecord::Base.remove_connection
-      connect(path)
+      connect path
     else
-      connect(path)
+      connect path
     end
     self
   end
@@ -52,7 +52,7 @@ private
   def connect(path)
     ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
     ActiveRecord::Base.timestamped_migrations = false
-    ActiveRecord::Migrator.up('src/engine/migrations')
+    ActiveRecord::Migrator.up 'src/engine/migrations'
     self
   end
 end

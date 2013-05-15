@@ -13,15 +13,15 @@ class Settings
 
   Contract Symbol, Symbol => String
   def self.[](group, key)
-    @@settings.beginGroup(group.to_s)
-    result = @@settings.value(key.to_s)
+    @@settings.beginGroup group.to_s
+    result = @@settings.value key.to_s
     @@settings.endGroup()
     result.value.to_s
   end
 
   Contract Symbol, Symbol, Any => Any
   def self.[]=(group, key, value)
-    @@settings.beginGroup(group.to_s)
+    @@settings.beginGroup group.to_s
     @@settings.setValue(key.to_s, Qt::Variant.new(value))
     @@settings.endGroup()
     @@settings.sync
@@ -36,7 +36,7 @@ class SettingsDialog < Qt::Dialog
   def initialize(parent = nil)
     super(parent)
     @ui = Ui::SettingsDialog.new
-    @ui.setup_ui(self)
+    @ui.setup_ui self
     @ui.emailLineEdit.text = Settings[:mailer, :email]
     @ui.passwordLineEdit.text = Settings[:mailer, :password]
   end

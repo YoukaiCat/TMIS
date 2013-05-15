@@ -72,13 +72,13 @@ class MainWindow < Qt::MainWindow
   def initialize(parent = nil)
     super(parent)
     @ui = Ui::MainWindow.new
-    @ui.setup_ui(self)
+    @ui.setup_ui self
     @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
                      @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView]
     @tables_views.each{ |x| x.visible = false }
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     @clear_recent_action = Qt::Action.new('Очистить', self)
-    @clear_recent_action.setData(Qt::Variant.new('clear'))
+    @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
     @ui.recentMenu.clear
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
@@ -91,8 +91,8 @@ class MainWindow < Qt::MainWindow
 
   def on_openAction_triggered
     if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'TMIS databases (SQLite3)(*.sqlite)'))
-      Database.instance.connect_to(filename)
-      update_recent(filename)
+      Database.instance.connect_to filename
+      update_recent filename
       show_tables
     end
   end
@@ -103,8 +103,8 @@ class MainWindow < Qt::MainWindow
   def on_saveAsAction_triggered
     if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)').force_encoding('UTF-8'))
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
-      Database.instance.connect_to(filename)
-      update_recent(filename)
+      Database.instance.connect_to filename
+      update_recent filename
       show_tables
     end
   end
@@ -112,7 +112,7 @@ class MainWindow < Qt::MainWindow
   def on_importAction_triggered
     please_wait do
       if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
-        sheet = SpreadsheetCreater.create(filename)
+        sheet = SpreadsheetCreater.create filename
         reader = TimetableReader.new(sheet, :first!)
         Database.instance.connect_to(@temp.())
         TimetableManager.new(reader).save_to_db
@@ -122,7 +122,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_exportAction_triggered
-    timetable_for_lecturer(Lecturer.find(1))
+    timetable_for_lecturer Lecturer.find(1)
   end
 
   def on_closeAction_triggered
@@ -153,7 +153,7 @@ class MainWindow < Qt::MainWindow
     end
     text += "\nИтого пар: #{lecturer.studies.count}\n"
 
-    spreadsheet = SpreadsheetCreater.create('Timetable.xls')
+    spreadsheet = SpreadsheetCreater.create 'Timetable.xls'
     LecturerWeekTimetableExporter.new(lecturer, spreadsheet).export.save
     Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
       from    'tmis@kp11.ru'
@@ -162,7 +162,7 @@ class MainWindow < Qt::MainWindow
       body     text
       add_file :filename => 'timetable.xls', :content => File.read('Timetable.xls')
     end.send!
-    File.delete('Timetable.xls')
+    File.delete 'Timetable.xls'
   end
 
   def show_tables
@@ -181,8 +181,8 @@ class MainWindow < Qt::MainWindow
   def open_file
     filename = sender.data.value.to_s
     if File.exist? filename
-      Database.instance.connect_to(filename)
-      update_recent(filename)
+      Database.instance.connect_to filename
+      update_recent filename
       show_tables
     end
   end
@@ -191,7 +191,7 @@ class MainWindow < Qt::MainWindow
   def create_recent_action(path)
     action = Qt::Action.new(path[path.size-10..path.size], self)
     connect(action, SIGNAL('triggered()'), self, SLOT('open_file()'))
-    action.setData(Qt::Variant.new(path)); action
+    action.setData Qt::Variant.new(path); action
   end
 
   Contract String => Any
@@ -201,17 +201,17 @@ class MainWindow < Qt::MainWindow
       @ui.recentMenu.clear
       @ui.recentMenu.addActions([@clear_recent_action] + actions[1..actions.size-1])
     else
-      @ui.recentMenu.addAction(create_recent_action(filename))
+      @ui.recentMenu.addAction create_recent_action(filename)
     end
   end
 
   def clear_recent_files
     @ui.recentMenu.clear
-    @ui.recentMenu.addAction(@clear_recent_action)
+    @ui.recentMenu.addAction @clear_recent_action
   end
 
   def please_wait(&block)
-    @ui.statusbar.showMessage('Please, wait...')
+    @ui.statusbar.showMessage 'Please, wait...'
     yield block
     @ui.statusbar.clearMessage
   end
