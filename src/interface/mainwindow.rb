@@ -101,7 +101,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_saveAsAction_triggered
-    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
+    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)').force_encoding('UTF-8'))
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to(filename)
       update_recent(filename)
