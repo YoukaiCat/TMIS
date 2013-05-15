@@ -26,6 +26,6 @@ def compile_form(path)
   rbuic4(path << ' -o ' << dirs << 'ui_' << file.sub('.ui', '.rb'))
 end
 
-def rspec(arg="")
+def rspec(arg='')
   puts %x[rspec #{arg}]
 end

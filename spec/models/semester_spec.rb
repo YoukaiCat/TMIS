@@ -11,11 +11,11 @@ describe Semester do
     @speciality_subject = create(:speciality_subject, semester: @semester)
   end
 
-  describe "Semester associations" do
-    it "Semester.speciality_subjects" do
+  describe 'Semester associations' do
+    it 'Semester.speciality_subjects' do
       @semester.speciality_subjects.last.should eq(@speciality_subject)
     end
-    it "Speciality_subject.semester" do
+    it 'Speciality_subject.semester' do
       @speciality_subject.semester.should eq(@semester)
     end
   end

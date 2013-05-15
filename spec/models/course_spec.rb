@@ -11,11 +11,11 @@ describe Course do
     @semester = create(:semester, course: @course)
   end
 
-  describe "Course associations" do
-    it "Course.semesters" do
+  describe 'Course associations' do
+    it 'Course.semesters' do
       @course.semesters.last.should eq(@semester)
     end
-    it "Semester.course" do
+    it 'Semester.course' do
       @semester.course.should eq(@course)
     end
   end

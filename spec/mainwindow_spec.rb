@@ -12,7 +12,7 @@ describe MainWindow do
   end
 
   it "must print 'Sayonara!'" do
-    $stdout.should_receive(:puts).with("Sayonara!")
+    $stdout.should_receive(:puts).with('Sayonara!')
     @mw.on_quitAction_triggered
   end
 end

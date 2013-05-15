@@ -27,11 +27,11 @@ class LecturerWeekTimetableExporter < AbstractTimetableExporter
   Contract None => IsA[AbstractSpreadsheet]
   def export
     data = @lecturer.studies.group(:date, :number).group_by(&:date)
-    @table[1, 1] = "Дата"
-    @table[1, 2] = "Номер"
-    @table[1, 3] = "Группа"
-    @table[1, 4] = "Предмет"
-    @table[1, 5] = "Кабинет"
+    @table[1, 1] = 'Дата'
+    @table[1, 2] = 'Номер'
+    @table[1, 3] = 'Группа'
+    @table[1, 4] = 'Предмет'
+    @table[1, 5] = 'Кабинет'
     index = 2
     for date_studies in data
       @table[index, 1] = date_studies.first.to_s

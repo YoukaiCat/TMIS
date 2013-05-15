@@ -15,11 +15,11 @@ describe TimetableReader do
     expect { TimetableReader.new(@sheet, :first!) }.to_not raise_error
   end
 
-  it "must raise exception" do
+  it 'must raise exception' do
     expect { TimetableReader.new(@sheet, :test) }.to raise_error
   end
 
-  it "must parse info right" do
+  it 'must parse info right' do
     TimetableReader.new(@sheet, :first!).parse_info('').should eq(nil)
     TimetableReader.new(@sheet, :first!).parse_info('invalid').should eq(nil)
     res = TimetableReader.new(@sheet, :first!).parse_info('Информатика и ИКТ   Куплинова Е.Д.(2п)')

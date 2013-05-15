@@ -9,7 +9,7 @@ require_relative '../src/engine/import/timetable_manager'
 require_relative '../src/engine/import/timetable_reader'
 require_relative '../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-Encoding.default_external = 'utf-8'
+Encoding.default_external = 'UTF-8'
 
 SimpleCov.command_name('Rspec')
 SimpleCov.start do
@@ -25,7 +25,7 @@ spreadsheet = SpreadsheetCreater.create('./spec/import/test_data/raspisanie_2013
 reader = TimetableReader.new(spreadsheet, :first!)
 TimetableManager.new(reader).save_to_db
 
-# Возможно стоит использовать возможности RSpec вместо создания глобальной перепенной
+# Возможно, стоит использовать возможности RSpec вместо создания глобальной переменной
 #module DatabaseConnection
 #  extend RSpec::SharedContext
 #  let(:db) do

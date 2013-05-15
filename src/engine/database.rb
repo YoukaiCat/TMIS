@@ -52,7 +52,7 @@ private
   def connect(path)
     ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
     ActiveRecord::Base.timestamped_migrations = false
-    ActiveRecord::Migrator.up("src/engine/migrations")
+    ActiveRecord::Migrator.up('src/engine/migrations')
     self
   end
 end

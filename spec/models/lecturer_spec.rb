@@ -11,17 +11,17 @@ describe Lecturer do
     @study = create(:study, :whole_group, lecturer: @lecturer)
   end
 
-  describe "Lecturer associations" do
-    it "Lecturer.studies" do
+  describe 'Lecturer associations' do
+    it 'Lecturer.studies' do
       @lecturer.studies.last.should eq(@study)
     end
 
-    it "Study.lecturer" do
+    it 'Study.lecturer' do
       @study.lecturer.should eq(@lecturer)
     end
   end
 
-  it "should print surname with initials" do
+  it 'should print surname with initials' do
     @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\s[[:alpha:]]+/
   end
 
