@@ -31,7 +31,7 @@ class SpreadsheetRoo < AbstractSpreadsheet
 
   Contract Not[Neg] => Any
   def sheet(number)
-    @sheet.default_sheet = @sheet.sheets[number]
+    @sheet.default_sheet = @sheet.sheets[number-1]
   end
 
   Contract Pos => Any

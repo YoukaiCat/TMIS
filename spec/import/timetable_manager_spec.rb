@@ -10,7 +10,7 @@ require_relative '../../src/engine/import/spreadsheet_roo'
 #describe TimetableManager do
 #  it "mustn't raise exception" do
 #    expect do
-#      TimetableManager.new(TimetableReader.new(SpreadsheetFabric.create("./spec/import/test_data/raspisanie_2013.csv"), 0)).save_to_db
+#      TimetableManager.new(TimetableReader.new(SpreadsheetFabric.create("./spec/import/test_data/raspisanie_2013.csv"), 1), Date.parse('monday')).save_to_db
 #    end.to_not raise_error
 #  end
 #end

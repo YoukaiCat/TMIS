@@ -41,6 +41,7 @@ require_relative '../engine/models/subject'
 require_relative '../engine/models/subgroup'
 require_relative 'ui_mainwindow'
 require_relative 'forms/settings'
+require_relative 'forms/import'
 require_relative 'models/cabinet_table_model'
 require_relative 'models/course_table_model'
 require_relative 'models/group_table_model'
@@ -112,11 +113,14 @@ class MainWindow < Qt::MainWindow
   def on_importAction_triggered
     please_wait do
       if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
-        sheet = SpreadsheetCreater.create filename
-        reader = TimetableReader.new(sheet, :first!)
-        Database.instance.connect_to(@temp.())
-        TimetableManager.new(reader).save_to_db
-        show_tables
+        (id = ImportDialog.new).exec
+        unless id.params.empty?
+          sheet = SpreadsheetCreater.create filename
+          reader = TimetableReader.new(sheet, id.params[:sheet])
+          Database.instance.connect_to(@temp.())
+          TimetableManager.new(reader, id.params[:date]).save_to_db
+          show_tables
+        end
       end
     end
   end

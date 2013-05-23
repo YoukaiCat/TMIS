@@ -5,24 +5,15 @@ require_relative 'abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TimetableReader
-  Contract IsA[AbstractSpreadsheet], Symbol => Any
-  def initialize(spreadsheet, week_name=:first)
+  Contract IsA[AbstractSpreadsheet], Pos => Any
+  def initialize(spreadsheet, sheet_number=1)
     @table = spreadsheet
-    week(week_name)
+    week(sheet_number)
   end
 
-  Contract Symbol => TimetableReader
-  def week(name)
-    case name
-    when :even
-      @table.sheet(4); self
-    when :odd
-      @table.sheet(3); self
-    when :first!
-      @table.sheet(0); self
-    else
-      raise ArgumentError, "No such week: #{name}"
-    end
+  Contract Pos => TimetableReader
+  def week(num)
+    @table.sheet(num); self
   end
 
   Contract None => Array

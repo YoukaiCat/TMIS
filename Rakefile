@@ -4,11 +4,13 @@ task :default => [:test]
 task :compile do
   compile_form 'src/interface/mainwindow.ui'
   compile_form 'src/interface/forms/settings.ui'
+  compile_form 'src/interface/forms/import.ui'
 end
 
 task :clean do
   rm 'src/interface/ui_mainwindow.rb'
   rm 'src/interface/forms/ui_settings.rb'
+  rm 'src/interface/forms/import.ui'
 end
 
 task :rspec do

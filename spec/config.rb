@@ -1,5 +1,6 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
+require 'date'
 require 'rspec'
 require 'simplecov'
 require 'factory_girl'
@@ -22,8 +23,8 @@ end
 $DB = Database.instance.connect_to(':memory:')
 # Загрузка данных для проверки
 spreadsheet = SpreadsheetCreater.create('./spec/import/test_data/raspisanie_2013.csv')
-reader = TimetableReader.new(spreadsheet, :first!)
-TimetableManager.new(reader).save_to_db
+reader = TimetableReader.new(spreadsheet, 1)
+TimetableManager.new(reader, Date.parse('monday')).save_to_db
 
 # Возможно, стоит использовать возможности RSpec вместо создания глобальной переменной
 #module DatabaseConnection
@@ -31,8 +32,8 @@ TimetableManager.new(reader).save_to_db
 #  let(:db) do
 #    db = Database.instance.connect_to(':memory:')
 #    spreadsheet = SpreadsheetFabric.create("./spec/import/test_data/raspisanie_2013.csv")
-#    reader = TimetableReader.new(spreadsheet).week(0)
-#    TimetableManager.new(reader).save_to_db
+#    reader = TimetableReader.new(spreadsheet, 1).week(0)
+#    TimetableManager.new(reader, Date.parse('monday')).save_to_db
 #    db
 #  end
 #end

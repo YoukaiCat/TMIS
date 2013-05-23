@@ -1,6 +1,7 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'active_record'
+require 'date'
 require_relative '../models/group'
 require_relative '../models/subgroup'
 require_relative '../models/subject'
@@ -16,10 +17,10 @@ require_relative 'abstract_spreadsheet'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TimetableManager
-  Contract IsA[TimetableReader] => Any
-  def initialize(timetable_reader)
+  Contract IsA[TimetableReader], Any => Any
+  def initialize(timetable_reader, date)
     @reader = timetable_reader
-    @days = {'понедельник' => Date.new(2013,2,11), 'вторник' => Date.new(2013,2,12), 'среда' => Date.new(2013,2,13), 'четверг' => Date.new(2013,2,14), 'пятница' => Date.new(2013,2,15), 'суббота' => Date.new(2013,2,16) }
+    @days = {'понедельник' => date, 'вторник' => date + 1, 'среда' => date + 2, 'четверг' => date + 3, 'пятница' => date + 4, 'суббота' => date + 5 }
   end
 
   Contract None => Any
@@ -72,7 +73,7 @@ private
       lecturer: add(Lecturer, { surname: study[:info][:lecturer][:surname],
                                 name: study[:info][:lecturer][:name],
                                 patronymic: study[:info][:lecturer][:patronymic] }),
-      date: @days[day.gsub(' ', '')],
+      date: @days[day.mb_chars.downcase.to_s.gsub(' ', '')],
       number: study_number,
       groupable: groupable }
   end
