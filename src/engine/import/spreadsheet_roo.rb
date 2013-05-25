@@ -58,6 +58,7 @@ class SpreadsheetSpreadsheet < AbstractSpreadsheet
   Contract String => Any
   def initialize(filepath)
     @filepath = filepath
+    Spreadsheet.client_encoding = 'UTF-8'
     if File.file?(@filepath)
       @book = Spreadsheet.open(@filepath)
     else
@@ -65,6 +66,12 @@ class SpreadsheetSpreadsheet < AbstractSpreadsheet
       @book.create_worksheet
     end
     @sheet = @book.worksheet(0)
+    fmt = Spreadsheet::Format.new text_wrap: true
+    fmt.horizontal_align = :center
+    fmt.vertical_align = :middle
+    fmt.font = Spreadsheet::Font.new('Times New Roman', :size => 12)
+    @sheet.default_format = fmt
+    @sheet
   end
 
   Contract None => Pos
@@ -79,7 +86,7 @@ class SpreadsheetSpreadsheet < AbstractSpreadsheet
 
   Contract Not[Neg] => Any
   def sheet(number)
-    @sheet = @book.worksheet(number)
+    @sheet = @book.worksheet(number - 1)
   end
 
   Contract Pos => Any
@@ -106,6 +113,14 @@ class SpreadsheetSpreadsheet < AbstractSpreadsheet
   def save
     @book.write("#{@filepath}_temp")
     FileUtils.mv("#{@filepath}_temp", @filepath) # Обход бага в библиотеке
+  end
+
+  def merge(start_row, start_col, end_row, end_col)
+    @sheet.merge_cells(start_row - 1, start_col - 1, end_row - 1, end_col - 1)
+  end
+
+  def format(r, c, fmt)
+    @sheet.row(r - 1).set_format(c - 1, fmt)
   end
 end
 

@@ -9,4 +9,8 @@ class Subgroup < ActiveRecord::Base
   def subgroup?
     true
   end
+
+  def get_group
+    self.group
+  end
 end

@@ -161,6 +161,14 @@
      </property>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="exportMenu">
+     <property name="title">
+      <string>Экспорт</string>
+     </property>
+     <addaction name="exportGeneralAction"/>
+     <addaction name="exportForLecturersAction"/>
+     <addaction name="exportForGroupsAction"/>
+    </widget>
     <addaction name="newAction"/>
     <addaction name="openAction"/>
     <addaction name="recentMenu"/>
@@ -169,7 +177,7 @@
     <addaction name="saveAsAction"/>
     <addaction name="separator"/>
     <addaction name="importAction"/>
-    <addaction name="exportAction"/>
+    <addaction name="exportMenu"/>
     <addaction name="separator"/>
     <addaction name="closeAction"/>
     <addaction name="separator"/>
@@ -204,6 +212,7 @@
      <string>Инструменты</string>
     </property>
     <addaction name="settingsAction"/>
+    <addaction name="verifyAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -217,19 +226,9 @@
     <string>Импорт</string>
    </property>
   </action>
-  <action name="exportAction">
-   <property name="text">
-    <string>Экспорт</string>
-   </property>
-  </action>
   <action name="quitAction">
    <property name="text">
     <string>Выйти</string>
-   </property>
-  </action>
-  <action name="newAction">
-   <property name="text">
-    <string>Новое</string>
    </property>
   </action>
   <action name="openAction">
@@ -290,6 +289,31 @@
   <action name="settingsAction">
    <property name="text">
     <string>Настройки</string>
+   </property>
+  </action>
+  <action name="exportGeneralAction">
+   <property name="text">
+    <string>Общее</string>
+   </property>
+  </action>
+  <action name="exportForLecturersAction">
+   <property name="text">
+    <string>Для преподавателей</string>
+   </property>
+  </action>
+  <action name="exportForGroupsAction">
+   <property name="text">
+    <string>Для групп</string>
+   </property>
+  </action>
+  <action name="newAction">
+   <property name="text">
+    <string>Новое</string>
+   </property>
+  </action>
+  <action name="verifyAction">
+   <property name="text">
+    <string>Проверить</string>
    </property>
   </action>
  </widget>

@@ -5,12 +5,14 @@ task :compile do
   compile_form 'src/interface/mainwindow.ui'
   compile_form 'src/interface/forms/settings.ui'
   compile_form 'src/interface/forms/import.ui'
+  compile_form 'src/interface/forms/export_general_timetable.ui'
 end
 
 task :clean do
   rm 'src/interface/ui_mainwindow.rb'
   rm 'src/interface/forms/ui_settings.rb'
-  rm 'src/interface/forms/import.ui'
+  rm 'src/interface/forms/ui_import.rb'
+  rm 'src/interface/forms/ui_export_general_timetable.rb'
 end
 
 task :rspec do

@@ -42,6 +42,7 @@ require_relative '../engine/models/subgroup'
 require_relative 'ui_mainwindow'
 require_relative 'forms/settings'
 require_relative 'forms/import'
+require_relative 'forms/export_general_timetable'
 require_relative 'models/cabinet_table_model'
 require_relative 'models/course_table_model'
 require_relative 'models/group_table_model'
@@ -61,11 +62,12 @@ class MainWindow < Qt::MainWindow
   slots 'on_saveAction_triggered()'
   slots 'on_saveAsAction_triggered()'
   slots 'on_importAction_triggered()'
-  slots 'on_exportAction_triggered()'
+  slots 'on_exportGeneralAction_triggered()'
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
   # Tools menu
   slots 'on_settingsAction_triggered()'
+  slots 'on_verifyAction_triggered()'
   # Self
   slots 'open_file()'
   slots 'clear_recent_files()'
@@ -74,6 +76,7 @@ class MainWindow < Qt::MainWindow
     super(parent)
     @ui = Ui::MainWindow.new
     @ui.setup_ui self
+    @ui.exportMenu.enabled = false
     @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
                      @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView]
     @tables_views.each{ |x| x.visible = false }
@@ -102,7 +105,8 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_saveAsAction_triggered
-    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)').force_encoding('UTF-8'))
+    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
+      filename.force_encoding('UTF-8')
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to filename
       update_recent filename
@@ -125,12 +129,35 @@ class MainWindow < Qt::MainWindow
     end
   end
 
-  def on_exportAction_triggered
-    timetable_for_lecturer Lecturer.find(1)
+  def on_exportGeneralAction_triggered
+    if Database.instance.connected?
+    (ed = ExportGeneralTimetableDialog.new).exec
+      unless ed.params.empty?
+        if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'XLS Spreadsheet(*.xls)'))
+          filename.force_encoding('UTF-8')
+          if File.exist? filename
+            File.delete filename
+            spreadsheet = SpreadsheetCreater.create filename
+          else
+            spreadsheet = SpreadsheetCreater.create filename
+          end
+          if ed.params[:weekly_date]
+            GeneralWeekTimetableExporter.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5, spreadsheet).export.save
+          elsif ed.params[:daily_date]
+            GeneralDailyTimetableExporter.new(ed.params[:daily_date], spreadsheet).export.save
+          end
+        end
+      end
+    else
+      box = Qt::MessageBox.new
+      box.setText('Необходимо открыть расписание прежде чем экспортировать его')
+      box.exec
+    end
   end
 
   def on_closeAction_triggered
     @tables_views.each{ |x| x.hide }
+    @ui.exportMenu.enabled = false
     #@db.disconnect
   end
 
@@ -144,6 +171,33 @@ class MainWindow < Qt::MainWindow
 
   def on_settingsAction_triggered
     SettingsDialog.new.exec
+  end
+
+  def on_verifyAction_triggered
+    # SELECT surname, count(surname)
+    # FROM "lecturers"
+    # group by surname
+    # having count(surname) > 1
+    # Lecturer.select('surname, count(surname)').group(:surname).having('count(surname) > 1')
+    #- один преподаватель в odnoy pare
+    #Study.select('number, lecturer_id, count(*)').where(date: Date.parse('Monday')).group('number, lecturer_id').having('count(*) > 1')
+    text = ""
+    (Date.parse('Monday')..Date.parse('Saturday')).each do |date|
+      err = Study.select('number, lecturer_id, count(*)').where(date: date).group('number, lecturer_id').having('count(*) > 1')
+      err.each do |e|
+        if e
+          text += "Обнаружена ошибка!\n#{date} преподаватель"+
+                   " '#{Lecturer.where(id: e.lecturer_id).first.to_s}' "+
+                   "ведёт несколько пар одновременно! Номер пары: #{e.number}.\n"
+        end
+      end
+    end
+    box = Qt::MessageBox.new
+    box.setText(text)
+    box.exec
+    #- один преподаватель в двух аудиториях
+    #- группа и подгруппы в разных кабинетах
+    #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
   end
 
   def timetable_for_lecturer(lecturer)
@@ -180,6 +234,7 @@ class MainWindow < Qt::MainWindow
             @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
             @ui.#{entities}TableView.show")
     end
+    @ui.exportMenu.enabled = true
   end
 
   def open_file

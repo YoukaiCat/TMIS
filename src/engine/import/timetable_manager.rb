@@ -78,8 +78,8 @@ private
       groupable: groupable }
   end
 
-  Contract Or[Float, String] => String
+  Contract Or[Num, String] => String
   def fix_cabinet(title)
-    title.is_a?(Float) ? title.ceil.to_s : title
+    title.is_a?(Float) ? title.ceil.to_s : title.to_s
   end
 end
