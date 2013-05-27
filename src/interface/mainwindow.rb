@@ -142,9 +142,11 @@ class MainWindow < Qt::MainWindow
             spreadsheet = SpreadsheetCreater.create filename
           end
           if ed.params[:weekly_date]
-            GeneralWeekTimetableExporter.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5, spreadsheet).export.save
+            TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5)).export.save
           elsif ed.params[:daily_date]
-            GeneralDailyTimetableExporter.new(ed.params[:daily_date], spreadsheet).export.save
+            #TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new([ed.params[:daily_date]])).export.save
+            #TimetableExporter.new(spreadsheet, LecturerTimetableExportStratagy.new([ed.params[:daily_date]], Lecturer.first)).export.save
+            TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new((ed.params[:daily_date]..(ed.params[:daily_date] + 5)), Group.first)).export.save
           end
         end
       end
