@@ -24,9 +24,10 @@ require_relative 'src/interface/mainwindow'
 Encoding.default_external = 'UTF-8'
 
 Qt::Application.new(ARGV) do
-  codec = Qt::TextCodec::codecForName 'UTF-8'
-  Qt::TextCodec::setCodecForTr codec
+  codec = Qt::TextCodec::codecForName('UTF-8')
+  Qt::TextCodec::setCodecForCStrings codec
   Qt::TextCodec::setCodecForLocale codec
+  Qt::TextCodec::setCodecForTr codec
   MainWindow.new.show
   exec
 end

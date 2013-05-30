@@ -5,6 +5,7 @@ include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Lecturer < ActiveRecord::Base
   has_many :studies
+  has_many :emails, :as => :emailable
 
   Contract None => String
   def to_s

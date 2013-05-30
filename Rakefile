@@ -6,6 +6,8 @@ task :compile do
   compile_form 'src/interface/forms/settings.ui'
   compile_form 'src/interface/forms/import.ui'
   compile_form 'src/interface/forms/export_general_timetable.ui'
+  compile_form 'src/interface/forms/export_lecturer_timetable.ui'
+  compile_form 'src/interface/forms/export_group_timetable.ui'
 end
 
 task :clean do
@@ -13,6 +15,8 @@ task :clean do
   rm 'src/interface/forms/ui_settings.rb'
   rm 'src/interface/forms/ui_import.rb'
   rm 'src/interface/forms/ui_export_general_timetable.rb'
+  rm 'src/interface/forms/ui_export_lecturer_timetable'
+  rm 'src/interface/forms/ui_export_group_timetable'
 end
 
 task :rspec do

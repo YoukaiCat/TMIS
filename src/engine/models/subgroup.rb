@@ -1,3 +1,4 @@
+# coding: UTF-8
 class Subgroup < ActiveRecord::Base
   belongs_to :group
   has_many :studies, :as => :groupable
@@ -12,5 +13,9 @@ class Subgroup < ActiveRecord::Base
 
   def get_group
     self.group
+  end
+
+  def to_s
+    "#{group.title} #{number} подгруппа"
   end
 end

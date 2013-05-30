@@ -3,6 +3,7 @@ class Group < ActiveRecord::Base
   belongs_to :course
   has_many :subgroups
   has_many :studies, :as => :groupable
+  has_many :emails, :as => :emailable
 
   def group?
     true
@@ -18,5 +19,9 @@ class Group < ActiveRecord::Base
 
   def title_for_sort
     title[/(.*)-(.*)/i]; "#{$2}-#{$1}"
+  end
+
+  def to_s
+    title
   end
 end

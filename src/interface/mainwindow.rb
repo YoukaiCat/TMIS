@@ -43,6 +43,8 @@ require_relative 'ui_mainwindow'
 require_relative 'forms/settings'
 require_relative 'forms/import'
 require_relative 'forms/export_general_timetable'
+require_relative 'forms/export_lecturer_timetable'
+require_relative 'forms/export_group_timetable'
 require_relative 'models/cabinet_table_model'
 require_relative 'models/course_table_model'
 require_relative 'models/group_table_model'
@@ -63,6 +65,8 @@ class MainWindow < Qt::MainWindow
   slots 'on_saveAsAction_triggered()'
   slots 'on_importAction_triggered()'
   slots 'on_exportGeneralAction_triggered()'
+  slots 'on_exportForLecturersAction_triggered()'
+  slots 'on_exportForGroupsAction_triggered()'
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
   # Tools menu
@@ -130,35 +134,36 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_exportGeneralAction_triggered
-    if Database.instance.connected?
     (ed = ExportGeneralTimetableDialog.new).exec
-      unless ed.params.empty?
-        if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'XLS Spreadsheet(*.xls)'))
-          filename.force_encoding('UTF-8')
-          if File.exist? filename
-            File.delete filename
-            spreadsheet = SpreadsheetCreater.create filename
-          else
-            spreadsheet = SpreadsheetCreater.create filename
-          end
-          if ed.params[:weekly_date]
-            TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5)).export.save
-          elsif ed.params[:daily_date]
-            #TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new([ed.params[:daily_date]])).export.save
-            #TimetableExporter.new(spreadsheet, LecturerTimetableExportStratagy.new([ed.params[:daily_date]], Lecturer.first)).export.save
-            TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new((ed.params[:daily_date]..(ed.params[:daily_date] + 5)), Group.first)).export.save
-          end
+    unless ed.params.empty?
+      if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'XLS Spreadsheet(*.xls)'))
+        filename.force_encoding('UTF-8')
+        if File.exist? filename
+          File.delete filename
+          spreadsheet = SpreadsheetCreater.create filename
+        else
+          spreadsheet = SpreadsheetCreater.create filename
+        end
+        if ed.params[:weekly_date]
+          TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5)).export.save
+        elsif ed.params[:daily_date]
+          TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new([ed.params[:daily_date]])).export.save
+          #TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new((ed.params[:daily_date]..(ed.params[:daily_date] + 5)), Group.first)).export.save
         end
       end
-    else
-      box = Qt::MessageBox.new
-      box.setText('Необходимо открыть расписание прежде чем экспортировать его')
-      box.exec
     end
   end
 
+  def on_exportForLecturersAction_triggered
+    ExportLecturerTimetableDialog.new.exec
+  end
+
+  def on_exportForGroupsAction_triggered
+    ExportGroupTimetableDialog.new.exec
+  end
+
   def on_closeAction_triggered
-    @tables_views.each{ |x| x.hide }
+    @tables_views.each &:hide
     @ui.exportMenu.enabled = false
     #@db.disconnect
   end
@@ -200,29 +205,6 @@ class MainWindow < Qt::MainWindow
     #- один преподаватель в двух аудиториях
     #- группа и подгруппы в разных кабинетах
     #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
-  end
-
-  def timetable_for_lecturer(lecturer)
-    text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
-    grouped = lecturer.studies.group(:date, :number).group_by(&:date)
-    grouped.each do |date, studies|
-      text += "Дата: #{date}\n\n"
-      studies.each do |s|
-        text += "\t Номер: #{s.number}, группа: #{s.groupable.title}, предмет #{s.subject.title}, кабинет: #{s.cabinet.title}\n"
-      end
-    end
-    text += "\nИтого пар: #{lecturer.studies.count}\n"
-
-    spreadsheet = SpreadsheetCreater.create 'Timetable.xls'
-    LecturerWeekTimetableExporter.new(lecturer, spreadsheet).export.save
-    Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
-      from    'tmis@kp11.ru'
-      to      'noein93@gmail.com'
-      subject 'Расписание'
-      body     text
-      add_file :filename => 'timetable.xls', :content => File.read('Timetable.xls')
-    end.send!
-    File.delete 'Timetable.xls'
   end
 
   def show_tables

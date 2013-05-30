@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>exportLecturerTimetableDialog</class>
+ <widget class="QDialog" name="exportLecturerTimetableDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>607</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Экспорт расписания для преподавателей</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="6" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="saveCheckBox">
+           <property name="text">
+            <string>Сохранить в папку</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="folderPathLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0">
+        <widget class="QCheckBox" name="mailCheckBox">
+         <property name="text">
+          <string>Произвести рассылку по E-Mail</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QComboBox" name="modeComboBox">
+           <item>
+            <property name="text">
+             <string>На неделю</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>На день</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="dayDateEdit">
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Выберите преподвавателей для формирования расписаний</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QListWidget" name="lecturersListWidget"/>
+       </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="deselectAllPushButton">
+           <property name="text">
+            <string>Отменить выбор</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="selectAllPushButton">
+           <property name="text">
+            <string>Выбрать всех</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QProgressBar" name="progressBar">
+           <property name="value">
+            <number>24</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDialogButtonBox" name="exportButtonBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="standardButtons">
+            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -16,5 +16,6 @@ class AddIndexes < ActiveRecord::Migration
     add_index(:semesters, :title)
     add_index(:speciality_subjects, :subject_id)
     add_index(:speciality_subjects, :semester_id)
+    add_index(:emails, [:emailable_id, :emailable_type])
   end
 end
