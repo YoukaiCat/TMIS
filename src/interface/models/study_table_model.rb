@@ -7,14 +7,16 @@ class StudyTableModel < Qt::AbstractTableModel
   def initialize(studies)
     super()
     @studies = studies
+    @titles = studies.map{ |g, v| g.title }
+    p @titles.size
   end
 
   def rowCount(parent)
-    @studies.size
+    6
   end
 
   def columnCount(parent)
-    7
+    @titles.size * 2
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -22,33 +24,27 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
     study = @studies[index.row]
     return invalid if study.nil?
-    v = case index.column
-        when 0
-          study.subject.title
-        when 1
-          study.lecturer.to_s
-        when 2
-          study.cabinet.title
-        when 3
-          study.number.to_s
-        when 4
-          study.date.to_s
-        when 5
-          study.groupable.subgroup? ? study.groupable.group.title : study.groupable.title
-        when 6
-          study.groupable.subgroup? ? study.groupable.number : '--'
-        else
-          raise "invalid column #{index.column}"
-        end || ''
-    Qt::Variant.new(v)
+    begin
+      if index.column.even?
+        #p "#{index.column} | #{index.column / 2}"
+        v = @studies[index.column / 2][1][index.row][1].map(&:to_s).join("\n") || ''
+      else
+        v = @studies[index.column / 2][1][index.row][1].map{ |s| s.cabinet.title }.join("\n") || ''
+      end
+    rescue
+      v = ''
+    end
+    Qt::Variant.new(v.to_s)
   end
 
   def headerData(section, orientation, role = Qt::DisplayRole)
     invalid = Qt::Variant.new
     return invalid unless role == Qt::DisplayRole
     v = case orientation
+        when Qt::Vertical
+          (1..6).to_a[section]
         when Qt::Horizontal
-          %w(Предмет Предмет Кабинет Номер Дата Группа Подгруппа)[section]
+          @titles.zip(Array.new(@titles.size, 'Кабинет')).flatten[section]
         else
           ''
         end

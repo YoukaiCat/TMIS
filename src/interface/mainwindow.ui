@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
-    <height>570</height>
+    <width>735</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,11 +26,51 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
-         <widget class="QTableView" name="studiesTableView">
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <layout class="QGridLayout" name="gridLayout_13">
+          <item row="1" column="0">
+           <widget class="QTableView" name="studiesTableView">
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+             <bool>true</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QDateEdit" name="dateDateEdit">
+              <property name="wrapping">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dddd - d MMMM yy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -147,7 +187,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>721</width>
+     <width>735</width>
      <height>20</height>
     </rect>
    </property>

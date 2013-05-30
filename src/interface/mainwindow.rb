@@ -72,6 +72,8 @@ class MainWindow < Qt::MainWindow
   # Tools menu
   slots 'on_settingsAction_triggered()'
   slots 'on_verifyAction_triggered()'
+  # Main
+  slots 'on_dateDateEdit_dateChanged(QDate)'
   # Self
   slots 'open_file()'
   slots 'clear_recent_files()'
@@ -82,12 +84,13 @@ class MainWindow < Qt::MainWindow
     @ui.setup_ui self
     @ui.exportMenu.enabled = false
     @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
-                     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView]
+                     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit]
     @tables_views.each{ |x| x.visible = false }
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
+    @ui.dateDateEdit.setDate(Qt::Date.fromString(Date.today.to_s, Qt::ISODate))
     @ui.recentMenu.clear
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
   end
@@ -211,14 +214,31 @@ class MainWindow < Qt::MainWindow
     # Переменные экземпляра используются для обхода бага:
     # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
     tables = { Cabinet: :cabinets, Course: :courses, Group: :groups, Lecturer: :lecturers, Semester: :semesters,
-               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Study: :studies, Subgroup: :subgroups, Subject: :subjects }
+               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Subgroup: :subgroups, Subject: :subjects }
     tables.each_pair do |model, entities|
       eval("@#{model.downcase}_model = #{model}TableModel.new(#{model}.all)\n\
             @ui.#{entities}TableView.model = @#{model.downcase}_model\n\
             @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
             @ui.#{entities}TableView.show")
     end
+    setup_studies_table_view(@ui.dateDateEdit.date)
+    @ui.dateDateEdit.show
     @ui.exportMenu.enabled = true
+  end
+
+  def setup_studies_table_view(date)
+    studies = Study.where(date: Date.parse(date.toString(Qt::ISODate)))
+    s1 =  studies.group_by(&:get_group).sort_by{ |f, s| f.title_for_sort }
+    s2 =  s1.map do |f, s| [f, s.sort_by(&:number).group_by(&:number).to_a]
+
+    end
+    # a -> a -> a
+    model = StudyTableModel.new(s2)
+    @ui.studiesTableView.model = model
+    @ui.studiesTableView.horizontalHeader.setResizeMode(Qt::HeaderView::ResizeToContents)
+    @ui.studiesTableView.verticalHeader.setResizeMode(Qt::HeaderView::ResizeToContents)
+    @ui.studiesTableView.show
+    #@ui.studiesTableView.setSpan(0, 0, 1, 3)
   end
 
   def open_file
@@ -251,6 +271,10 @@ class MainWindow < Qt::MainWindow
   def clear_recent_files
     @ui.recentMenu.clear
     @ui.recentMenu.addAction @clear_recent_action
+  end
+
+  def on_dateDateEdit_dateChanged(date)
+    setup_studies_table_view(date) if Database.instance.connected?
   end
 
   def please_wait(&block)
