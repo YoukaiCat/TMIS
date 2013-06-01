@@ -15,8 +15,8 @@ task :clean do
   rm 'src/interface/forms/ui_settings.rb'
   rm 'src/interface/forms/ui_import.rb'
   rm 'src/interface/forms/ui_export_general_timetable.rb'
-  rm 'src/interface/forms/ui_export_lecturer_timetable'
-  rm 'src/interface/forms/ui_export_group_timetable'
+  rm 'src/interface/forms/ui_export_lecturer_timetable.rb'
+  rm 'src/interface/forms/ui_export_group_timetable.rb'
 end
 
 task :rspec do
