@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>735</width>
-    <height>378</height>
+    <width>1033</width>
+    <height>816</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,16 +27,6 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_13">
-          <item row="1" column="0">
-           <widget class="QTableView" name="studiesTableView">
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-             <bool>true</bool>
-            </attribute>
-           </widget>
-          </item>
           <item row="0" column="0">
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
@@ -69,6 +59,313 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOn</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>986</width>
+               <height>3136</height>
+              </rect>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_14">
+              <item row="5" column="1">
+               <widget class="QTableView" name="studiesTableView3">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="QTableView" name="studiesTableView4">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QTableView" name="studiesTableView2">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Вторник</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Четверг</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Среда</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QTableView" name="studiesTableView5">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QTableView" name="studiesTableView">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Panel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Sunken</enum>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DragDrop</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>true</bool>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>500</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>500</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>1</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="11" column="1">
+               <widget class="QTableView" name="studiesTableView6">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Пятница</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Понедельник</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Суббота</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
           </item>
          </layout>
         </item>
@@ -187,7 +484,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>735</width>
+     <width>1033</width>
      <height>20</height>
     </rect>
    </property>
@@ -227,11 +524,17 @@
     <property name="title">
      <string>Вид</string>
     </property>
+    <addaction name="weeklyViewAction"/>
+    <addaction name="dailyViewAction"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="helpMenu">
     <property name="title">
      <string>Справка</string>
     </property>
+    <addaction name="action"/>
+    <addaction name="aboutQtAction"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="editMenu">
     <property name="title">
@@ -330,6 +633,9 @@
    <property name="text">
     <string>Настройки</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
   </action>
   <action name="exportGeneralAction">
    <property name="text">
@@ -354,6 +660,52 @@
   <action name="verifyAction">
    <property name="text">
     <string>Проверить</string>
+   </property>
+  </action>
+  <action name="dailyViewAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Расписание на день</string>
+   </property>
+  </action>
+  <action name="weeklyViewAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Расписание на неделю</string>
+   </property>
+  </action>
+  <action name="aboutQtAction">
+   <property name="text">
+    <string>О &amp;Qt</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>О Программе</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Расписание для группы на неделю</string>
    </property>
   </action>
  </widget>

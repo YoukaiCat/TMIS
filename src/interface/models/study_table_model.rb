@@ -8,14 +8,13 @@ class StudyTableModel < Qt::AbstractTableModel
     super()
     @studies = studies
     @titles = studies.map{ |g, v| g.title }
-    p @titles.size
   end
 
-  def rowCount(parent)
-    6
+  def rowCount(parent = self)
+    12
   end
 
-  def columnCount(parent)
+  def columnCount(parent = self)
     @titles.size * 2
   end
 
@@ -26,12 +25,19 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid if study.nil?
     begin
       if index.column.even?
-        #p "#{index.column} | #{index.column / 2}"
-        v = @studies[index.column / 2][1][index.row][1].map(&:to_s).join("\n") || ''
+        if index.row.even?
+          v = @studies[index.column / 2][1][index.row / 2][1][0].to_s
+        else
+          v = @studies[index.column / 2][1][index.row / 2][1][1].to_s
+        end
       else
-        v = @studies[index.column / 2][1][index.row][1].map{ |s| s.cabinet.title }.join("\n") || ''
+        if index.row.even?
+          v = @studies[index.column / 2][1][index.row / 2][1][0].cabinet.title
+        else
+          v = @studies[index.column / 2][1][index.row / 2][1][1].cabinet.title
+        end
       end
-    rescue
+    rescue NoMethodError
       v = ''
     end
     Qt::Variant.new(v.to_s)
@@ -42,7 +48,7 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Vertical
-          (1..6).to_a[section]
+          (1..6).zip(Array.new(6, '')).flatten[section]
         when Qt::Horizontal
           @titles.zip(Array.new(@titles.size, 'Кабинет')).flatten[section]
         else

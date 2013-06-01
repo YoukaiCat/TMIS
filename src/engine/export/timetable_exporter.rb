@@ -2,6 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
 require 'spreadsheet'
+require 'benchmark'
 require_relative '../import/abstract_spreadsheet'
 require_relative '../models/lecturer'
 require_relative '../models/group'
@@ -159,7 +160,7 @@ class GeneralTimetableExportStratagy < AbstractTimetableExportStratagy
 
   Contract Any, Any => ArrayOf[Study]
   def studies(date, group)
-    (group.studies.where(date: date) + group.subgroups.map{ |s| s.studies.where(date: date) }).flatten
+    Study.of_group_and_its_subgroups(group).where(date: date).to_a
   end
 end
 
@@ -178,7 +179,7 @@ class LecturerTimetableExportStratagy < AbstractTimetableExportStratagy
   # TODO Изменить контракты
   Contract None => RespondTo[:zip]
   def columns
-    Group.where(id: @lecturer.studies.where(date: @dates, groupable_type: 'Group').map(&:groupable_id))
+    Group.where(id: @lecturer.studies.where(date: @dates, groupable_type: 'Group').select(:groupable_id))
   end
 
   Contract Any => Any
@@ -193,7 +194,7 @@ class LecturerTimetableExportStratagy < AbstractTimetableExportStratagy
 
   Contract Any, Any => ArrayOf[Study]
   def studies(date, group)
-    (group.studies.where(date: date, lecturer_id: @lecturer) + group.subgroups.map{ |s| s.studies.where(date: date, lecturer_id: @lecturer) }).flatten
+    Study.of_group_and_its_subgroups(group).where(date: date, lecturer_id: @lecturer).to_a
   end
 end
 
@@ -226,6 +227,6 @@ class GroupTimetableExportStratagy < AbstractTimetableExportStratagy
 
   Contract Any, Any => ArrayOf[Study]
   def studies(none, date)
-    (@group.studies.where(date: date) + @group.subgroups.map{ |s| s.studies.where(date: date) }).flatten
+    Study.of_group_and_its_subgroups(@group).where(date: date).to_a
   end
 end

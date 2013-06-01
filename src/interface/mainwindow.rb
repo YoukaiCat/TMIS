@@ -73,7 +73,7 @@ class MainWindow < Qt::MainWindow
   slots 'on_settingsAction_triggered()'
   slots 'on_verifyAction_triggered()'
   # Main
-  slots 'on_dateDateEdit_dateChanged(QDate)'
+  slots 'on_dateDateEdit_dateChanged()'
   # Self
   slots 'open_file()'
   slots 'clear_recent_files()'
@@ -83,14 +83,30 @@ class MainWindow < Qt::MainWindow
     @ui = Ui::MainWindow.new
     @ui.setup_ui self
     @ui.exportMenu.enabled = false
-    @tables_views = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView, @ui.semestersTableView,
-                     @ui.specialitySubjectsTableView, @ui.specialitiesTableView, @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit]
-    @tables_views.each{ |x| x.visible = false }
+    @study_table_views = [@ui.studiesTableView, @ui.studiesTableView2, @ui.studiesTableView3, @ui.studiesTableView4, @ui.studiesTableView5, @ui.studiesTableView6]
+    @table_views = [[Cabinet, CabinetTableModel, @ui.cabinetsTableView], [Course, CourseTableModel, @ui.coursesTableView],
+                    [Group, GroupTableModel, @ui.groupsTableView], [Lecturer, LecturerTableModel, @ui.lecturersTableView],
+                    [Semester, SemesterTableModel, @ui.semestersTableView], [Speciality, SpecialityTableModel, @ui.specialitiesTableView],
+                    [SpecialitySubject, SpecialitySubjectTableModel, @ui.specialitySubjectsTableView], [Subgroup, SubgroupTableModel, @ui.subgroupsTableView],
+                    [Subject, SubjectTableModel, @ui.subjectsTableView]]
+    # Следующие два атрибута используются для обхода бага связанного с работой GC http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
+    @table_models = @study_table_models = []
+    @tables_views_to_hide = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView,
+                     @ui.semestersTableView, @ui.specialitySubjectsTableView, @ui.specialitiesTableView,
+                     @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit, @ui.exportMenu]
+    @tables_views_to_hide.each &:hide
+    @ui.exportMenu.enabled = false
+    modeActionGroup = Qt::ActionGroup.new(self)
+    modeActionGroup.setExclusive(true)
+    modeActionGroup.addAction(@ui.weeklyViewAction)
+    modeActionGroup.addAction(@ui.dailyViewAction)
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
+    connect(@ui.aboutQtAction, SIGNAL('triggered()')){ Qt::Application.aboutQt }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
     @ui.dateDateEdit.setDate(Qt::Date.fromString(Date.today.to_s, Qt::ISODate))
+    setup_dateEdit(Date.today)
     @ui.recentMenu.clear
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
   end
@@ -166,7 +182,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_closeAction_triggered
-    @tables_views.each &:hide
+    @tables_views_to_hide.each &:hide
     @ui.exportMenu.enabled = false
     #@db.disconnect
   end
@@ -211,34 +227,37 @@ class MainWindow < Qt::MainWindow
   end
 
   def show_tables
-    # Переменные экземпляра используются для обхода бага:
-    # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
-    tables = { Cabinet: :cabinets, Course: :courses, Group: :groups, Lecturer: :lecturers, Semester: :semesters,
-               Speciality: :specialities, SpecialitySubject: :specialitySubjects, Subgroup: :subgroups, Subject: :subjects }
-    tables.each_pair do |model, entities|
-      eval("@#{model.downcase}_model = #{model}TableModel.new(#{model}.all)\n\
-            @ui.#{entities}TableView.model = @#{model.downcase}_model\n\
-            @ui.#{entities}TableView.horizontalHeader.setResizeMode(Qt::HeaderView::Stretch)\n\
-            @ui.#{entities}TableView.show")
+    @table_models = @table_views.map do |entity, table_model, table_view|
+      model = table_model.new(entity.all)
+      setup_table_view(table_view, model, Qt::HeaderView::Stretch)
+      model
     end
-    setup_studies_table_view(@ui.dateDateEdit.date)
+    setup_study_table_views
     @ui.dateDateEdit.show
     @ui.exportMenu.enabled = true
+    #@ui.studiesTableView.setSpan(0, 0, 1, 3)
   end
 
-  def setup_studies_table_view(date)
-    studies = Study.where(date: Date.parse(date.toString(Qt::ISODate)))
-    s1 =  studies.group_by(&:get_group).sort_by{ |f, s| f.title_for_sort }
-    s2 =  s1.map do |f, s| [f, s.sort_by(&:number).group_by(&:number).to_a]
-
+  def setup_study_table_views
+    monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
+    studies = Study.of_groups_and_its_subgroups(Group.scoped)
+    @study_table_models = @study_table_views.each_with_index.map do |view, index|
+      day_studies = studies.where(date: monday + index).group_by(&:get_group).sort_by{ |f, s| f.title_for_sort }.map{ |f, s| [f, s.sort_by(&:number).group_by(&:number).to_a] }
+      model = StudyTableModel.new(day_studies)
+      view = setup_table_view(view, model, Qt::HeaderView::Interactive)
+      model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
+      model.rowCount.times{ |i| view.setRowHeight(i, 50) }
+      model
     end
-    # a -> a -> a
-    model = StudyTableModel.new(s2)
-    @ui.studiesTableView.model = model
-    @ui.studiesTableView.horizontalHeader.setResizeMode(Qt::HeaderView::ResizeToContents)
-    @ui.studiesTableView.verticalHeader.setResizeMode(Qt::HeaderView::ResizeToContents)
-    @ui.studiesTableView.show
-    #@ui.studiesTableView.setSpan(0, 0, 1, 3)
+  end
+
+  Contract IsA[Qt::TableView], IsA[Qt::AbstractTableModel], IsA[Qt::Enum] => IsA[Qt::TableView]
+  def setup_table_view(table_view, table_model, resize_mode)
+    table_view.model = table_model
+    table_view.horizontalHeader.setResizeMode(resize_mode)
+    table_view.verticalHeader.setResizeMode(resize_mode)
+    table_view.show
+    table_view
   end
 
   def open_file
@@ -273,8 +292,14 @@ class MainWindow < Qt::MainWindow
     @ui.recentMenu.addAction @clear_recent_action
   end
 
-  def on_dateDateEdit_dateChanged(date)
-    setup_studies_table_view(date) if Database.instance.connected?
+  def on_dateDateEdit_dateChanged
+    setup_dateEdit(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)))
+    setup_study_table_views if Database.instance.connected?
+  end
+
+  def setup_dateEdit(date)
+    type = date.cweek.even? ? "Чётная" : "Нечётная"
+    @ui.dateDateEdit.displayFormat = "Неделя №#{date.cweek} (#{type}) dddd - d MMMM yy"
   end
 
   def please_wait(&block)
