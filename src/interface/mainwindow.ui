@@ -193,21 +193,21 @@
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="dayLabel2">
                 <property name="text">
                  <string>Вторник</string>
                 </property>
                </widget>
               </item>
               <item row="6" column="1">
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="dayLabel4">
                 <property name="text">
                  <string>Четверг</string>
                 </property>
                </widget>
               </item>
               <item row="4" column="1">
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="dayLabel3">
                 <property name="text">
                  <string>Среда</string>
                 </property>
@@ -257,12 +257,6 @@
                   <width>0</width>
                   <height>500</height>
                  </size>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Panel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Sunken</enum>
                 </property>
                 <property name="dragEnabled">
                  <bool>true</bool>
@@ -343,21 +337,21 @@
                </widget>
               </item>
               <item row="8" column="1">
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="dayLabel5">
                 <property name="text">
                  <string>Пятница</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="dayLabel">
                 <property name="text">
                  <string>Понедельник</string>
                 </property>
                </widget>
               </item>
               <item row="10" column="1">
-               <widget class="QLabel" name="label_6">
+               <widget class="QLabel" name="dayLabel6">
                 <property name="text">
                  <string>Суббота</string>
                 </property>
@@ -536,20 +530,6 @@
     <addaction name="aboutQtAction"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="editMenu">
-    <property name="title">
-     <string>Правка</string>
-    </property>
-    <addaction name="undoAction"/>
-    <addaction name="redoAction"/>
-    <addaction name="separator"/>
-    <addaction name="cutAction"/>
-    <addaction name="copyAction"/>
-    <addaction name="insertAction"/>
-    <addaction name="deleteAction"/>
-    <addaction name="selectAllAction"/>
-    <addaction name="separator"/>
-   </widget>
    <widget class="QMenu" name="toolsMenu">
     <property name="title">
      <string>Инструменты</string>
@@ -558,7 +538,6 @@
     <addaction name="verifyAction"/>
    </widget>
    <addaction name="fileMenu"/>
-   <addaction name="editMenu"/>
    <addaction name="viewMenu"/>
    <addaction name="toolsMenu"/>
    <addaction name="helpMenu"/>

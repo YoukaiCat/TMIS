@@ -91,11 +91,12 @@ class MainWindow < Qt::MainWindow
                     [Subject, SubjectTableModel, @ui.subjectsTableView]]
     # Следующие два атрибута используются для обхода бага связанного с работой GC http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
     @table_models = @study_table_models = []
-    @tables_views_to_hide = [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView, @ui.lecturersTableView,
-                     @ui.semestersTableView, @ui.specialitySubjectsTableView, @ui.specialitiesTableView,
-                     @ui.studiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit, @ui.exportMenu]
+    @tables_views_to_hide = @study_table_views + [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView,
+                     @ui.lecturersTableView, @ui.semestersTableView, @ui.specialitySubjectsTableView,
+                     @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit, @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6]
+    @widgets_to_disable = [@ui.exportMenu, @ui.saveAsAction]
     @tables_views_to_hide.each &:hide
-    @ui.exportMenu.enabled = false
+    @widgets_to_disable.each{ |x| x.enabled = false }
     modeActionGroup = Qt::ActionGroup.new(self)
     modeActionGroup.setExclusive(true)
     modeActionGroup.addAction(@ui.weeklyViewAction)
@@ -129,6 +130,7 @@ class MainWindow < Qt::MainWindow
 
   def on_saveAsAction_triggered
     if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
+      p "|#{filename}|"
       filename.force_encoding('UTF-8')
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to filename
@@ -183,7 +185,7 @@ class MainWindow < Qt::MainWindow
 
   def on_closeAction_triggered
     @tables_views_to_hide.each &:hide
-    @ui.exportMenu.enabled = false
+    @widgets_to_disable.each{ |x| x.enabled = false }
     #@db.disconnect
   end
 
@@ -234,7 +236,7 @@ class MainWindow < Qt::MainWindow
     end
     setup_study_table_views
     @ui.dateDateEdit.show
-    @ui.exportMenu.enabled = true
+    @widgets_to_disable.each{ |x| x.enabled = true }
     #@ui.studiesTableView.setSpan(0, 0, 1, 3)
   end
 
