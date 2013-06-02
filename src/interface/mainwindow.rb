@@ -56,6 +56,35 @@ require_relative 'models/study_table_model'
 require_relative 'models/subject_table_model'
 require_relative 'models/subgroup_table_model'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
+#class Object
+#  def to_v
+#    Qt::Variant.new object_id
+#  end
+#end
+#
+#class Qt::Variant
+#  def to_o
+#    ObjectSpace._id2ref to_int
+#  end
+#end
+
+#class Object
+#  def to_v
+#    Qt::Variant.new object_id
+#  end
+#end
+#
+#class Qt::Variant
+#  def to_o
+#    ObjectSpace._id2ref to_int
+#  end
+#end
+class Object
+  def to_v
+    Qt::Variant.new(self)
+  end
+end
+
 class MainWindow < Qt::MainWindow
 
   # File menu
@@ -236,6 +265,7 @@ class MainWindow < Qt::MainWindow
     end
     setup_study_table_views
     @ui.dateDateEdit.show
+    @tables_views_to_hide.each(&:show)
     @widgets_to_disable.each{ |x| x.enabled = true }
     #@ui.studiesTableView.setSpan(0, 0, 1, 3)
   end
@@ -244,13 +274,21 @@ class MainWindow < Qt::MainWindow
     monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
     studies = Study.of_groups_and_its_subgroups(Group.scoped)
     @study_table_models = @study_table_views.each_with_index.map do |view, index|
-      day_studies = studies.where(date: monday + index).group_by(&:get_group).sort_by{ |f, s| f.title_for_sort }.map{ |f, s| [f, s.sort_by(&:number).group_by(&:number).to_a] }
-      model = StudyTableModel.new(day_studies)
-      view = setup_table_view(view, model, Qt::HeaderView::Interactive)
-      model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
-      model.rowCount.times{ |i| view.setRowHeight(i, 50) }
+      model = setup_study_table_view(view, studies, monday + index)
+      connect(model, SIGNAL('studySaved(QVariant)')){ |study| @study_table_models[Study.where(id: study.to_i).first.date.cwday] = setup_study_table_view(view, studies, Study.where(id: study.to_i).first.date)  }
       model
     end
+  end
+
+  def setup_study_table_view(view, studies, date)
+    day_studies = Hash[ Group.all.map{ |g| [g, []] } ].
+        merge(studies.where(date: date).group_by(&:get_group)).
+        sort_by{ |k, v| k.title_for_sort }.map{ |k, v| [k, v.sort_by(&:number).group_by(&:number)] }
+    model = StudyTableModel.new(day_studies, date)
+    view = setup_table_view(view, model, Qt::HeaderView::Interactive)
+    model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
+    model.rowCount.times{ |i| view.setRowHeight(i, 50) }
+    model
   end
 
   Contract IsA[Qt::TableView], IsA[Qt::AbstractTableModel], IsA[Qt::Enum] => IsA[Qt::TableView]

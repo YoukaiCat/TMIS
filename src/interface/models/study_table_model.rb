@@ -1,13 +1,18 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/study'
+require_relative '../forms/edit_study'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class StudyTableModel < Qt::AbstractTableModel
 
-  def initialize(studies)
+  signals 'studySaved(QVariant)'
+
+  def initialize(studies, date)
     super()
+    @date = date
     @studies = studies
-    @titles = studies.map{ |g, v| g.title }
+    @groups = studies.map{ |k, v| k }
+    @titles = @groups.map(&:title)
   end
 
   def rowCount(parent = self)
@@ -25,17 +30,9 @@ class StudyTableModel < Qt::AbstractTableModel
     return invalid if study.nil?
     begin
       if index.column.even?
-        if index.row.even?
-          v = @studies[index.column / 2][1][index.row / 2][1][0].to_s
-        else
-          v = @studies[index.column / 2][1][index.row / 2][1][1].to_s
-        end
+        v = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].to_s
       else
-        if index.row.even?
-          v = @studies[index.column / 2][1][index.row / 2][1][0].cabinet.title
-        else
-          v = @studies[index.column / 2][1][index.row / 2][1][1].cabinet.title
-        end
+        v = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].cabinet.title
       end
     rescue NoMethodError
       v = ''
@@ -63,27 +60,18 @@ class StudyTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
-      study = @studies[index.row]
-      case index.column
-      when 0
-        study.subject_id = s.to_i
-      when 1
-        study.lecturer_id = s.to_i
-      when 2
-        study.cabinet_id = s.to_i
-      when 3
-        study.number = s.to_i
-      when 4
-        study.date = s
-      when 5
-        study.groupable.group.title = s
-      when 6
-        study.groupable.subgroup? ? study.groupable.number = s.to_i : '--'
+      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
+        EditStudyDialog.new().setupData(studies[index.row % 2]).exec
       else
-        raise "invalid column #{index.column}"
+        p :test
+        study = Study.new
+        study.groupable_type = 'Group'
+        study.groupable_id = @groups[index.column / 2].id
+        study.number = (1..6).to_a[index.row / 2]
+        study.date = @date
+        EditStudyDialog.new().setupData(study).exec
+        emit studySaved(study.id.to_v)
       end
-      study.save
       emit dataChanged(index, index)
       true
     else
