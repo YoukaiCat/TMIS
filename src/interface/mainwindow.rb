@@ -198,7 +198,6 @@ class MainWindow < Qt::MainWindow
           TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5)).export.save
         elsif ed.params[:daily_date]
           TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new([ed.params[:daily_date]])).export.save
-          #TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new((ed.params[:daily_date]..(ed.params[:daily_date] + 5)), Group.first)).export.save
         end
       end
     end

@@ -13,58 +13,30 @@ class ExportGeneralTimetableDialog < Qt::Dialog
 
   slots 'on_exportButtonBox_accepted()'
   slots 'on_exportButtonBox_rejected()'
-  slots 'on_weeklyCheckBox_stateChanged()'
-  slots 'on_dailyCheckBox_stateChanged()'
+  slots 'on_weeklyRadioButton_toggled(bool)'
 
   def initialize(parent = nil)
     super parent
     @ui = Ui::ExportGeneralTimetableDialog.new
     @ui.setup_ui self
-    @ui.weeklyDateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
-    @ui.dailyDateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
-    @ui.weeklyCheckBox.enabled = true
-    @ui.weeklyCheckBox.checked = true
-    @ui.dailyCheckBox.enabled = false
-    @ui.dailyCheckBox.checked = false
+    @ui.dateDateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
     @params = {}
   end
 
-  def on_weeklyCheckBox_stateChanged
-    case sender.checkState
-    when Qt::Checked
-      @ui.dailyCheckBox.enabled = false
-      @ui.dailyCheckBox.checked = false
-    when Qt::Unchecked
-      @ui.dailyCheckBox.enabled = true
-      @ui.dailyCheckBox.checked = false
-    end
-  end
-
-  def on_dailyCheckBox_stateChanged
-    case sender.checkState
-    when Qt::Checked
-      @ui.weeklyCheckBox.enabled = false
-      @ui.weeklyCheckBox.checked = false
-    when Qt::Unchecked
-      @ui.weeklyCheckBox.enabled = true
-      @ui.weeklyCheckBox.checked = false
+  def on_weeklyCheckBox_toggled(checked)
+    if checked && !Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday?
+      @ui.dateDateEdit.setDate(Qt::Date.fromString(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday.to_s, Qt::ISODate))
     end
   end
 
   def on_exportButtonBox_accepted
-    if @ui.weeklyCheckBox.checkState == Qt::Checked
-      if (date = Date.parse(@ui.weeklyDateEdit.date.toString(Qt::ISODate))).monday?
-        @params[:weekly_date] = date
-        close
-      else
-        box = Qt::MessageBox.new
-        box.setText('Дата не соответствует понедельнику')
-        box.exec
-      end
-    elsif @ui.dailyCheckBox.checkState == Qt::Checked
-      @params[:daily_date] = Date.parse(@ui.dailyDateEdit.date.toString(Qt::ISODate))
-      close
+    if @ui.weeklyRadioButton.isChecked
+      @params[:weekly_date] = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+      p @params[:weekly_date]
+    else
+      @params[:daily_date] = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     end
+    close
   end
 
   def on_exportButtonBox_rejected
