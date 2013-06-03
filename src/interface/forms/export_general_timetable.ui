@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>170</width>
-    <height>115</height>
+    <width>358</width>
+    <height>125</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,28 +17,58 @@
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QRadioButton" name="weeklyRadioButton">
-       <property name="text">
-        <string>На неделю</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="dailyRadioButton">
-       <property name="text">
-        <string>На день</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QRadioButton" name="weeklyRadioButton">
+         <property name="text">
+          <string>На неделю</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="dailyRadioButton">
+         <property name="text">
+          <string>На день</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QDateEdit" name="dateDateEdit"/>
+          <widget class="QDateEdit" name="dateDateEdit">
+           <property name="minimumSize">
+            <size>
+             <width>260</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="displayFormat">
+            <string>dddd - d MMMM yy</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer name="horizontalSpacer">
@@ -58,11 +88,52 @@
       </layout>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Путь к файлу:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="pathLineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>165</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="browsePushButton">
+         <property name="text">
+          <string>Выбрать</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QDialogButtonBox" name="exportButtonBox">
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>

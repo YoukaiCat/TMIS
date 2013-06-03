@@ -68,17 +68,6 @@ require_relative 'models/subgroup_table_model'
 #  end
 #end
 
-#class Object
-#  def to_v
-#    Qt::Variant.new object_id
-#  end
-#end
-#
-#class Qt::Variant
-#  def to_o
-#    ObjectSpace._id2ref to_int
-#  end
-#end
 class Object
   def to_v
     Qt::Variant.new(self)
@@ -93,13 +82,9 @@ class MainWindow < Qt::MainWindow
   slots 'on_saveAction_triggered()'
   slots 'on_saveAsAction_triggered()'
   slots 'on_importAction_triggered()'
-  slots 'on_exportGeneralAction_triggered()'
-  slots 'on_exportForLecturersAction_triggered()'
-  slots 'on_exportForGroupsAction_triggered()'
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
   # Tools menu
-  slots 'on_settingsAction_triggered()'
   slots 'on_verifyAction_triggered()'
   # Main
   slots 'on_dateDateEdit_dateChanged()'
@@ -112,17 +97,20 @@ class MainWindow < Qt::MainWindow
     @ui = Ui::MainWindow.new
     @ui.setup_ui self
     @ui.exportMenu.enabled = false
-    @study_table_views = [@ui.studiesTableView, @ui.studiesTableView2, @ui.studiesTableView3, @ui.studiesTableView4, @ui.studiesTableView5, @ui.studiesTableView6]
+    @study_table_views = [@ui.studiesTableView, @ui.studiesTableView2, @ui.studiesTableView3,
+                          @ui.studiesTableView4, @ui.studiesTableView5, @ui.studiesTableView6]
     @table_views = [[Cabinet, CabinetTableModel, @ui.cabinetsTableView], [Course, CourseTableModel, @ui.coursesTableView],
                     [Group, GroupTableModel, @ui.groupsTableView], [Lecturer, LecturerTableModel, @ui.lecturersTableView],
                     [Semester, SemesterTableModel, @ui.semestersTableView], [Speciality, SpecialityTableModel, @ui.specialitiesTableView],
-                    [SpecialitySubject, SpecialitySubjectTableModel, @ui.specialitySubjectsTableView], [Subgroup, SubgroupTableModel, @ui.subgroupsTableView],
-                    [Subject, SubjectTableModel, @ui.subjectsTableView]]
-    # Следующие два атрибута используются для обхода бага связанного с работой GC http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
+                    [SpecialitySubject, SpecialitySubjectTableModel, @ui.specialitySubjectsTableView],
+                    [Subgroup, SubgroupTableModel, @ui.subgroupsTableView], [Subject, SubjectTableModel, @ui.subjectsTableView]]
+    # Следующие два атрибута используются для обхода бага связанного с работой GC
+    # http://stackoverflow.com/questions/9715548/cant-display-more-than-one-table-model-inheriting-from-the-same-class-on-differ
     @table_models = @study_table_models = []
     @tables_views_to_hide = @study_table_views + [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView,
                      @ui.lecturersTableView, @ui.semestersTableView, @ui.specialitySubjectsTableView,
-                     @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit, @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6]
+                     @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
+                     @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6]
     @widgets_to_disable = [@ui.exportMenu, @ui.saveAsAction]
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
@@ -132,6 +120,10 @@ class MainWindow < Qt::MainWindow
     modeActionGroup.addAction(@ui.dailyViewAction)
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     connect(@ui.aboutQtAction, SIGNAL('triggered()')){ Qt::Application.aboutQt }
+    connect(@ui.exportGeneralAction, SIGNAL('triggered()')){ ExportGeneralTimetableDialog.new.exec }
+    connect(@ui.exportForLecturersAction, SIGNAL('triggered()')){ ExportLecturerTimetableDialog.new.exec }
+    connect(@ui.exportForGroupsAction, SIGNAL('triggered()')){ ExportGroupTimetableDialog.new.exec }
+    connect(@ui.settingsAction, SIGNAL('triggered()')){ SettingsDialog.new.exec}
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
@@ -183,34 +175,6 @@ class MainWindow < Qt::MainWindow
     end
   end
 
-  def on_exportGeneralAction_triggered
-    (ed = ExportGeneralTimetableDialog.new).exec
-    unless ed.params.empty?
-      if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'XLS Spreadsheet(*.xls)'))
-        filename.force_encoding('UTF-8')
-        if File.exist? filename
-          File.delete filename
-          spreadsheet = SpreadsheetCreater.create filename
-        else
-          spreadsheet = SpreadsheetCreater.create filename
-        end
-        if ed.params[:weekly_date]
-          TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(ed.params[:weekly_date]..ed.params[:weekly_date] + 5)).export.save
-        elsif ed.params[:daily_date]
-          TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new([ed.params[:daily_date]])).export.save
-        end
-      end
-    end
-  end
-
-  def on_exportForLecturersAction_triggered
-    ExportLecturerTimetableDialog.new.exec
-  end
-
-  def on_exportForGroupsAction_triggered
-    ExportGroupTimetableDialog.new.exec
-  end
-
   def on_closeAction_triggered
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
@@ -223,10 +187,6 @@ class MainWindow < Qt::MainWindow
     Settings[:recent, :files] = recent[1..recent.size-1].map{ |a| a.data.value.to_s }.join(' ')
     puts 'Sayonara!'
     Qt::Application.quit
-  end
-
-  def on_settingsAction_triggered
-    SettingsDialog.new.exec
   end
 
   def on_verifyAction_triggered
