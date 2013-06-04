@@ -4,6 +4,7 @@ class CreateLecturers < ActiveRecord::Migration
       t.string :surname
       t.string :name
       t.string :patronymic
+      t.boolean :stub
 
       t.timestamps
     end

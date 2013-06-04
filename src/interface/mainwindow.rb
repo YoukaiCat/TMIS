@@ -24,6 +24,7 @@ require 'fileutils'
 require 'contracts'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../engine/database'
+require_relative '../engine/verificator'
 require_relative '../engine/import/timetable_manager'
 require_relative '../engine/import/timetable_reader'
 require_relative '../engine/import/spreadsheet_roo'
@@ -42,6 +43,7 @@ require_relative '../engine/models/subgroup'
 require_relative 'ui_mainwindow'
 require_relative 'forms/settings'
 require_relative 'forms/import'
+require_relative 'forms/console'
 require_relative 'forms/export_general_timetable'
 require_relative 'forms/export_lecturer_timetable'
 require_relative 'forms/export_group_timetable'
@@ -189,28 +191,38 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyAction_triggered
-    # SELECT surname, count(surname)
-    # FROM "lecturers"
-    # group by surname
-    # having count(surname) > 1
-    # Lecturer.select('surname, count(surname)').group(:surname).having('count(surname) > 1')
-    #- один преподаватель в odnoy pare
-    #Study.select('number, lecturer_id, count(*)').where(date: Date.parse('Monday')).group('number, lecturer_id').having('count(*) > 1')
-    text = ""
-    (Date.parse('Monday')..Date.parse('Saturday')).each do |date|
-      err = Study.select('number, lecturer_id, count(*)').where(date: date).group('number, lecturer_id').having('count(*) > 1')
-      err.each do |e|
-        if e
-          text += "Обнаружена ошибка!\n#{date} преподаватель"+
-                   " '#{Lecturer.where(id: e.lecturer_id).first.to_s}' "+
-                   "ведёт несколько пар одновременно! Номер пары: #{e.number}.\n"
-        end
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:lecturer_studies).map do |k, v|
+      date = k[0]
+      lecturer = Lecturer.where(id: k[1]).first
+      number = k[2]
+      if lecturer.stub
+        nil
+      else
+        v.each{ |study| @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, number, Qt::red) }
+        "#{date} | #{lecturer} ведёт несколько пар одновременно! Номер пары: #{number}"
       end
     end
-    box = Qt::MessageBox.new
-    box.setText(text)
-    box.exec
-    #- один преподаватель в двух аудиториях
+    res = res.compact.join("\n")
+    console = ConsoleDialog.new self
+    connect(@ui.verifyAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    console.show
+    console.browser.append res
+    res = v.verify(:cabinet_studies).map do |k, v|
+      date = k[0]
+      cabinet= Cabinet.where(id: k[1]).first
+      number = k[2]
+      #if cabinet.stub
+      #  nil
+      #else
+        v.each{ |study| @study_table_models[date.cwday - 1].setColorCabinet(study.groupable.get_group, number, Qt::blue) }
+        "#{date} | В #{cabinet.title} проходит несколько пар одновременно! Номер пары: #{number}"
+      #end
+    end
+    res = res.compact.join("\n")
+    console.browser.append res
     #- группа и подгруппы в разных кабинетах
     #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
   end

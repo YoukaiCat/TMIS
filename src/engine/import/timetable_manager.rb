@@ -72,7 +72,8 @@ private
       cabinet: study[:cabinet].nil? ? Cabinet.last : add(Cabinet, title: fix_cabinet(study[:cabinet])),
       lecturer: add(Lecturer, { surname: study[:info][:lecturer][:surname],
                                 name: study[:info][:lecturer][:name],
-                                patronymic: study[:info][:lecturer][:patronymic] }),
+                                patronymic: study[:info][:lecturer][:patronymic],
+                                stub: study[:info][:lecturer][:surname][/вакансия/i] ? true : false }),
       date: @days[day.mb_chars.downcase.to_s.gsub(' ', '')],
       number: study_number,
       groupable: groupable }
