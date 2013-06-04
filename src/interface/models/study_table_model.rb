@@ -6,13 +6,24 @@ require_relative '../forms/edit_study'
 class StudyTableModel < Qt::AbstractTableModel
 
   signals 'studySaved(QVariant)'
+  slots 'editStudy(QModelIndex)'
 
-  def initialize(studies, date)
+  def initialize(date)
     super()
     @date = date
-    @studies = studies
-    @groups = studies.map{ |k, v| k }
+    @studies = get_studies
+    @groups = Group.all.sort_by(&:title_for_sort)
     @titles = @groups.map(&:title)
+  end
+
+  def get_studies
+    Hash[ Group.all.map{ |g| [g, []] } ].
+        merge(Study.of_groups_and_its_subgroups(Group.scoped).where(date: @date).group_by(&:get_group)).
+        sort_by{ |k, v| k.title_for_sort }.map{ |k, v| [k, v.sort_by(&:number).group_by(&:number)] }
+  end
+
+  def refresh
+    @studies = get_studies
   end
 
   def rowCount(parent = self)
@@ -61,16 +72,19 @@ class StudyTableModel < Qt::AbstractTableModel
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
       if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
-        EditStudyDialog.new().setupData(studies[index.row % 2]).exec
+        study = studies[index.row % 2]
+        EditStudyDialog.new().setupData(study).exec
+        refresh
+        emit studySaved(study.id.to_v)
       else
-        p :test
         study = Study.new
         study.groupable_type = 'Group'
         study.groupable_id = @groups[index.column / 2].id
         study.number = (1..6).to_a[index.row / 2]
         study.date = @date
         EditStudyDialog.new().setupData(study).exec
-        emit studySaved(study.id.to_v)
+        refresh
+        emit studySaved(study.id.to_v) unless study.new_record?
       end
       emit dataChanged(index, index)
       true
@@ -79,4 +93,7 @@ class StudyTableModel < Qt::AbstractTableModel
     end
   end
 
+  def editStudy(index)
+    setData(index, nil, Qt::EditRole)
+  end
 end

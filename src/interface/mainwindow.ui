@@ -89,6 +89,9 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -126,6 +129,9 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -162,6 +168,9 @@
                   <width>0</width>
                   <height>500</height>
                  </size>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
@@ -221,6 +230,9 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -257,6 +269,9 @@
                   <width>0</width>
                   <height>500</height>
                  </size>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="dragEnabled">
                  <bool>true</bool>
@@ -306,6 +321,9 @@
                   <width>0</width>
                   <height>500</height>
                  </size>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
@@ -500,20 +518,6 @@
      <addaction name="exportForLecturersAction"/>
      <addaction name="exportForGroupsAction"/>
     </widget>
-   <widget class="QMenu" name="editMenu">
-    <property name="title">
-     <string>Правка</string>
-    </property>
-    <addaction name="undoAction"/>
-    <addaction name="redoAction"/>
-    <addaction name="separator"/>
-    <addaction name="cutAction"/>
-    <addaction name="copyAction"/>
-    <addaction name="insertAction"/>
-    <addaction name="deleteAction"/>
-    <addaction name="selectAllAction"/>
-    <addaction name="separator"/>
-   </widget>
     <addaction name="newAction"/>
     <addaction name="openAction"/>
     <addaction name="recentMenu"/>
@@ -550,6 +554,20 @@
     </property>
     <addaction name="settingsAction"/>
     <addaction name="verifyAction"/>
+   </widget>
+   <widget class="QMenu" name="editMenu">
+    <property name="title">
+     <string>Правка</string>
+    </property>
+    <addaction name="undoAction"/>
+    <addaction name="redoAction"/>
+    <addaction name="separator"/>
+    <addaction name="cutAction"/>
+    <addaction name="copyAction"/>
+    <addaction name="insertAction"/>
+    <addaction name="deleteAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectAllAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>

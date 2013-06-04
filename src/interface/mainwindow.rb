@@ -151,7 +151,6 @@ class MainWindow < Qt::MainWindow
 
   def on_saveAsAction_triggered
     if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
-      p "|#{filename}|"
       filename.force_encoding('UTF-8')
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to filename
@@ -231,19 +230,22 @@ class MainWindow < Qt::MainWindow
 
   def setup_study_table_views
     monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
-    studies = Study.of_groups_and_its_subgroups(Group.scoped)
     @study_table_models = @study_table_views.each_with_index.map do |view, index|
-      model = setup_study_table_view(view, studies, monday + index)
-      connect(model, SIGNAL('studySaved(QVariant)')){ |study| @study_table_models[Study.where(id: study.to_i).first.date.cwday] = setup_study_table_view(view, studies, Study.where(id: study.to_i).first.date)  }
+      model = setup_study_table_view(view, monday + index)
+      view.disconnect(SIGNAL('doubleClicked(QModelIndex)'))
+      model.disconnect(SIGNAL('studySaved(QVariant)'))
+      connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
+      connect(model, SIGNAL('studySaved(QVariant)')){ |id| update_table_view_model(Study.where(id: id.value).first.date) }
       model
     end
   end
 
-  def setup_study_table_view(view, studies, date)
-    day_studies = Hash[ Group.all.map{ |g| [g, []] } ].
-        merge(studies.where(date: date).group_by(&:get_group)).
-        sort_by{ |k, v| k.title_for_sort }.map{ |k, v| [k, v.sort_by(&:number).group_by(&:number)] }
-    model = StudyTableModel.new(day_studies, date)
+  def update_table_view_model(date)
+    @study_table_models[date.cwday - 1].refresh
+  end
+
+  def setup_study_table_view(view, date)
+    model = StudyTableModel.new(date)
     view = setup_table_view(view, model, Qt::HeaderView::Interactive)
     model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
     model.rowCount.times{ |i| view.setRowHeight(i, 50) }
@@ -252,7 +254,7 @@ class MainWindow < Qt::MainWindow
 
   Contract IsA[Qt::TableView], IsA[Qt::AbstractTableModel], IsA[Qt::Enum] => IsA[Qt::TableView]
   def setup_table_view(table_view, table_model, resize_mode)
-    table_view.model = table_model
+    table_view.setModel(table_model)
     table_view.horizontalHeader.setResizeMode(resize_mode)
     table_view.verticalHeader.setResizeMode(resize_mode)
     table_view.show
