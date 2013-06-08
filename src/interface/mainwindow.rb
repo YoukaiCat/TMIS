@@ -125,7 +125,7 @@ class MainWindow < Qt::MainWindow
     connect(@ui.exportGeneralAction, SIGNAL('triggered()')){ ExportGeneralTimetableDialog.new.exec }
     connect(@ui.exportForLecturersAction, SIGNAL('triggered()')){ ExportLecturerTimetableDialog.new.exec }
     connect(@ui.exportForGroupsAction, SIGNAL('triggered()')){ ExportGroupTimetableDialog.new.exec }
-    connect(@ui.settingsAction, SIGNAL('triggered()')){ SettingsDialog.new.exec}
+    connect(@ui.settingsAction, SIGNAL('triggered()')){ SettingsDialog.new.exec }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
@@ -248,6 +248,9 @@ class MainWindow < Qt::MainWindow
       model.disconnect(SIGNAL('studySaved(QVariant)'))
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
       connect(model, SIGNAL('studySaved(QVariant)')){ |id| update_table_view_model(Study.where(id: id.value).first.date) }
+      connect(@ui.deleteAction, SIGNAL('triggered()'), model, SLOT('removeData()'))
+      view.setContextMenuPolicy(Qt::CustomContextMenu)
+      connect(view, SIGNAL('customContextMenuRequested(QPoint)'), model, SLOT('displayMenu(QPoint)'))
       model
     end
   end
@@ -257,7 +260,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def setup_study_table_view(view, date)
-    model = StudyTableModel.new(date)
+    model = StudyTableModel.new(date, view)
     view = setup_table_view(view, model, Qt::HeaderView::Interactive)
     model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
     model.rowCount.times{ |i| view.setRowHeight(i, 50) }

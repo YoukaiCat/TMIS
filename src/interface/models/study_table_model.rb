@@ -7,9 +7,12 @@ class StudyTableModel < Qt::AbstractTableModel
 
   signals 'studySaved(QVariant)'
   slots 'editStudy(QModelIndex)'
+  slots 'removeData()'
+  slots 'displayMenu(QPoint)'
 
-  def initialize(date)
+  def initialize(date, parent = nil)
     super()
+    @view = parent
     @date = date
     @studies = get_studies
     @groups = Group.all.sort_by(&:title_for_sort)
@@ -107,6 +110,26 @@ class StudyTableModel < Qt::AbstractTableModel
     else
       false
     end
+  end
+
+  def removeData
+    if @view.hasFocus && (index = @view.currentIndex).valid?
+      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1])
+        if (study = studies[index.row % 2])
+          study.delete
+          refresh
+          emit dataChanged(index, createIndex(index.row, index.column + 1))
+        end
+      end
+    end
+  end
+
+  def displayMenu(pos)
+    menu = Qt::Menu.new()
+    remove = Qt::Action.new('Удалить', menu)
+    connect(remove, SIGNAL('triggered()'), self, SLOT('removeData()'))
+    menu.addAction(remove)
+    menu.exec(@view.viewport.mapToGlobal(pos))
   end
 
   def setColor(group, number, color)

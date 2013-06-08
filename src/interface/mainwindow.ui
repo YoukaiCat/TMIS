@@ -92,6 +92,9 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -132,6 +135,9 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -171,6 +177,9 @@
                 </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
                 </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
@@ -233,6 +242,9 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
                 </property>
@@ -279,6 +291,9 @@
                 <property name="dragDropMode">
                  <enum>QAbstractItemView::DragDrop</enum>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
                 <property name="showGrid">
                  <bool>true</bool>
                 </property>
@@ -324,6 +339,9 @@
                 </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
                 </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
@@ -634,6 +652,9 @@
   <action name="deleteAction">
    <property name="text">
     <string>Удалить</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
   <action name="selectAllAction">
