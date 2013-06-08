@@ -89,7 +89,7 @@ class StudyTableModel < Qt::AbstractTableModel
         study = studies[index.row % 2]
         EditStudyDialog.new().setupData(study).exec
         refresh
-        emit studySaved(study.id.to_v)
+        emit studySaved(study.id.to_v) unless study.date == @date
       else
         study = Study.new
         study.groupable_type = 'Group'
@@ -97,8 +97,10 @@ class StudyTableModel < Qt::AbstractTableModel
         study.number = (1..6).to_a[index.row / 2]
         study.date = @date
         EditStudyDialog.new().setupData(study).exec
-        refresh
-        emit studySaved(study.id.to_v) unless study.new_record?
+        unless study.new_record?
+          refresh
+          emit studySaved(study.id.to_v) unless study.date == @date
+        end
       end
       emit dataChanged(index, index)
       true
@@ -108,11 +110,6 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def setColor(group, number, color)
-    p :color
-    p number
-    p group.title
-    p (1..6).zip(7..7 + 6).flatten.index(number)
-    p @groups.zip(Array.new(@groups.size, nil)).flatten.index(group)
     @color_at_index[[(1..6).zip(7..7 + 6).flatten.index(number), @groups.zip(Array.new(@groups.size, nil)).flatten.index(group)]] = color
     #@color_at_index[[@groups.zip(Array.new(@groups.size, nil)).index(group), number]] = color
   end
