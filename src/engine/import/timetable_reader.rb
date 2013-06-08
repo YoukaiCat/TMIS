@@ -2,6 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'contracts'
 require_relative 'abstract_spreadsheet'
+require_relative '../../interface/forms/settings'
 include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TimetableReader
@@ -43,7 +44,7 @@ private
   Contract Maybe[String] => Maybe[Hash]
   def parse_info(info)
     unless info.nil?
-      info[/(.*)\s{2,}(([[:alpha:]]+)\s+([[:alpha:]]).\s?([[:alpha:]])|вакансия)(.+?(\d))?/i]
+      info[/(.*)\s{2,}(([[:alpha:]]+)\s+([[:alpha:]]).\s?([[:alpha:]])|#{Settings[:stubs, :lecturer]})(.+?(\d))?/i]
       if $1 && $3 && $4 && $5
         { subject: ($1.strip), lecturer: { surname: $3, name: $4, patronymic: $5 }, subgroup: $7 }
       elsif $1 && $2

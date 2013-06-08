@@ -133,11 +133,20 @@ class MainWindow < Qt::MainWindow
     setup_dateEdit(Date.today)
     @ui.recentMenu.clear
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
+    #Settings[:app, :first_run] = ''
+    Settings.set_defaults_if_first_run
   end
 
   def on_newAction_triggered
     Database.instance.connect_to(@temp.())
+    create_stubs
     show_tables
+  end
+
+  def create_stubs
+    Lecturer.create(surname: Settings[:stubs, :lecturer], stub: true)
+    Cabinet.create(title: Settings[:stubs, :cabinet], stub: true)
+    Subject.create(title: Settings[:stubs, :subject], stub: true)
   end
 
   def on_openAction_triggered
@@ -169,6 +178,7 @@ class MainWindow < Qt::MainWindow
           sheet = SpreadsheetCreater.create filename
           reader = TimetableReader.new(sheet, id.params[:sheet])
           Database.instance.connect_to(@temp.())
+          create_stubs
           TimetableManager.new(reader, id.params[:date]).save_to_db
           show_tables
         end

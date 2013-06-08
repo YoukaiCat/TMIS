@@ -15,6 +15,7 @@ class StudyTableModel < Qt::AbstractTableModel
     @view = parent
     @date = date
     @studies = get_studies
+    p @studies
     @groups = Group.all.sort_by(&:title_for_sort)
     @titles = @groups.map(&:title)
     @color_at_index = {}

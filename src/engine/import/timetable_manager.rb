@@ -70,13 +70,20 @@ private
   def get_study_options(study, day, study_number, groupable)
     { subject: add(Subject, title: study[:info][:subject]),
       cabinet: study[:cabinet].nil? ? Cabinet.last : add(Cabinet, title: fix_cabinet(study[:cabinet])),
-      lecturer: add(Lecturer, { surname: study[:info][:lecturer][:surname],
-                                name: study[:info][:lecturer][:name],
-                                patronymic: study[:info][:lecturer][:patronymic],
-                                stub: study[:info][:lecturer][:surname][/вакансия/i] ? true : false }),
+      lecturer: new_lecturer_or_stub(study),
       date: @days[day.mb_chars.downcase.to_s.gsub(' ', '')],
       number: study_number,
       groupable: groupable }
+  end
+
+  def new_lecturer_or_stub(study)
+    if study[:info][:lecturer][:surname][/#{Settings[:stubs, :lecturer]}/i]
+      Lecturer.where(stub: true).first
+    else
+      add(Lecturer, { surname: study[:info][:lecturer][:surname],
+                      name: study[:info][:lecturer][:name],
+                      patronymic: study[:info][:lecturer][:patronymic] })
+    end
   end
 
   Contract Or[Num, String] => String
