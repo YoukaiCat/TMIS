@@ -21,9 +21,17 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def get_studies
-    Hash[ Group.all.map{ |g| [g, []] } ].
-        merge(Study.of_groups_and_its_subgroups(Group.scoped).where(date: @date).group_by(&:get_group)).
-        sort_by{ |k, v| k.title_for_sort }.map{ |k, v| [k, v.sort_by(&:number).group_by(&:number)] }
+    Hash[ Group.all.map{|g| [g, []]} ].
+      merge(Study.of_groups_and_its_subgroups(Group.scoped).
+      where(date: @date).
+      group_by(&:get_group)).
+      sort_by{|k, v| k.title_for_sort}.
+      map do |k, v|
+        [k, Hash[ v.sort_by(&:number).
+                    group_by(&:number).
+                    map{|n, ss| [n, ss.sort_by{|s| s.groupable.number}]}
+                ] ]
+      end
   end
 
   def refresh

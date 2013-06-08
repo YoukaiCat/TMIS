@@ -17,6 +17,10 @@ class Group < ActiveRecord::Base
     self
   end
 
+  def number
+    0
+  end
+
   def title_for_sort
     title[/(.*)-(.*)/i]; "#{$2}-#{$1}"
   end

@@ -241,11 +241,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def setup_study_table_views
+    @ui.deleteAction.disconnect(SIGNAL('triggered()'))
     monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
     @study_table_models = @study_table_views.each_with_index.map do |view, index|
       model = setup_study_table_view(view, monday + index)
       view.disconnect(SIGNAL('doubleClicked(QModelIndex)'))
       model.disconnect(SIGNAL('studySaved(QVariant)'))
+      view.disconnect(SIGNAL('customContextMenuRequested(QPoint)'))
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
       connect(model, SIGNAL('studySaved(QVariant)')){ |id| update_table_view_model(Study.where(id: id.value).first.date) }
       connect(@ui.deleteAction, SIGNAL('triggered()'), model, SLOT('removeData()'))
