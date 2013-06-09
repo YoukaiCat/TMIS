@@ -87,7 +87,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
           else
             spreadsheet = SpreadsheetCreater.create filename
           end
-          TimetableExporter.new(spreadsheet, LecturerTimetableExportStratagy.new(dates, lecturer)).export.save
+          TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
           mail(lecturer, filename)
         end
       end
@@ -105,7 +105,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
           else
             spreadsheet = SpreadsheetCreater.create filename
           end
-          TimetableExporter.new(spreadsheet, LecturerTimetableExportStratagy.new(dates, lecturer)).export.save
+          TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
         end
       end
     elsif @ui.mailCheckBox.checkState == Qt::Checked
@@ -117,7 +117,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
           lecturer = Lecturer.where(id: id.to_i).first
           filename = Dir.mktmpdir('tmis') + "/#{lecturer.surname}_timetable.xls"
           spreadsheet = SpreadsheetCreater.create filename
-          TimetableExporter.new(spreadsheet, LecturerTimetableExportStratagy.new(dates, lecturer)).export.save
+          TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
           mail(lecturer, filename)
         end
       end

@@ -198,6 +198,140 @@ class LecturerTimetableExportStratagy < AbstractTimetableExportStratagy
   end
 end
 
+class TimetableExporter2
+  Contract IsA[AbstractSpreadsheet], IsA[AbstractTimetableExportStratagy] => Any
+  def initialize(table, stratagy)
+    @table = table
+    @stratagy = stratagy
+  end
+
+  Contract None => IsA[AbstractSpreadsheet]
+  def export
+    rows_export
+    @table
+  end
+
+  private
+  def rows_export
+    rows.each do |entity, rows|
+      rows_format(rows)
+      @table[rows[0] + 1, 1] = @stratagy.row_value(entity)
+      (1..6).each do |row|
+        pair_format(rows, row)
+        @table[(rows[0] - 1) + row * 2, 2] = "#{row} пара"
+      end
+      columns_export(entity, rows)
+    end
+  end
+
+  def columns_export(row_ent, rows)
+    columns.each do |ent, cols|
+      columns_format(rows, cols)
+      @table[rows[0], cols[0]] = @stratagy.column_value(ent)
+      export_studies(@stratagy.studies(row_ent, ent), rows, cols)
+    end
+  end
+
+  Contract ArrayOf[Study], [Pos, Pos], [Pos, Pos] => Any
+  def export_studies(studies, rows, cols)
+    prepare_studies(studies).each do |number, studies|
+      @table.merge(real_row(rows, number), cols[0], real_row(rows, number) + 1, cols[0])
+      @table.merge(real_row(rows, number), cols[1], real_row(rows, number) + 1, cols[1])
+      studies.each_with_index do |study, i|
+        @table[real_row(rows, number) + i, cols[0]] =
+            "#{study.subject.title}\n#{study.groupable.get_group.title} " +
+            (study.groupable.subgroup? ? "(#{study.groupable.number}п)" : '')
+        @table[real_row(rows, number) + i, cols[1]] = study.cabinet.title
+      end
+    end
+  end
+
+  def rows
+    @stratagy.rows.zip((1..(7 * @stratagy.rows.to_a.size)).each_slice(7).map{ |i| [i.first, i.last] })
+  end
+
+  def columns
+    @stratagy.columns.zip((3..(@stratagy.columns.to_a.size * 2) + (3 - 1)).each_slice(2))
+  end
+
+  #Contract ArrayOf[Study] => ({ Pos => ArrayOf[Study] })
+  def prepare_studies(studies)
+    studies.sort_by(&:number).group_by(&:number)
+  end
+
+  Contract ArrayOf[Pos], Pos => Pos
+  def real_row(rows, number)
+    (rows[0] - 1) + (number * 2)
+  end
+
+  def rows_format(rows)
+    @table.merge(rows[0] + 1, 1, rows[1], 1)
+    format = Spreadsheet::Format.new
+    format.rotation = 90
+    format.horizontal_align = :center
+    format.vertical_align = :middle
+    format.top = :medium
+    format.bottom = :medium
+    format.right = :medium
+    format.left = :medium
+    @table.format(rows[0] + 1, 1, format)
+  end
+
+  def pair_format(rows, row)
+    @table.row((rows[0] - 1) + row * 2).height = 30
+    @table.row(rows[0] + row * 2).height = 30
+    @table.merge((rows[0] - 1) + row * 2, 2, rows[0] + row * 2, 2)
+  end
+
+  def columns_format(rows, cols)
+    @table.column(cols[0]).width = 25
+    @table.merge(rows[0], cols[0], rows[0], cols[1])
+  end
+end
+
+class LecturerTimetableExportStratagy2 < AbstractTimetableExportStratagy
+  Contract Or[Range,Array], Lecturer => Any
+  def initialize(dates, lecturer)
+    @dates = dates
+    @lecturer = lecturer
+  end
+
+  Contract None => Or[Range,Array]
+  def rows
+    ['']
+  end
+
+  # TODO Изменить контракты
+  Contract None => RespondTo[:zip]
+  def columns
+    @dates
+  end
+
+  Contract Any => Any
+  def row_value(none)
+    ""
+  end
+
+  Contract Any => Any
+  def column_value(date)
+    date.strftime('%A')
+  end
+
+  Contract Any, Any => ArrayOf[Study]
+  def studies(none, date)
+    Study.find_by_sql("select studies.* "+
+                      "from studies "+
+                      "join groups on groups.id = studies.groupable_id and studies.groupable_type = 'Group' "+
+                      "where date = '#{date.to_s}' and lecturer_id = #{@lecturer.id} "+
+                      "union "+
+                      "select studies.* "+
+                      "from studies "+
+                      "join subgroups on subgroups.id = studies.groupable_id and studies.groupable_type = 'Subgroup' "+
+                      "where date = '#{date.to_s}' and lecturer_id = #{@lecturer.id}")
+    #Study.of_group_and_its_subgroups(group).where(date: date, lecturer_id: @lecturer).to_a
+  end
+end
+
 class GroupTimetableExportStratagy < AbstractTimetableExportStratagy
   Contract Or[Range,Array], Group => Any
   def initialize(dates, group)
