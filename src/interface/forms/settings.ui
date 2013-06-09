@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Настройки</string>
   </property>
+  <property name="locale">
+   <locale language="Russian" country="RussianFederation"/>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -170,7 +173,7 @@
           <enum>QFrame::Plain</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="Import">
           <layout class="QVBoxLayout" name="verticalLayout_3">

@@ -93,6 +93,8 @@ class MainWindow < Qt::MainWindow
   # Self
   slots 'open_file()'
   slots 'clear_recent_files()'
+  # help
+  slots 'on_showManualAction_triggered()'
 
   def initialize(parent = nil)
     super(parent)
@@ -201,6 +203,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyAction_triggered
+    return 0 unless Database.instance.connected?
     date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     dates = date.monday..date.monday + 6
     v = Verificator.new(dates)
@@ -334,6 +337,19 @@ class MainWindow < Qt::MainWindow
     @ui.statusbar.showMessage 'Please, wait...'
     yield block
     @ui.statusbar.clearMessage
+  end
+
+  def on_showManualAction_triggered
+    # binding doesn't include QHelpEngine
+    #helpEngine Qt::HelpEngineCore('test.qhc')
+    #links = helpEngine.linksForIdentifier('MyDialog::ChangeButton')
+    #if links.count
+    #  helpData = helpEngine.fileData links.constBegin.value
+    #  if !helpData.isEmpty
+    #    displayHelp helpData
+    #  end
+    #end
+    Qt::DesktopServices::openUrl(Qt::Url.new('https://github.com/Noein/TMIS/wiki/_pages'))
   end
 
 end

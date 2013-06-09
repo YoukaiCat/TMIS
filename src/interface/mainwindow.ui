@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Timetable management information system</string>
   </property>
+  <property name="locale">
+   <locale language="Russian" country="RussianFederation"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
@@ -562,9 +565,10 @@
     <property name="title">
      <string>Справка</string>
     </property>
-    <addaction name="action"/>
-    <addaction name="aboutQtAction"/>
+    <addaction name="showManualAction"/>
     <addaction name="separator"/>
+    <addaction name="aboutProgramAction"/>
+    <addaction name="aboutQtAction"/>
    </widget>
    <widget class="QMenu" name="toolsMenu">
     <property name="title">
@@ -725,9 +729,9 @@
     <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
-  <action name="action">
+  <action name="aboutProgramAction">
    <property name="text">
-    <string>О Программе</string>
+    <string>О программе TMIS</string>
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
@@ -739,6 +743,11 @@
    </property>
    <property name="text">
     <string>Расписание для группы на неделю</string>
+   </property>
+  </action>
+  <action name="showManualAction">
+   <property name="text">
+    <string>Руководство пользователя</string>
    </property>
   </action>
  </widget>
