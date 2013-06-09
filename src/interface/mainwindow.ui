@@ -574,8 +574,18 @@
     <property name="title">
      <string>Инструменты</string>
     </property>
+    <widget class="QMenu" name="verifyMenu">
+     <property name="title">
+      <string>Проверить</string>
+     </property>
+     <addaction name="verifyLecturersAction"/>
+     <addaction name="verifyCabinetsAction"/>
+     <addaction name="showLecturerStubsAction"/>
+     <addaction name="showCabinetStubsAction"/>
+     <addaction name="showSubjectsStubsAction"/>
+    </widget>
     <addaction name="settingsAction"/>
-    <addaction name="verifyAction"/>
+    <addaction name="verifyMenu"/>
    </widget>
    <widget class="QMenu" name="editMenu">
     <property name="title">
@@ -694,11 +704,6 @@
     <string>Новое</string>
    </property>
   </action>
-  <action name="verifyAction">
-   <property name="text">
-    <string>Проверить</string>
-   </property>
-  </action>
   <action name="dailyViewAction">
    <property name="checkable">
     <bool>true</bool>
@@ -748,6 +753,31 @@
   <action name="showManualAction">
    <property name="text">
     <string>Руководство пользователя</string>
+   </property>
+  </action>
+  <action name="verifyLecturersAction">
+   <property name="text">
+    <string>Совпадения преподавателей</string>
+   </property>
+  </action>
+  <action name="verifyCabinetsAction">
+   <property name="text">
+    <string>Совпадения кабинетов</string>
+   </property>
+  </action>
+  <action name="showLecturerStubsAction">
+   <property name="text">
+    <string>Не назначенные преподаватели</string>
+   </property>
+  </action>
+  <action name="showCabinetStubsAction">
+   <property name="text">
+    <string>Не назначенные кабинеты</string>
+   </property>
+  </action>
+  <action name="showSubjectsStubsAction">
+   <property name="text">
+    <string>Не назначенные предметы</string>
    </property>
   </action>
  </widget>

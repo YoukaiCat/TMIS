@@ -87,7 +87,11 @@ class MainWindow < Qt::MainWindow
   slots 'on_closeAction_triggered()'
   slots 'on_quitAction_triggered()'
   # Tools menu
-  slots 'on_verifyAction_triggered()'
+  slots 'on_verifyLecturersAction_triggered()'
+  slots 'on_verifyCabinetsAction_triggered()'
+  slots 'on_showLecturerStubsAction_triggered()'
+  slots 'on_showCabinetStubsAction_triggered()'
+  slots 'on_showSubjectsStubsAction_triggered()'
   # Main
   slots 'on_dateDateEdit_dateChanged()'
   # Self
@@ -115,7 +119,7 @@ class MainWindow < Qt::MainWindow
                      @ui.lecturersTableView, @ui.semestersTableView, @ui.specialitySubjectsTableView,
                      @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
                      @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6]
-    @widgets_to_disable = [@ui.exportMenu, @ui.saveAsAction]
+    @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction]
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
     modeActionGroup = Qt::ActionGroup.new(self)
@@ -202,8 +206,7 @@ class MainWindow < Qt::MainWindow
     Qt::Application.quit
   end
 
-  def on_verifyAction_triggered
-    return 0 unless Database.instance.connected?
+  def on_verifyLecturersAction_triggered
     date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     dates = date.monday..date.monday + 6
     v = Verificator.new(dates)
@@ -220,22 +223,85 @@ class MainWindow < Qt::MainWindow
     end
     res = res.compact.join("\n")
     console = ConsoleDialog.new self
-    connect(@ui.verifyAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
     console.show
     console.browser.append res
+  end
+
+  def on_verifyCabinetsAction_triggered
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
     res = v.verify(:cabinet_studies).map do |k, v|
       date = k[0]
       cabinet= Cabinet.where(id: k[1]).first
       number = k[2]
-      #if cabinet.stub
-      #  nil
-      #else
+      if cabinet.stub
+        nil
+      else
         v.each{ |study| @study_table_models[date.cwday - 1].setColorCabinet(study.groupable.get_group, number, Qt::blue) }
         "#{date} | В #{cabinet.title} проходит несколько пар одновременно! Номер пары: #{number}"
-      #end
+      end
     end
     res = res.compact.join("\n")
+    console = ConsoleDialog.new self
+    connect(@ui.verifyCabinetsAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    console.show
     console.browser.append res
+  end
+
+  def on_showLecturerStubsAction_triggered
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:lecturer_stubs).map do |date, studies|
+      studies.map do |study|
+        @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, study.number, Qt::green)
+        "#{date} | Не назначен преподаватель! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+      end.join("\n")
+    end
+    res = res.compact.join("\n")
+    console = ConsoleDialog.new self
+    connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    console.show
+    console.browser.append res
+  end
+
+  def on_showCabinetStubsAction_triggered
+    #date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    #dates = date.monday..date.monday + 6
+    #v = Verificator.new(dates)
+    #res = v.verify(:cabinet_stubs).map do |date, studies|
+    #  studies.map do |study|
+    #    @study_table_models[date.cwday - 1].setColorCabinet(study.groupable.get_group, study.number, Qt::green)
+    #    "#{date} | Не назначен кабинет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+    #  end.join("\n")
+    #end
+    #res = res.compact.join("\n")
+    #console = ConsoleDialog.new self
+    #connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    #console.show
+    #console.browser.append res
+  end
+
+  def on_showSubjectsStubsAction_triggered
+    #date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    #dates = date.monday..date.monday + 6
+    #v = Verificator.new(dates)
+    #res = v.verify(:subject_stubs).map do |date, studies|
+    #  studies.map do |study|
+    #    @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, study.number, Qt::green)
+    #    "#{date} | Не назначен предмет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+    #  end.join("\n")
+    #end
+    #res = res.compact.join("\n")
+    #console = ConsoleDialog.new self
+    #connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
+    #console.show
+    #console.browser.append res
+  end
+
+  def on_verifyAction_triggered
     #- группа и подгруппы в разных кабинетах
     #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
   end
