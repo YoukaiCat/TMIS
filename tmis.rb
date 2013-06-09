@@ -28,6 +28,9 @@ Qt::Application.new(ARGV) do
   Qt::TextCodec::setCodecForCStrings codec
   Qt::TextCodec::setCodecForLocale codec
   Qt::TextCodec::setCodecForTr codec
+  translator = Qt::Translator.new(self)
+  translator.load('qt_ru', Qt::LibraryInfo::location(Qt::LibraryInfo::TranslationsPath))
+  installTranslator(translator)
   MainWindow.new.show
   exec
 end
