@@ -77,7 +77,7 @@ private
   end
 
   def new_lecturer_or_stub(study)
-    if study[:info][:lecturer][:surname][/#{Settings[:stubs, :lecturer]}/i]
+    if study[:info][:lecturer][:surname] && study[:info][:lecturer][:surname][/#{Settings[:stubs, :lecturer]}/i]
       Lecturer.where(stub: true).first
     else
       add(Lecturer, { surname: study[:info][:lecturer][:surname],
