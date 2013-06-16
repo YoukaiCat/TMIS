@@ -53,8 +53,9 @@ private
             Study.create( get_study_options(study[0], day[:name], number.succ, group) )
           end
         else
-          study.each_with_index do |sepstudy, subgroup_number|
-            Study.create( get_study_options(sepstudy, day[:name], number.succ, subgroups[subgroup_number]) )
+          study.each do |sepstudy|
+            Study.create( get_study_options(sepstudy, day[:name], number.succ,
+              sepstudy[:info][:subgroup] ? subgroups[sepstudy[:info][:subgroup].to_i - 1] : group) )
           end
         end
       end
@@ -69,7 +70,7 @@ private
   Contract Hash, String, Pos, Or[Group, Subgroup] => Hash
   def get_study_options(study, day, study_number, groupable)
     { subject: add(Subject, title: study[:info][:subject]),
-      cabinet: study[:cabinet].nil? ? Cabinet.last : add(Cabinet, title: fix_cabinet(study[:cabinet])),
+      cabinet: new_cabinet_or_stub(study),
       lecturer: new_lecturer_or_stub(study),
       date: @days[day.mb_chars.downcase.to_s.gsub(' ', '')],
       number: study_number,
@@ -77,12 +78,23 @@ private
   end
 
   def new_lecturer_or_stub(study)
-    if study[:info][:lecturer][:surname] && study[:info][:lecturer][:surname][/#{Settings[:stubs, :lecturer]}/i]
+    case study[:info][:lecturer][:surname]
+    when nil
+      Lecturer.where(stub: true).first
+    when /#{Settings[:stubs, :lecturer]}/i
       Lecturer.where(stub: true).first
     else
       add(Lecturer, { surname: study[:info][:lecturer][:surname],
                       name: study[:info][:lecturer][:name],
                       patronymic: study[:info][:lecturer][:patronymic] })
+    end
+  end
+
+  def new_cabinet_or_stub(study)
+    if study[:cabinet]
+      add(Cabinet, title: fix_cabinet(study[:cabinet]))
+    else
+      Cabinet.where(stub: true).first
     end
   end
 

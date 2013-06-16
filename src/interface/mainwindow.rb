@@ -415,7 +415,7 @@ class MainWindow < Qt::MainWindow
     #    displayHelp helpData
     #  end
     #end
-    Qt::DesktopServices::openUrl(Qt::Url.new('https://github.com/Noein/TMIS/wiki/_pages'))
+    Qt::DesktopServices::openUrl(Qt::Url.new('https://github.com/Noein/TMIS/wiki'))
   end
 
 end

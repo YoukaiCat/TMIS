@@ -92,6 +92,8 @@ describe TimetableReader do
     res.should eq({ subject: 'Физическая культура', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: '2' })
     res = TimetableReader.new(@sheet, 1).parse_info('Физическая культура  вакансия .(2п)')
     res.should eq({ subject: 'Физическая культура', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: '2' })
+    res = TimetableReader.new(@sheet, 1).parse_info('РиЭАИС  вакансия(2)')
+    res.should eq({ subject: 'РиЭАИС', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: '2' })
     res = TimetableReader.new(@sheet, 1).parse_info('Информатика и ИКТ   вакансия (2п)')
     res.should eq({ subject: 'Информатика и ИКТ', lecturer: { surname: 'вакансия', name: nil, patronymic: nil }, subgroup: '2' })
     res = TimetableReader.new(@sheet, 1).parse_info('Информатика и ИКТ   вакансия(2п)')
