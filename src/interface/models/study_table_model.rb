@@ -17,7 +17,8 @@ class StudyTableModel < Qt::AbstractTableModel
     @studies = get_studies
     @groups = Group.all.sort_by(&:title_for_sort)
     @titles = @groups.map(&:title)
-    @color_at_index = {}
+    @colors_for_studies = {}
+    @colors_for_cabinets = {}
   end
 
   def get_studies
@@ -47,32 +48,32 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def data(index, role = Qt::DisplayRole, data = nil)
-    invalid = Qt::Variant.new
+    default = Qt::Variant.new
     #return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
     case role
+    #when Qt::UserRole # for future use
     when Qt::DisplayRole || Qt::EditRole
-      study = @studies[index.row]
-      return invalid if study.nil?
       begin
         if index.column.even?
-          v = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].to_s
+          @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].to_s.to_v
         else
-          v = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].cabinet.title
+          @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].cabinet.title.to_v
         end
       rescue NoMethodError
-        v = ''
+        default
       end
-      Qt::Variant.new(v.to_s)
     when  Qt::BackgroundRole #Qt::TextColorRole
-      if @color_at_index[[index.row, index.column]]
-        p :data
-        p [index.row, index.column]
-        Qt::Variant.new(@color_at_index[[index.row, index.column]])
-      else
-        Qt::Variant.new()
+      begin
+        if index.column.even?
+          @colors_for_studies[@studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].id].to_v
+        else
+          @colors_for_cabinets[@studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].id].to_v
+        end
+      rescue
+        default
       end
     else
-      invalid
+      default
     end
   end
 
@@ -140,13 +141,12 @@ class StudyTableModel < Qt::AbstractTableModel
     menu.exec(@view.viewport.mapToGlobal(pos))
   end
 
-  def setColor(group, number, color)
-    @color_at_index[[(1..6).zip(7..7 + 6).flatten.index(number), @groups.zip(Array.new(@groups.size, nil)).flatten.index(group)]] = color
-    #@color_at_index[[@groups.zip(Array.new(@groups.size, nil)).index(group), number]] = color
+  def setColor(id, color)
+    @colors_for_studies[id] = color
   end
 
-  def setColorCabinet(group, number, color)
-    @color_at_index[[(1..6).zip(7..7 + 6).flatten.index(number), Array.new(@groups.size, nil).zip(@groups).flatten.index(group)]] = color
+  def setColorCabinet(id, color)
+    @colors_for_cabinets[id] = color
   end
 
   def editStudy(index)

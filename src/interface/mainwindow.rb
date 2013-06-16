@@ -217,7 +217,7 @@ class MainWindow < Qt::MainWindow
       if lecturer.stub
         nil
       else
-        v.each{ |study| @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, number, Qt::red) }
+        v.each{ |study| @study_table_models[date.cwday - 1].setColor(study.id Qt::red) }
         "#{date} | #{lecturer} ведёт несколько пар одновременно! Номер пары: #{number}"
       end
     end
@@ -239,7 +239,7 @@ class MainWindow < Qt::MainWindow
       if cabinet.stub
         nil
       else
-        v.each{ |study| @study_table_models[date.cwday - 1].setColorCabinet(study.groupable.get_group, number, Qt::blue) }
+        v.each{ |study| @study_table_models[date.cwday - 1].setColorCabinet(study.id, Qt::blue) }
         "#{date} | В #{cabinet.title} проходит несколько пар одновременно! Номер пары: #{number}"
       end
     end
@@ -256,7 +256,7 @@ class MainWindow < Qt::MainWindow
     v = Verificator.new(dates)
     res = v.verify(:lecturer_stubs).map do |date, studies|
       studies.map do |study|
-        @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, study.number, Qt::green)
+        @study_table_models[date.cwday - 1].setColor(study.id, Qt::green)
         "#{date} | Не назначен преподаватель! Группа: #{study.get_group.title} Номер пары: #{study.number}"
       end.join("\n")
     end
