@@ -41,6 +41,7 @@ require_relative '../engine/models/study'
 require_relative '../engine/models/subject'
 require_relative '../engine/models/subgroup'
 require_relative 'ui_mainwindow'
+require_relative 'forms/about'
 require_relative 'forms/settings'
 require_relative 'forms/import'
 require_relative 'forms/console'
@@ -128,6 +129,7 @@ class MainWindow < Qt::MainWindow
     modeActionGroup.addAction(@ui.dailyViewAction)
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     connect(@ui.aboutQtAction, SIGNAL('triggered()')){ Qt::Application.aboutQt }
+    connect(@ui.aboutProgramAction, SIGNAL('triggered()')){ AboutDialog.new.exec }
     connect(@ui.exportGeneralAction, SIGNAL('triggered()')){ ExportGeneralTimetableDialog.new.exec }
     connect(@ui.exportForLecturersAction, SIGNAL('triggered()')){ ExportLecturerTimetableDialog.new.exec }
     connect(@ui.exportForGroupsAction, SIGNAL('triggered()')){ ExportGroupTimetableDialog.new.exec }

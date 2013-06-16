@@ -10,6 +10,7 @@ task :compile do
   compile_form 'src/interface/forms/export_group_timetable.ui'
   compile_form 'src/interface/forms/edit_study.ui'
   compile_form 'src/interface/forms/console.ui'
+  compile_form 'src/interface/forms/about.ui'
 end
 
 task :clean do
@@ -21,6 +22,7 @@ task :clean do
   rm 'src/interface/forms/ui_export_group_timetable.rb'
   rm 'src/interface/forms/ui_edit_study.rb'
   rm 'src/interface/forms/ui_console.rb'
+  rm 'src/interface/forms/ui_about.rb'
 end
 
 task :rspec do
