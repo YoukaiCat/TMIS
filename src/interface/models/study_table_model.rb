@@ -9,6 +9,7 @@ class StudyTableModel < Qt::AbstractTableModel
   slots 'editStudy(QModelIndex)'
   slots 'removeData()'
   slots 'displayMenu(QPoint)'
+  slots 'cancelColoring()'
 
   def initialize(date, parent = nil)
     super()
@@ -147,6 +148,11 @@ class StudyTableModel < Qt::AbstractTableModel
 
   def setColorCabinet(id, color)
     @colors_for_cabinets[id] = color
+  end
+
+  def cancelColoring()
+    @colors_for_studies.clear
+    @colors_for_cabinets.clear
   end
 
   def editStudy(index)

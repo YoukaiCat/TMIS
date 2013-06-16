@@ -578,11 +578,18 @@
      <property name="title">
       <string>Проверить</string>
      </property>
+     <addaction name="allAction"/>
+     <addaction name="separator"/>
+     <addaction name="allCoincidenceAction"/>
      <addaction name="verifyLecturersAction"/>
      <addaction name="verifyCabinetsAction"/>
+     <addaction name="separator"/>
+     <addaction name="allNotAssignedAction"/>
      <addaction name="showLecturerStubsAction"/>
      <addaction name="showCabinetStubsAction"/>
      <addaction name="showSubjectsStubsAction"/>
+     <addaction name="separator"/>
+     <addaction name="cancelVerifyingAction"/>
     </widget>
     <addaction name="settingsAction"/>
     <addaction name="verifyMenu"/>
@@ -778,6 +785,26 @@
   <action name="showSubjectsStubsAction">
    <property name="text">
     <string>Не назначенные предметы</string>
+   </property>
+  </action>
+  <action name="cancelVerifyingAction">
+   <property name="text">
+    <string>Отменить выделение</string>
+   </property>
+  </action>
+  <action name="allNotAssignedAction">
+   <property name="text">
+    <string>Все не назначенные</string>
+   </property>
+  </action>
+  <action name="allCoincidenceAction">
+   <property name="text">
+    <string>Всё совпадения</string>
+   </property>
+  </action>
+  <action name="allAction">
+   <property name="text">
+    <string>Все проверки</string>
    </property>
   </action>
  </widget>

@@ -330,6 +330,7 @@ class MainWindow < Qt::MainWindow
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
       connect(model, SIGNAL('studySaved(QVariant)')){ |id| update_table_view_model(Study.where(id: id.value).first.date) }
       connect(@ui.deleteAction, SIGNAL('triggered()'), model, SLOT('removeData()'))
+      connect(@ui.cancelVerifyingAction, SIGNAL('triggered()'), model, SLOT('cancelColoring()'))
       view.setContextMenuPolicy(Qt::CustomContextMenu)
       connect(view, SIGNAL('customContextMenuRequested(QPoint)'), model, SLOT('displayMenu(QPoint)'))
       model
