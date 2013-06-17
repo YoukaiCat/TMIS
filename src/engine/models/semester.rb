@@ -1,4 +1,4 @@
 class Semester < ActiveRecord::Base
   belongs_to :course
-  has_many :speciality_subjects
+  has_many :speciality_subjects,  :dependent => :destroy
 end

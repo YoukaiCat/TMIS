@@ -1,7 +1,7 @@
 # coding: UTF-8
 class Subgroup < ActiveRecord::Base
   belongs_to :group
-  has_many :studies, :as => :groupable
+  has_many :studies, :as => :groupable,  :dependent => :destroy
 
   def group?
     false

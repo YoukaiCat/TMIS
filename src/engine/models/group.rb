@@ -1,9 +1,9 @@
 class Group < ActiveRecord::Base
   belongs_to :speciality
   belongs_to :course
-  has_many :subgroups
-  has_many :studies, :as => :groupable
-  has_many :emails, :as => :emailable
+  has_many :subgroups, :dependent => :destroy
+  has_many :studies, :as => :groupable, :dependent => :destroy
+  has_many :emails, :as => :emailable,  :dependent => :destroy
 
   def group?
     true
