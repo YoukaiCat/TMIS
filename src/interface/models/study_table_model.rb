@@ -50,7 +50,7 @@ class StudyTableModel < Qt::AbstractTableModel
 
   def data(index, role = Qt::DisplayRole, data = nil)
     default = Qt::Variant.new
-    #return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
+    return default unless index.valid?
     case role
     #when Qt::UserRole # for future use
     when Qt::DisplayRole || Qt::EditRole
@@ -93,7 +93,7 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def flags(index)
-    Qt::ItemIsEditable | super(index)
+    Qt::ItemIsDropEnabled | super(index) if index.valid?
   end
 
   def setData(index, variant, role = Qt::EditRole)
@@ -132,6 +132,75 @@ class StudyTableModel < Qt::AbstractTableModel
         end
       end
     end
+  end
+
+  #def dropEvent(event)
+    #if event.mimeData().hasFormat("text/plain")
+    #  event.accept()
+    #else
+    #  event.ignore()
+    #end
+  #end
+
+  def dropMimeData(data, action, row, column, index)
+    subject_id = data.data('application/subject') if data.hasFormat('application/subject')
+    lecturer_id = data.data('application/lecturer') if data.hasFormat('application/lecturer')
+    cabinet_id = data.data('application/cabinet') if data.hasFormat('application/cabinet')
+    return false unless index.valid?
+    if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
+      study = studies[index.row % 2]
+      study.subject_id = subject_id if subject_id
+      study.lecturer_id = lecturer_id if lecturer_id
+      study.cabinet_id = cabinet_id if cabinet_id
+    else
+      study = Study.new
+      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[(index.row % 2) - 1])
+        another_study = studies[(index.row % 2)- 1]
+        if another_study.groupable.subgroup?
+          if another_study.groupable.number == 1
+            study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
+          else
+            study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
+          end
+        else
+          another_study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
+          study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
+        end
+      else
+        study.groupable_type = 'Group'
+        study.groupable_id = @groups[index.column / 2].id
+      end
+      study.number = (1..6).to_a[index.row / 2]
+      study.date = @date
+      study.subject_id = subject_id || Subject.where(stub: true).first.id
+      study.lecturer_id = lecturer_id || Lecturer.where(stub: true).first.id
+      study.cabinet_id = cabinet_id || Cabinet.where(stub: true).first.id
+    end
+    study.save
+    refresh
+    #emit studySaved(study.id.to_v) unless study.date == @date
+    emit dataChanged(index, index)
+    true
+  end
+
+  def setItemData(index, roles)
+    false
+  end
+
+  def supportedDropActions
+    Qt::CopyAction
+  end
+
+  def insertRows(row, count, parent )
+    false
+  end
+
+  def insertColumns(column, count, parent )
+    false
+  end
+
+  def mimeTypes
+    ['application/subject', 'application/lecturer', 'application/cabinet']
   end
 
   def displayMenu(pos)

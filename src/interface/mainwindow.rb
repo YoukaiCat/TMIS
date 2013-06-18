@@ -308,6 +308,55 @@ class MainWindow < Qt::MainWindow
     #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
   end
 
+  class EntityItemModel < Qt::AbstractItemModel
+    def initialize(entities, parent = nil)
+      super(parent)
+      @entities = entities
+      @size = @entities.size
+    end
+
+    def index(row, column, parent)
+      createIndex(row, column)
+    end
+
+    def parent(index)
+      Qt::ModelIndex.new()
+    end
+
+    def columnCount(parent = self)
+      1
+    end
+
+    def rowCount(parent = self)
+      @size
+    end
+
+    def data(index, role = Qt::DisplayRole, data = nil)
+      if role == Qt::DisplayRole && index.valid?
+        @entities[index.row].to_s.to_v
+      else
+        Qt::Variant.new
+      end
+    end
+
+    def flags(index)
+      if index.valid?
+        Qt::ItemIsDragEnabled | super(index)
+      else
+        super(index)
+      end
+    end
+
+    def mimeData(indexes)
+      entity = @entities[indexes.first.row]
+      ba = Qt::ByteArray.new entity.id.to_s # Marshal.dump entity?
+      mime_type = "application/#{entity.class.to_s.downcase}"
+      mime_data = super indexes # для обхода ошибки сегментации Qt::MimeData создаётся с помощью родительского метода
+      mime_data.setData(mime_type, ba)
+      mime_data
+    end
+  end
+
   def show_tables
     @table_models = @table_views.map do |entity, table_model, table_view|
       model = table_model.new(entity.all)
@@ -319,6 +368,12 @@ class MainWindow < Qt::MainWindow
     @tables_views_to_hide.each(&:show)
     @widgets_to_disable.each{ |x| x.enabled = true }
     #@ui.studiesTableView.setSpan(0, 0, 1, 3)
+    model =  EntityItemModel.new(Subject.all, self)
+    @ui.subjectsListView.setModel model
+    model =  EntityItemModel.new(Lecturer.all, self)
+    @ui.lecturersListView.setModel model
+    model =  EntityItemModel.new(Cabinet.all, self)
+    @ui.cabinetsListView.setModel model
   end
 
   def setup_study_table_views

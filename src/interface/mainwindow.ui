@@ -30,40 +30,45 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_13">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QDateEdit" name="dateDateEdit">
-              <property name="wrapping">
-               <bool>false</bool>
-              </property>
-              <property name="readOnly">
-               <bool>false</bool>
-              </property>
-              <property name="displayFormat">
-               <string>dddd - d MMMM yy</string>
-              </property>
-              <property name="calendarPopup">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+          <item row="3" column="0">
+           <widget class="QListView" name="cabinetsListView">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="flow">
+             <enum>QListView::LeftToRight</enum>
+            </property>
+           </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
+           <widget class="QListView" name="lecturersListView">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="flow">
+             <enum>QListView::LeftToRight</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QScrollArea" name="scrollArea">
             <property name="verticalScrollBarPolicy">
              <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -84,6 +89,27 @@
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_14">
+              <item row="10" column="0">
+               <widget class="QLabel" name="dayLabel6">
+                <property name="text">
+                 <string>Суббота</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="dayLabel">
+                <property name="text">
+                 <string>Понедельник</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="dayLabel5">
+                <property name="text">
+                 <string>Пятница</string>
+                </property>
+               </widget>
+              </item>
               <item row="5" column="0">
                <widget class="QTableView" name="studiesTableView3">
                 <property name="minimumSize">
@@ -92,8 +118,14 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DropOnly</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -127,16 +159,29 @@
                 </attribute>
                </widget>
               </item>
-              <item row="7" column="0">
-               <widget class="QTableView" name="studiesTableView4">
+              <item row="2" column="0">
+               <widget class="QLabel" name="dayLabel2">
+                <property name="text">
+                 <string>Вторник</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="0">
+               <widget class="QTableView" name="studiesTableView6">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
                   <height>500</height>
                  </size>
                 </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DropOnly</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -178,8 +223,14 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DropOnly</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -213,10 +264,10 @@
                 </attribute>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="dayLabel2">
+              <item row="4" column="0">
+               <widget class="QLabel" name="dayLabel3">
                 <property name="text">
-                 <string>Вторник</string>
+                 <string>Среда</string>
                 </property>
                </widget>
               </item>
@@ -224,13 +275,6 @@
                <widget class="QLabel" name="dayLabel4">
                 <property name="text">
                  <string>Четверг</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="dayLabel3">
-                <property name="text">
-                 <string>Среда</string>
                 </property>
                </widget>
               </item>
@@ -242,8 +286,63 @@
                   <height>500</height>
                  </size>
                 </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DropOnly</enum>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::DashLine</enum>
+                </property>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>60</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QTableView" name="studiesTableView4">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>500</height>
+                 </size>
+                </property>
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DropOnly</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -285,14 +384,11 @@
                   <height>500</height>
                  </size>
                 </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
-                </property>
-                <property name="dragEnabled">
+                <property name="acceptDrops">
                  <bool>true</bool>
                 </property>
-                <property name="dragDropMode">
-                 <enum>QAbstractItemView::DragDrop</enum>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -302,9 +398,6 @@
                 </property>
                 <property name="gridStyle">
                  <enum>Qt::DashLine</enum>
-                </property>
-                <property name="sortingEnabled">
-                 <bool>true</bool>
                 </property>
                 <attribute name="horizontalHeaderCascadingSectionResizes">
                  <bool>true</bool>
@@ -316,7 +409,7 @@
                  <number>500</number>
                 </attribute>
                 <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="verticalHeaderCascadingSectionResizes">
                  <bool>true</bool>
@@ -332,72 +425,60 @@
                 </attribute>
                </widget>
               </item>
-              <item row="11" column="0">
-               <widget class="QTableView" name="studiesTableView6">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>500</height>
-                 </size>
-                </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
-                </property>
-                <property name="selectionMode">
-                 <enum>QAbstractItemView::SingleSelection</enum>
-                </property>
-                <property name="gridStyle">
-                 <enum>Qt::DashLine</enum>
-                </property>
-                <attribute name="horizontalHeaderCascadingSectionResizes">
-                 <bool>true</bool>
-                </attribute>
-                <attribute name="horizontalHeaderDefaultSectionSize">
-                 <number>200</number>
-                </attribute>
-                <attribute name="horizontalHeaderMinimumSectionSize">
-                 <number>200</number>
-                </attribute>
-                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-                 <bool>true</bool>
-                </attribute>
-                <attribute name="verticalHeaderCascadingSectionResizes">
-                 <bool>true</bool>
-                </attribute>
-                <attribute name="verticalHeaderDefaultSectionSize">
-                 <number>60</number>
-                </attribute>
-                <attribute name="verticalHeaderMinimumSectionSize">
-                 <number>60</number>
-                </attribute>
-                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                 <bool>true</bool>
-                </attribute>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="dayLabel5">
-                <property name="text">
-                 <string>Пятница</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="dayLabel">
-                <property name="text">
-                 <string>Понедельник</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0">
-               <widget class="QLabel" name="dayLabel6">
-                <property name="text">
-                 <string>Суббота</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </widget>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QDateEdit" name="dateDateEdit">
+              <property name="wrapping">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dddd - d MMMM yy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QListView" name="subjectsListView">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="flow">
+             <enum>QListView::LeftToRight</enum>
+            </property>
            </widget>
           </item>
          </layout>
