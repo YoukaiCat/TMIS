@@ -4,9 +4,10 @@ require_relative '../../engine/models/subject'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SubjectTableModel < Qt::AbstractTableModel
 
-  def initialize(subjects)
+  def initialize(subjects, parent)
     super()
     @subjects = subjects
+    @view = parent
   end
 
   def rowCount(parent)
@@ -53,7 +54,7 @@ class SubjectTableModel < Qt::AbstractTableModel
       subject = @subjects[index.row]
       case index.column
       when 0
-        subject.title
+        subject.title = s
       else
         raise "invalid column #{index.column}"
       end
@@ -62,6 +63,23 @@ class SubjectTableModel < Qt::AbstractTableModel
       true
     else
       false
+    end
+  end
+
+  def insert_new
+    beginInsertRows(createIndex(0, 0), 0, 0)
+    @subjects.prepend(Subject.new)
+    emit dataChanged(createIndex(0, 0), createIndex(@cabinets.size, 1))
+    endInsertRows
+  end
+
+  def remove_current
+    if @view.currentIndex.valid?
+      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
+      @subjects[@view.currentIndex.row].try(:delete)
+      @subjects.delete_at(@view.currentIndex.row)
+      endRemoveRows
+      emit dataChanged(createIndex(0, 0), createIndex(@subjects.size, 1))
     end
   end
 

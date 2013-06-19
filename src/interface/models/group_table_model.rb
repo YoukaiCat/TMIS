@@ -4,9 +4,10 @@ require_relative '../../engine/models/group'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class GroupTableModel < Qt::AbstractTableModel
 
-  def initialize(groups)
+  def initialize(groups, parent)
     super()
     @groups = groups
+    @view = parent
   end
 
   def rowCount(parent)
@@ -70,6 +71,23 @@ class GroupTableModel < Qt::AbstractTableModel
       true
     else
       false
+    end
+  end
+
+  def insert_new
+    beginInsertRows(createIndex(0, 0), 0, 0)
+    @groups.prepend(Group.new)
+    emit dataChanged(createIndex(0, 0), createIndex(@groups.size, 1))
+    endInsertRows
+  end
+
+  def remove_current
+    if @view.currentIndex.valid?
+      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
+      @groups[@view.currentIndex.row].try(:delete)
+      @groups.delete_at(@view.currentIndex.row)
+      endRemoveRows
+      emit dataChanged(createIndex(0, 0), createIndex(@groups.size, 1))
     end
   end
 

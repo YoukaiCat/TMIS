@@ -521,8 +521,42 @@
             <string>Кабинеты</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addCabinetPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeCabinetPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
             <item row="0" column="0">
-             <widget class="QTableView" name="cabinetsTableView"/>
+             <widget class="QTableView" name="cabinetsTableView">
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAsNeeded</enum>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="sortingEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -534,6 +568,27 @@
             <item row="0" column="0">
              <widget class="QTableView" name="coursesTableView"/>
             </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_2">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addCoursePushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeCoursePushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="groupsTab">
@@ -544,45 +599,26 @@
             <item row="0" column="0">
              <widget class="QTableView" name="groupsTableView"/>
             </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="lecturersTab">
-           <attribute name="title">
-            <string>Преподаватели</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_7">
-            <item row="0" column="0">
-             <widget class="QTableView" name="lecturersTableView"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="semestersTab">
-           <attribute name="title">
-            <string>Семестры</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_8">
-            <item row="0" column="0">
-             <widget class="QTableView" name="semestersTableView"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="specialitiesTab">
-           <attribute name="title">
-            <string>Специальности</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_9">
-            <item row="0" column="0">
-             <widget class="QTableView" name="specialitiesTableView"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="specialitySubjects">
-           <attribute name="title">
-            <string>Предметы специальностей</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
-             <widget class="QTableView" name="specialitySubjectsTableView"/>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_3">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addGroupPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeGroupPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -594,6 +630,151 @@
             <item row="0" column="0">
              <widget class="QTableView" name="subgroupsTableView"/>
             </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_10">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addSubgroupPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeSubgroupPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="lecturersTab">
+           <attribute name="title">
+            <string>Преподаватели</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QTableView" name="lecturersTableView"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_4">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addLecturerPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeLecturerPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="semestersTab">
+           <attribute name="title">
+            <string>Семестры</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QTableView" name="semestersTableView"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_6">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addSemesterPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeSemesterPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="specialitiesTab">
+           <attribute name="title">
+            <string>Специальности</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QTableView" name="specialitiesTableView"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_11">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addSpecialityPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeSpecialityPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="specialitySubjects">
+           <attribute name="title">
+            <string>Предметы специальностей</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QTableView" name="specialitySubjectsTableView"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_9">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addSpecialitySubjectPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeSpecialitySubjectPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="subjectsTab">
@@ -603,6 +784,27 @@
            <layout class="QGridLayout" name="gridLayout_12">
             <item row="0" column="0">
              <widget class="QTableView" name="subjectsTableView"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="editHorizontalLayout_8">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="addSubjectPushButton">
+                <property name="text">
+                 <string>Добавить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="removeSubjectPushButton">
+                <property name="text">
+                 <string>Удалить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>

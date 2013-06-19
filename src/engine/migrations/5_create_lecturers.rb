@@ -5,7 +5,7 @@ class CreateLecturers < ActiveRecord::Migration
       t.string :surname
       t.string :name
       t.string :patronymic
-      t.boolean :stub
+      t.boolean :stub, default: false
 
       t.timestamps
     end

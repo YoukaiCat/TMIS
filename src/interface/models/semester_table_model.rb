@@ -4,9 +4,10 @@ require_relative '../../engine/models/semester'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SemesterTableModel < Qt::AbstractTableModel
 
-  def initialize(semesters)
+  def initialize(semesters, parent)
     super()
     @semesters = semesters
+    @view = parent
   end
 
   def rowCount(parent)
@@ -55,7 +56,7 @@ class SemesterTableModel < Qt::AbstractTableModel
       semester = @semesters[index.row]
       case index.column
       when 0
-        semester.title
+        semester.title = s
       when 1
         semester.course.number
       else
@@ -66,6 +67,23 @@ class SemesterTableModel < Qt::AbstractTableModel
       true
     else
       false
+    end
+  end
+
+  def insert_new
+    beginInsertRows(createIndex(0, 0), 0, 0)
+    @semesters.prepend(Semester.new)
+    emit dataChanged(createIndex(0, 0), createIndex(@semesters.size, 1))
+    endInsertRows
+  end
+
+  def remove_current
+    if @view.currentIndex.valid?
+      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
+      @semesters[@view.currentIndex.row].try(:delete)
+      @semesters.delete_at(@view.currentIndex.row)
+      endRemoveRows
+      emit dataChanged(createIndex(0, 0), createIndex(@semesters.size, 1))
     end
   end
 

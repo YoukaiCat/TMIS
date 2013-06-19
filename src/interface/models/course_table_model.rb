@@ -4,9 +4,10 @@ require_relative '../../engine/models/course'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CourseTableModel < Qt::AbstractTableModel
 
-  def initialize(courses)
+  def initialize(courses, parent)
     super()
     @courses = courses
+    @view = parent
   end
 
   def rowCount(parent)
@@ -62,6 +63,23 @@ class CourseTableModel < Qt::AbstractTableModel
       true
     else
       false
+    end
+  end
+
+  def insert_new
+    beginInsertRows(createIndex(0, 0), 0, 0)
+    @courses.prepend(Course.new)
+    emit dataChanged(createIndex(0, 0), createIndex(@courses.size, 1))
+    endInsertRows
+  end
+
+  def remove_current
+    if @view.currentIndex.valid?
+      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
+      @courses[@view.currentIndex.row].try(:delete)
+      @courses.delete_at(@view.currentIndex.row)
+      endRemoveRows
+      emit dataChanged(createIndex(0, 0), createIndex(@courses.size, 1))
     end
   end
 
