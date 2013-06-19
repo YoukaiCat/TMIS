@@ -16,6 +16,8 @@ class StudyTableModel < Qt::AbstractTableModel
     @view = parent
     @date = date
     @studies = get_studies
+    p @date
+    p @studies
     @groups = Group.all.sort_by(&:title_for_sort)
     @titles = @groups.map(&:title)
     @colors_for_studies = {}
@@ -70,7 +72,7 @@ class StudyTableModel < Qt::AbstractTableModel
         else
           @colors_for_cabinets[@studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].id].to_v
         end
-      rescue
+      rescue NoMethodError
         default
       end
     else

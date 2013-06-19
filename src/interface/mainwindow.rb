@@ -120,7 +120,8 @@ class MainWindow < Qt::MainWindow
     @tables_views_to_hide = @study_table_views + [@ui.cabinetsTableView, @ui.coursesTableView, @ui.groupsTableView,
                      @ui.lecturersTableView, @ui.semestersTableView, @ui.specialitySubjectsTableView,
                      @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
-                     @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6]
+                     @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6,
+                     @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView]
     @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction]
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
@@ -371,10 +372,13 @@ class MainWindow < Qt::MainWindow
     #@ui.studiesTableView.setSpan(0, 0, 1, 3)
     model =  EntityItemModel.new(Subject.all, self)
     @ui.subjectsListView.setModel model
+    @ui.subjectsListView.show
     model =  EntityItemModel.new(Lecturer.all, self)
     @ui.lecturersListView.setModel model
+    @ui.lecturersListView.show
     model =  EntityItemModel.new(Cabinet.all, self)
     @ui.cabinetsListView.setModel model
+    @ui.cabinetsListView.show
   end
 
   def setup_study_table_views
