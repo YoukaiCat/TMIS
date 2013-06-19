@@ -385,7 +385,7 @@ class MainWindow < Qt::MainWindow
       model.disconnect(SIGNAL('studySaved(QVariant)'))
       view.disconnect(SIGNAL('customContextMenuRequested(QPoint)'))
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
-      connect(model, SIGNAL('studySaved(QVariant)')){ |id| update_table_view_model(Study.where(id: id.value).first.date) }
+      connect(model, SIGNAL('studySaved(QVariant)')){ |v| update_table_view_model(v.value) }
       connect(@ui.deleteAction, SIGNAL('triggered()'), model, SLOT('removeData()'))
       connect(@ui.cancelVerifyingAction, SIGNAL('triggered()'), model, SLOT('cancelColoring()'))
       view.setContextMenuPolicy(Qt::CustomContextMenu)
@@ -395,7 +395,8 @@ class MainWindow < Qt::MainWindow
   end
 
   def update_table_view_model(date)
-    @study_table_models[date.cwday - 1].refresh
+    p :update
+    @study_table_models[date.dayOfWeek - 1].refresh
   end
 
   def setup_study_table_view(view, date)

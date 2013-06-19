@@ -124,8 +124,11 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
                 <property name="dragDropMode">
-                 <enum>QAbstractItemView::DropOnly</enum>
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -180,8 +183,11 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
                 <property name="dragDropMode">
-                 <enum>QAbstractItemView::DropOnly</enum>
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -229,8 +235,11 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
                 <property name="dragDropMode">
-                 <enum>QAbstractItemView::DropOnly</enum>
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -292,8 +301,11 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
                 <property name="dragDropMode">
-                 <enum>QAbstractItemView::DropOnly</enum>
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -341,8 +353,11 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
                 <property name="dragDropMode">
-                 <enum>QAbstractItemView::DropOnly</enum>
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>
@@ -389,6 +404,12 @@
                 </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="dragDropMode">
+                 <enum>QAbstractItemView::DragDrop</enum>
                 </property>
                 <property name="selectionMode">
                  <enum>QAbstractItemView::SingleSelection</enum>

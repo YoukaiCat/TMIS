@@ -37,6 +37,7 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def refresh
+    p :refresh
     @studies = get_studies
   end
 
@@ -93,7 +94,7 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def flags(index)
-    Qt::ItemIsDropEnabled | super(index) if index.valid?
+    Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | super(index) if index.valid?
   end
 
   def setData(index, variant, role = Qt::EditRole)
@@ -102,7 +103,7 @@ class StudyTableModel < Qt::AbstractTableModel
         study = studies[index.row % 2]
         EditStudyDialog.new().setupData(study).exec
         refresh
-        emit studySaved(study.id.to_v) unless study.date == @date
+        emit studySaved(study.date.to_v) unless study.date == @date
       else
         study = Study.new
         study.groupable_type = 'Group'
@@ -112,7 +113,7 @@ class StudyTableModel < Qt::AbstractTableModel
         EditStudyDialog.new().setupData(study).exec
         unless study.new_record?
           refresh
-          emit studySaved(study.id.to_v) unless study.date == @date
+          emit studySaved(study.date.to_v) unless study.date == @date
         end
       end
       emit dataChanged(index, index)
@@ -142,43 +143,89 @@ class StudyTableModel < Qt::AbstractTableModel
     #end
   #end
 
+  def mimeData(indexes)
+    index = indexes.first
+    if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
+      study = studies[index.row % 2]
+      dump = Base64.encode64(Marshal.dump(study))
+      ba = Qt::ByteArray.new dump
+    end
+    mime_data = super indexes # для обхода ошибки сегментации Qt::MimeData создаётся с помощью родительского метода
+    if ba
+      mime_data.setData('application/study', ba)
+    else
+      mime_data.setData('application/empty', Qt::ByteArray.new(''))
+    end
+    mime_data
+  end
+
   def dropMimeData(data, action, row, column, index)
     subject_id = data.data('application/subject') if data.hasFormat('application/subject')
     lecturer_id = data.data('application/lecturer') if data.hasFormat('application/lecturer')
     cabinet_id = data.data('application/cabinet') if data.hasFormat('application/cabinet')
-    return false unless index.valid?
-    if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
-      study = studies[index.row % 2]
-      study.subject_id = subject_id if subject_id
-      study.lecturer_id = lecturer_id if lecturer_id
-      study.cabinet_id = cabinet_id if cabinet_id
-    else
-      study = Study.new
-      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[(index.row % 2) - 1])
-        another_study = studies[(index.row % 2)- 1]
-        if another_study.groupable.subgroup?
-          if another_study.groupable.number == 1
-            study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
-          else
-            study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
-          end
-        else
-          another_study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
-          study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
-        end
-      else
-        study.groupable_type = 'Group'
-        study.groupable_id = @groups[index.column / 2].id
-      end
+    # date почему-то содержит "application/subject" с какимто мусором если drag осуществляется из табицы
+    return false if !index.valid? || data.hasFormat('application/empty')
+    if data.hasFormat('application/study')
+      study = Marshal.load(Base64.decode64(data.data('application/study').data))
+      emit studySaved(study.date.to_v)
       study.number = (1..6).to_a[index.row / 2]
       study.date = @date
-      study.subject_id = subject_id || Subject.where(stub: true).first.id
-      study.lecturer_id = lecturer_id || Lecturer.where(stub: true).first.id
-      study.cabinet_id = cabinet_id || Cabinet.where(stub: true).first.id
+      if study.groupable.group?
+        study.groupable_id = @groups[index.column / 2].id
+      else
+        number = study.groupable.number
+        study.groupable = @groups[index.column / 2].subgroups.where(number: number).first
+      end
+      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
+        exist_study = studies[index.row % 2]
+        exist_study.delete
+        @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2] = study
+      else
+        if @studies[index.column / 2][1][(index.row / 2) + 1]
+          @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2] = study
+        else
+          array = []
+          array[index.row % 2] = study
+          @studies[index.column / 2][1][(index.row / 2) + 1] = array
+        end
+      end
+    else
+      if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
+        study = studies[index.row % 2]
+        study.subject_id = subject_id if subject_id
+        study.lecturer_id = lecturer_id if lecturer_id
+        study.cabinet_id = cabinet_id if cabinet_id
+      elsif subject_id || lecturer_id || cabinet_id
+        p subject_id
+        p lecturer_id
+        p cabinet_id
+        study = Study.new
+        if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[(index.row % 2) - 1])
+          another_study = studies[(index.row % 2) - 1]
+          if another_study.groupable.subgroup?
+            if another_study.groupable.number == 1
+              study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
+            else
+              study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
+            end
+          else
+            another_study.groupable = another_study.groupable.get_group.subgroups.where(number: 1).first
+            study.groupable = another_study.groupable.get_group.subgroups.where(number: 2).first
+          end
+        else
+          study.groupable_type = 'Group'
+          study.groupable_id = @groups[index.column / 2].id
+        end
+        study.number = (1..6).to_a[index.row / 2]
+        study.date = @date
+        study.subject_id = subject_id || Subject.where(stub: true).first.id
+        study.lecturer_id = lecturer_id || Lecturer.where(stub: true).first.id
+        study.cabinet_id = cabinet_id || Cabinet.where(stub: true).first.id
+      end
     end
     study.save
     refresh
-    #emit studySaved(study.id.to_v) unless study.date == @date
+    emit studySaved(study.date.to_v) unless study.date == @date
     emit dataChanged(index, index)
     true
   end
@@ -200,7 +247,7 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def mimeTypes
-    ['application/subject', 'application/lecturer', 'application/cabinet']
+    ['application/subject', 'application/lecturer', 'application/cabinet', 'application/study']
   end
 
   def displayMenu(pos)
