@@ -178,7 +178,7 @@ class StudyTableModel < Qt::AbstractTableModel
       end
       if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
         exist_study = studies[index.row % 2]
-        exist_study.delete
+        exist_study.delete unless exist_study == study
         @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2] = study
       else
         if @studies[index.column / 2][1][(index.row / 2) + 1]
@@ -196,9 +196,6 @@ class StudyTableModel < Qt::AbstractTableModel
         study.lecturer_id = lecturer_id if lecturer_id
         study.cabinet_id = cabinet_id if cabinet_id
       elsif subject_id || lecturer_id || cabinet_id
-        p subject_id
-        p lecturer_id
-        p cabinet_id
         study = Study.new
         if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[(index.row % 2) - 1])
           another_study = studies[(index.row % 2) - 1]
