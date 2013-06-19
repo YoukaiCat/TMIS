@@ -37,7 +37,6 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def refresh
-    p :refresh
     @studies = get_studies
   end
 
@@ -145,14 +144,14 @@ class StudyTableModel < Qt::AbstractTableModel
 
   def mimeData(indexes)
     index = indexes.first
+    mime_data = super indexes # для обхода ошибки сегментации Qt::MimeData создаётся с помощью родительского метода
     if (studies = @studies[index.column / 2][1][(index.row / 2) + 1]) && (studies[index.row % 2])
       study = studies[index.row % 2]
-      dump = Base64.encode64(Marshal.dump(study))
-      ba = Qt::ByteArray.new dump
-    end
-    mime_data = super indexes # для обхода ошибки сегментации Qt::MimeData создаётся с помощью родительского метода
-    if ba
-      mime_data.setData('application/study', ba)
+      study_dump = Base64.encode64(Marshal.dump(study))
+      byte_study = Qt::ByteArray.new study_dump
+      table_model_ref = Qt::ByteArray.new self.object_id.to_s
+      mime_data.setData('application/study', byte_study)
+      mime_data.setData('application/model', table_model_ref)
     else
       mime_data.setData('application/empty', Qt::ByteArray.new(''))
     end
@@ -160,14 +159,14 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def dropMimeData(data, action, row, column, index)
-    subject_id = data.data('application/subject') if data.hasFormat('application/subject')
-    lecturer_id = data.data('application/lecturer') if data.hasFormat('application/lecturer')
-    cabinet_id = data.data('application/cabinet') if data.hasFormat('application/cabinet')
+    table_model = ObjectSpace._id2ref(data.data('application/model').data.to_i)
+    subject_id = data.data('application/subject').data if data.hasFormat('application/subject')
+    lecturer_id = data.data('application/lecturer').data if data.hasFormat('application/lecturer')
+    cabinet_id = data.data('application/cabinet').data if data.hasFormat('application/cabinet')
     # date почему-то содержит "application/subject" с какимто мусором если drag осуществляется из табицы
     return false if !index.valid? || data.hasFormat('application/empty')
     if data.hasFormat('application/study')
       study = Marshal.load(Base64.decode64(data.data('application/study').data))
-      emit studySaved(study.date.to_v)
       study.number = (1..6).to_a[index.row / 2]
       study.date = @date
       if study.groupable.group?
@@ -222,7 +221,7 @@ class StudyTableModel < Qt::AbstractTableModel
     end
     study.save
     refresh
-    emit studySaved(study.date.to_v) unless study.date == @date
+    table_model.refresh if table_model && table_model != self
     emit dataChanged(index, index)
     true
   end

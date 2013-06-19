@@ -98,6 +98,7 @@ class MainWindow < Qt::MainWindow
   # Self
   slots 'open_file()'
   slots 'clear_recent_files()'
+  slots 'refreshTableViewModel(QVariant)'
   # help
   slots 'on_showManualAction_triggered()'
 
@@ -385,7 +386,7 @@ class MainWindow < Qt::MainWindow
       model.disconnect(SIGNAL('studySaved(QVariant)'))
       view.disconnect(SIGNAL('customContextMenuRequested(QPoint)'))
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
-      connect(model, SIGNAL('studySaved(QVariant)')){ |v| update_table_view_model(v.value) }
+      connect(model, SIGNAL('studySaved(QVariant)'), self, SLOT('refreshTableViewModel(QVariant)'))
       connect(@ui.deleteAction, SIGNAL('triggered()'), model, SLOT('removeData()'))
       connect(@ui.cancelVerifyingAction, SIGNAL('triggered()'), model, SLOT('cancelColoring()'))
       view.setContextMenuPolicy(Qt::CustomContextMenu)
@@ -394,9 +395,8 @@ class MainWindow < Qt::MainWindow
     end
   end
 
-  def update_table_view_model(date)
-    p :update
-    @study_table_models[date.dayOfWeek - 1].refresh
+  def refreshTableViewModel(date_variant)
+    @study_table_models[date_variant.value.dayOfWeek - 1].refresh
   end
 
   def setup_study_table_view(view, date)
