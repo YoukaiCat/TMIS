@@ -50,11 +50,10 @@ class SpecialityTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       speciality = @specialities[index.row]
       case index.column
       when 0
-        speciality.title = s
+        speciality.title = variant.toString.force_encoding('UTF-8')
       else
         raise "invalid column #{index.column}"
       end

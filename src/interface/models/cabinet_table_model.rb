@@ -80,7 +80,7 @@ class CabinetTableModel < Qt::AbstractTableModel
       cabinet = @cabinets[index.row]
       case index.column
       when 0
-        cabinet.title = variant.value.force_encoding('UTF-8')
+        cabinet.title = variant.toString.force_encoding('UTF-8')
       when 1
         cabinet.with_computers = variant.toBool
       else

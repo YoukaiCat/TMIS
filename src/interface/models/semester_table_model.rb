@@ -8,6 +8,7 @@ class SemesterTableModel < Qt::AbstractTableModel
     super()
     @semesters = semesters
     @view = parent
+    @view.setItemDelegateForColumn(1, CourseComboBoxDelegate.new(self))
   end
 
   def rowCount(parent)
@@ -19,19 +20,30 @@ class SemesterTableModel < Qt::AbstractTableModel
   end
 
   def data(index, role = Qt::DisplayRole)
-    invalid = Qt::Variant.new
-    return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
     semester = @semesters[index.row]
-    return invalid if semester.nil?
-    v = case index.column
-        when 0
-          semester.title
-        when 1
-          semester.course.number
-        else
-          raise "invalid column #{index.column}"
-        end || ''
-    Qt::Variant.new(v)
+    default = Qt::Variant.new
+    case role
+    when Qt::DisplayRole
+      case index.column
+      when 0
+        semester.title
+      when 1
+        semester.course.try(:number)
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    when Qt::EditRole
+      case index.column
+      when 0
+        semester.title
+      when 1
+        semester.course_id
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    else
+      default
+    end
   end
 
   def headerData(section, orientation, role = Qt::DisplayRole)
@@ -52,13 +64,12 @@ class SemesterTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       semester = @semesters[index.row]
       case index.column
       when 0
-        semester.title = s
+        semester.title = variant.toString.force_encoding('UTF-8')
       when 1
-        semester.course.number
+        semester.course_id = variant.toInt
       else
         raise "invalid column #{index.column}"
       end
@@ -87,4 +98,31 @@ class SemesterTableModel < Qt::AbstractTableModel
     end
   end
 
+end
+
+class CourseComboBoxDelegate < Qt::ItemDelegate
+  def initialize(parent)
+    super
+    @courses = Course.all.sort_by(&:number)
+  end
+
+  def createEditor(parent, option, index)
+    editor = Qt::ComboBox.new(parent)
+    @courses.each{ |x| editor.addItem(x.number.to_s, x.id.to_v) }
+    editor
+  end
+
+  def setEditorData(editor, index)
+    value = index.data
+    editor.setCurrentIndex(editor.findData(value))
+  end
+
+  def setModelData(editor, model, index)
+    value = editor.itemData(editor.currentIndex)
+    model.setData(index, value, Qt::EditRole)
+  end
+
+  def updateEditorGeometry(editor, option, index)
+    editor.setGeometry(option.rect)
+  end
 end

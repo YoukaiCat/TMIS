@@ -44,7 +44,7 @@ class LecturerTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Фамилия Имя Отчество)[section]
+          %w(Фамилия Имя Отчество Email)[section]
         else
           ''
         end
@@ -57,17 +57,16 @@ class LecturerTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       lecturer = @lecturers[index.row]
       case index.column
       when 0
-        lecturer.surname = s.force_encoding('UTF-8')
+        lecturer.surname = variant.toString.force_encoding('UTF-8')
       when 1
-        lecturer.name = s.force_encoding('UTF-8')
+        lecturer.name = variant.toString.force_encoding('UTF-8')
       when 2
-        lecturer.patronymic = s.force_encoding('UTF-8')
+        lecturer.patronymic = variant.toString.force_encoding('UTF-8')
       when 3
-        emails = s.force_encoding('UTF-8').split(/,\s*/)
+        emails = variant.toString.force_encoding('UTF-8').split(/,\s*/)
         lecturer.emails.destroy_all
         emails.each do |email|
           lecturer.emails.create(email: email)

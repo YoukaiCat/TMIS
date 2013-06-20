@@ -50,11 +50,10 @@ class SubjectTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       subject = @subjects[index.row]
       case index.column
       when 0
-        subject.title = s
+        subject.title = variant.toString.force_encoding('UTF-8')
       else
         raise "invalid column #{index.column}"
       end
@@ -69,7 +68,7 @@ class SubjectTableModel < Qt::AbstractTableModel
   def insert_new
     beginInsertRows(createIndex(0, 0), 0, 0)
     @subjects.prepend(Subject.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@cabinets.size, 1))
+    emit dataChanged(createIndex(0, 0), createIndex(@subjects.size, 1))
     endInsertRows
   end
 

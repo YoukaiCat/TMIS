@@ -8,6 +8,8 @@ class GroupTableModel < Qt::AbstractTableModel
     super()
     @groups = groups
     @view = parent
+    @view.setItemDelegateForColumn(1, SpecialityComboBoxDelegate.new(self))
+    @view.setItemDelegateForColumn(2, CourseComboBoxDelegate.new(self))
   end
 
   def rowCount(parent)
@@ -19,23 +21,38 @@ class GroupTableModel < Qt::AbstractTableModel
   end
 
   def data(index, role = Qt::DisplayRole)
-    invalid = Qt::Variant.new
-    return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
     group = @groups[index.row]
-    return invalid if group.nil?
-    v = case index.column
-        when 0
-          group.title
-        when 1
-          group.speciality ? group.speciality.title : group.speciality_id
-        when 2
-          group.course ?  group.course.number :  group.course_id
-        when 3
-          group.emails.map(&:email).join(', ')
-        else
-          raise "invalid column #{index.column}"
-        end || ''
-    Qt::Variant.new(v)
+    default = Qt::Variant.new
+    case role
+    when Qt::DisplayRole
+      case index.column
+      when 0
+        group.title
+      when 1
+        group.speciality.try(:title)
+      when 2
+        group.course.try(:number)
+      when 3
+        group.emails.map(&:email).join(', ')
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    when Qt::EditRole
+      case index.column
+      when 0
+        group.title
+      when 1
+        group.speciality_id
+      when 2
+        group.course_id
+      when 3
+        group.emails.map(&:email).join(', ')
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    else
+      default
+    end
   end
 
   def headerData(section, orientation, role = Qt::DisplayRole)
@@ -43,7 +60,7 @@ class GroupTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Название Специальность Курс)[section]
+          %w(Название Специальность Курс Email)[section]
         else
           ''
         end
@@ -56,17 +73,16 @@ class GroupTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       group = @groups[index.row]
       case index.column
       when 0
-        group.title.force_encoding('UTF-8')
+        group.title = variant.toString.force_encoding('UTF-8')
       when 1
-        group.speciality_id
+        group.speciality_id = variant.toInt
       when 2
-        group.course_id
+        group.course_id = variant.toInt
       when 3
-        emails = s.force_encoding('UTF-8').split(/,\s*/)
+        emails = variant.toString.force_encoding('UTF-8').split(/,\s*/)
         group.emails.destroy_all
         emails.each do |email|
           group.emails.create(email: email)
@@ -99,4 +115,58 @@ class GroupTableModel < Qt::AbstractTableModel
     end
   end
 
+end
+
+class SpecialityComboBoxDelegate < Qt::ItemDelegate
+  def initialize(parent)
+    super
+    @specialities = Speciality.all.sort_by(&:title)
+  end
+
+  def createEditor(parent, option, index)
+    editor = Qt::ComboBox.new(parent)
+    @specialities.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
+    editor
+  end
+
+  def setEditorData(editor, index)
+    value = index.data
+    editor.setCurrentIndex(editor.findData(value))
+  end
+
+  def setModelData(editor, model, index)
+    value = editor.itemData(editor.currentIndex)
+    model.setData(index, value, Qt::EditRole)
+  end
+
+  def updateEditorGeometry(editor, option, index)
+    editor.setGeometry(option.rect)
+  end
+end
+
+class CourseComboBoxDelegate < Qt::ItemDelegate
+  def initialize(parent)
+    super
+    @courses = Course.all.sort_by(&:number)
+  end
+
+  def createEditor(parent, option, index)
+    editor = Qt::ComboBox.new(parent)
+    @courses.each{ |x| editor.addItem(x.number.to_s, x.id.to_v) }
+    editor
+  end
+
+  def setEditorData(editor, index)
+    value = index.data
+    editor.setCurrentIndex(editor.findData(value))
+  end
+
+  def setModelData(editor, model, index)
+    value = editor.itemData(editor.currentIndex)
+    model.setData(index, value, Qt::EditRole)
+  end
+
+  def updateEditorGeometry(editor, option, index)
+    editor.setGeometry(option.rect)
+  end
 end

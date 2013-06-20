@@ -128,8 +128,6 @@ class ExportLecturerTimetableDialog < Qt::Dialog
 
   def mail(lecturer, filename)
     lecturer.emails.each do |email|
-      p email
-      p filename
       text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
       grouped = lecturer.studies.group(:date, :number).group_by(&:date)
       grouped.each do |date, studies|

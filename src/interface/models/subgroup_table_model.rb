@@ -8,6 +8,7 @@ class SubgroupTableModel < Qt::AbstractTableModel
     super()
     @subgroups = subgroups
     @view = parent
+    @view.setItemDelegateForColumn(1, GroupComboBoxDelegate.new(self))
   end
 
   def rowCount(parent)
@@ -19,19 +20,30 @@ class SubgroupTableModel < Qt::AbstractTableModel
   end
 
   def data(index, role = Qt::DisplayRole)
-    invalid = Qt::Variant.new
-    return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
     subgroup = @subgroups[index.row]
-    return invalid if subgroup.nil?
-    v = case index.column
-        when 0
-          subgroup.number
-        when 1
-          subgroup.group.title
-        else
-          raise "invalid column #{index.column}"
-        end || ''
-    Qt::Variant.new(v)
+    default = Qt::Variant.new
+    case role
+    when Qt::DisplayRole
+      case index.column
+      when 0
+        subgroup.number
+      when 1
+        subgroup.group.try(:title)
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    when Qt::EditRole
+      case index.column
+      when 0
+        subgroup.number
+      when 1
+        subgroup.group_id
+      else
+        raise "invalid column #{index.column}"
+      end.try(:to_v) || default
+    else
+      default
+    end
   end
 
   def headerData(section, orientation, role = Qt::DisplayRole)
@@ -57,7 +69,7 @@ class SubgroupTableModel < Qt::AbstractTableModel
       when 0
         subgroup.number = variant.toInt
       when 1
-        subgroup.group.name = variant.toString
+        subgroup.group_id = variant.toInt
       else
         raise "invalid column #{index.column}"
       end
@@ -86,4 +98,31 @@ class SubgroupTableModel < Qt::AbstractTableModel
     end
   end
 
+end
+
+class GroupComboBoxDelegate < Qt::ItemDelegate
+  def initialize(parent)
+    super
+    @groups = Group.all.sort_by(&:title_for_sort)
+  end
+
+  def createEditor(parent, option, index)
+    editor = Qt::ComboBox.new(parent)
+    @groups.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
+    editor
+  end
+
+  def setEditorData(editor, index)
+    value = index.model.data(index, Qt::EditRole)
+    editor.setCurrentIndex(editor.findData(value))
+  end
+
+  def setModelData(editor, model, index)
+    value = editor.itemData(editor.currentIndex)
+    model.setData(index, value, Qt::EditRole)
+  end
+
+  def updateEditorGeometry(editor, option, index)
+    editor.setGeometry(option.rect)
+  end
 end

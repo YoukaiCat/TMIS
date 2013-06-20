@@ -50,11 +50,10 @@ class CourseTableModel < Qt::AbstractTableModel
 
   def setData(index, variant, role = Qt::EditRole)
     if index.valid? and role == Qt::EditRole
-      s = variant.toString
       course = @courses[index.row]
       case index.column
       when 0
-        course.number = s.to_i
+        course.number = variant.toInt
       else
         raise "invalid column #{index.column}"
       end

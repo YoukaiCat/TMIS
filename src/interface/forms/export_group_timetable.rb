@@ -128,10 +128,8 @@ class ExportGroupTimetableDialog < Qt::Dialog
 
   def mail(group, filename)
     group.emails.each do |email|
-      p filename
       text = "Здравствуйте, куратор группы #{group.to_s}!\n" +
              "В прикреплённой электронной таблице находится расписание для вашей группы.\n"
-      # group.emails.map do
       Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
         from     'tmis@kp11.ru'
         to       email.email
