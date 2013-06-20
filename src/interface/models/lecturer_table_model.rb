@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/lecturer'
+require_relative '../../engine/models/email'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class LecturerTableModel < Qt::AbstractTableModel
 
@@ -15,7 +16,7 @@ class LecturerTableModel < Qt::AbstractTableModel
   end
 
   def columnCount(parent)
-    3
+    4
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -30,6 +31,8 @@ class LecturerTableModel < Qt::AbstractTableModel
           lecturer.name
         when 2
           lecturer.patronymic
+        when 3
+          lecturer.emails.map(&:email).join(', ')
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -58,11 +61,17 @@ class LecturerTableModel < Qt::AbstractTableModel
       lecturer = @lecturers[index.row]
       case index.column
       when 0
-        lecturer.surname = s
+        lecturer.surname = s.force_encoding('UTF-8')
       when 1
-        lecturer.name = s
+        lecturer.name = s.force_encoding('UTF-8')
       when 2
-        lecturer.patronymic = s
+        lecturer.patronymic = s.force_encoding('UTF-8')
+      when 3
+        emails = s.force_encoding('UTF-8').split(/,\s*/)
+        lecturer.emails.destroy_all
+        emails.each do |email|
+          lecturer.emails.create(email: email)
+        end
       else
         raise "invalid column #{index.column}"
       end
@@ -84,7 +93,7 @@ class LecturerTableModel < Qt::AbstractTableModel
   def remove_current
     if @view.currentIndex.valid?
       beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
-      @lecturers[@view.currentIndex.row].try(:delete)
+      @lecturers[@view.currentIndex.row].try(:destroy)
       @lecturers.delete_at(@view.currentIndex.row)
       endRemoveRows
       emit dataChanged(createIndex(0, 0), createIndex(@lecturers.size, 1))

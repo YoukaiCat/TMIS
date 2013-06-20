@@ -15,7 +15,7 @@ class GroupTableModel < Qt::AbstractTableModel
   end
 
   def columnCount(parent)
-    3
+    4
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -30,6 +30,8 @@ class GroupTableModel < Qt::AbstractTableModel
           group.speciality ? group.speciality.title : group.speciality_id
         when 2
           group.course ?  group.course.number :  group.course_id
+        when 3
+          group.emails.map(&:email).join(', ')
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -58,11 +60,17 @@ class GroupTableModel < Qt::AbstractTableModel
       group = @groups[index.row]
       case index.column
       when 0
-        group.title
+        group.title.force_encoding('UTF-8')
       when 1
         group.speciality_id
       when 2
         group.course_id
+      when 3
+        emails = s.force_encoding('UTF-8').split(/,\s*/)
+        group.emails.destroy_all
+        emails.each do |email|
+          group.emails.create(email: email)
+        end
       else
         raise "invalid column #{index.column}"
       end
@@ -84,7 +92,7 @@ class GroupTableModel < Qt::AbstractTableModel
   def remove_current
     if @view.currentIndex.valid?
       beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
-      @groups[@view.currentIndex.row].try(:delete)
+      @groups[@view.currentIndex.row].try(:destroy)
       @groups.delete_at(@view.currentIndex.row)
       endRemoveRows
       emit dataChanged(createIndex(0, 0), createIndex(@groups.size, 1))

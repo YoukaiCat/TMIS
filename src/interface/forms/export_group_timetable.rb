@@ -127,16 +127,19 @@ class ExportGroupTimetableDialog < Qt::Dialog
   end
 
   def mail(group, filename)
-    text = "Здравствуйте, куратор группы #{group.to_s}!\n" +
-           "В прикреплённой электронной таблице находится расписание для вашей группы.\n"
-    # group.emails.map do
-    Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
-      from    'tmis@kp11.ru'
-      to      'noein93@gmail.com'
-      subject 'Расписание'
-      body     text
-      add_file :filename => 'timetable.xls', :content => File.read(filename)
-    end.send!
+    group.emails.each do |email|
+      p filename
+      text = "Здравствуйте, куратор группы #{group.to_s}!\n" +
+             "В прикреплённой электронной таблице находится расписание для вашей группы.\n"
+      # group.emails.map do
+      Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
+        from     'tmis@kp11.ru'
+        to       email.email
+        subject  'Расписание'
+        body     text
+        add_file filename
+      end.send!
+    end
   end
 
   def on_exportButtonBox_rejected

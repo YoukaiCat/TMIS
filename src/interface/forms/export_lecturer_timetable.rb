@@ -127,23 +127,28 @@ class ExportLecturerTimetableDialog < Qt::Dialog
   end
 
   def mail(lecturer, filename)
-    text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
-    grouped = lecturer.studies.group(:date, :number).group_by(&:date)
-    grouped.each do |date, studies|
-      text += "Дата: #{date}\n\n"
-      studies.each do |s|
-        text += "\t Номер: #{s.number}, группа: #{s.groupable.to_s}, предмет #{s.subject.title}, кабинет: #{s.cabinet.title}\n"
+    lecturer.emails.each do |email|
+      p email
+      p filename
+      text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
+      grouped = lecturer.studies.group(:date, :number).group_by(&:date)
+      grouped.each do |date, studies|
+        text += "Дата: #{date}\n\n"
+        studies.each do |s|
+          text += "\t Номер: #{s.number}, группа: #{s.groupable.to_s}, предмет #{s.subject.title}, кабинет: #{s.cabinet.title}\n"
+        end
       end
+      text += "\nИтого пар: #{lecturer.studies.count}\n"
+      # lecturer.emails.map do
+      Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
+        from     'tmis@kp11.ru'
+        to       email.email
+        subject  'Расписание'
+        body     text
+        add_file filename
+      end.send!
+      #add_file :filename => 'timetable.xls', :content => File.read(filename, "r:UTF-8")
     end
-    text += "\nИтого пар: #{lecturer.studies.count}\n"
-    # lecturer.emails.map do
-    Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do
-      from    'tmis@kp11.ru'
-      to      'noein93@gmail.com'
-      subject 'Расписание'
-      body     text
-      add_file :filename => 'timetable.xls', :content => File.read(filename)
-    end.send!
   end
 
   def on_exportButtonBox_rejected

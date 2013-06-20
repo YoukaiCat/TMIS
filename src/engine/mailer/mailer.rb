@@ -18,6 +18,7 @@ class Mailer
     @password = password
     set_defaults
     @mail = Mail.new(&block)
+    @mail.charset = 'UTF-8'
   end
 
   Contract String => Bool
@@ -40,6 +41,7 @@ private
   Contract None => Any
   def set_defaults
     parts = email_parts
+    p email_parts
     pass = @password
     Mail.defaults do
       delivery_method :smtp, {

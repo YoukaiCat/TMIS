@@ -76,7 +76,7 @@ class SpecialityTableModel < Qt::AbstractTableModel
   def remove_current
     if @view.currentIndex.valid?
       beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
-      @specialities[@view.currentIndex.row].try(:delete)
+      @specialities[@view.currentIndex.row].try(:destroy)
       @specialities.delete_at(@view.currentIndex.row)
       endRemoveRows
       emit dataChanged(createIndex(0, 0), createIndex(@specialities.size, 1))

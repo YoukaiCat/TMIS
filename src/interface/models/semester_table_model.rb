@@ -80,7 +80,7 @@ class SemesterTableModel < Qt::AbstractTableModel
   def remove_current
     if @view.currentIndex.valid?
       beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
-      @semesters[@view.currentIndex.row].try(:delete)
+      @semesters[@view.currentIndex.row].try(:destroy)
       @semesters.delete_at(@view.currentIndex.row)
       endRemoveRows
       emit dataChanged(createIndex(0, 0), createIndex(@semesters.size, 1))
