@@ -519,7 +519,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
-         <widget class="QTabWidget" name="tabWidget_2">
+         <widget class="QTabWidget" name="dataTabWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>

@@ -11,6 +11,11 @@ class LecturerTableModel < Qt::AbstractTableModel
     @view = parent
   end
 
+  def refresh
+    @lecturers = Lecturer.all
+    emit layoutChanged()
+  end
+
   def rowCount(parent)
     @lecturers.size
   end
@@ -83,19 +88,15 @@ class LecturerTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @lecturers.prepend(Lecturer.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@lecturers.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @lecturers[@view.currentIndex.row].try(:destroy)
       @lecturers.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@lecturers.size, 1))
+      emit layoutChanged()
     end
   end
 

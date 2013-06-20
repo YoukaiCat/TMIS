@@ -8,7 +8,14 @@ class SubgroupTableModel < Qt::AbstractTableModel
     super()
     @subgroups = subgroups
     @view = parent
-    @view.setItemDelegateForColumn(1, GroupComboBoxDelegate.new(self))
+    @GroupComboBoxDelegate = GroupComboBoxDelegate.new(self)
+    @view.setItemDelegateForColumn(1, @GroupComboBoxDelegate)
+  end
+
+  def refresh
+    @subgroups = Subgroup.all
+    @GroupComboBoxDelegate.setup
+    emit layoutChanged()
   end
 
   def rowCount(parent)
@@ -82,19 +89,15 @@ class SubgroupTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @subgroups.prepend(Subgroup.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@subgroups.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @subgroups[@view.currentIndex.row].try(:destroy)
       @subgroups.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@subgroups.size, 1))
+      emit layoutChanged()
     end
   end
 
@@ -103,6 +106,10 @@ end
 class GroupComboBoxDelegate < Qt::ItemDelegate
   def initialize(parent)
     super
+    setup
+  end
+
+  def setup
     @groups = Group.all.sort_by(&:title_for_sort)
   end
 

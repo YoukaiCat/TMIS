@@ -7,13 +7,24 @@ class GroupTableModel < Qt::AbstractTableModel
   def initialize(groups, parent)
     super()
     @groups = groups
+    @size = @groups.size
     @view = parent
-    @view.setItemDelegateForColumn(1, SpecialityComboBoxDelegate.new(self))
-    @view.setItemDelegateForColumn(2, CourseComboBoxDelegate.new(self))
+    @SpecialityComboBoxDelegate = SpecialityComboBoxDelegate.new(self)
+    @CourseComboBoxDelegate = CourseComboBoxDelegate.new(self)
+    @view.setItemDelegateForColumn(1, @SpecialityComboBoxDelegate)
+    @view.setItemDelegateForColumn(2, @CourseComboBoxDelegate)
+  end
+
+  def refresh
+    @groups = Group.all
+    @size = @groups.size
+    @SpecialityComboBoxDelegate.setup
+    @CourseComboBoxDelegate.setup
+    emit layoutChanged()
   end
 
   def rowCount(parent)
-    @groups.size
+    @size
   end
 
   def columnCount(parent)
@@ -91,6 +102,7 @@ class GroupTableModel < Qt::AbstractTableModel
         raise "invalid column #{index.column}"
       end
       group.save
+      p group
       emit dataChanged(index, index)
       true
     else
@@ -99,19 +111,15 @@ class GroupTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @groups.prepend(Group.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@groups.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @groups[@view.currentIndex.row].try(:destroy)
       @groups.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@groups.size, 1))
+      emit layoutChanged()
     end
   end
 
@@ -120,6 +128,10 @@ end
 class SpecialityComboBoxDelegate < Qt::ItemDelegate
   def initialize(parent)
     super
+    setup
+  end
+
+  def setup
     @specialities = Speciality.all.sort_by(&:title)
   end
 
@@ -147,6 +159,10 @@ end
 class CourseComboBoxDelegate < Qt::ItemDelegate
   def initialize(parent)
     super
+    setup
+  end
+
+  def setup
     @courses = Course.all.sort_by(&:number)
   end
 

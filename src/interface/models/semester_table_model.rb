@@ -8,7 +8,14 @@ class SemesterTableModel < Qt::AbstractTableModel
     super()
     @semesters = semesters
     @view = parent
-    @view.setItemDelegateForColumn(1, CourseComboBoxDelegate.new(self))
+    @CourseComboBoxDelegate = CourseComboBoxDelegate.new(self)
+    @view.setItemDelegateForColumn(1, @CourseComboBoxDelegate)
+  end
+
+  def refresh
+    @semesters = Semester.all
+    @CourseComboBoxDelegate.setup
+    emit layoutChanged()
   end
 
   def rowCount(parent)
@@ -74,6 +81,7 @@ class SemesterTableModel < Qt::AbstractTableModel
         raise "invalid column #{index.column}"
       end
       semester.save
+      p semester
       emit dataChanged(index, index)
       true
     else
@@ -82,19 +90,15 @@ class SemesterTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @semesters.prepend(Semester.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@semesters.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @semesters[@view.currentIndex.row].try(:destroy)
       @semesters.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@semesters.size, 1))
+      emit layoutChanged()
     end
   end
 
@@ -103,6 +107,10 @@ end
 class CourseComboBoxDelegate < Qt::ItemDelegate
   def initialize(parent)
     super
+    setup
+  end
+
+  def setup
     @courses = Course.all.sort_by(&:number)
   end
 

@@ -23,6 +23,9 @@ require_relative 'src/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Encoding.default_external = 'UTF-8'
 
+Qt.debug_level = Qt::DebugLevel::High if ARGV.include? "--debug"
+#Qt::Internal::setDebug(Qt::QtDebugChannel::QTDB_VIRTUAL)
+
 Qt::Application.new(ARGV) do
   codec = Qt::TextCodec::codecForName('UTF-8')
   Qt::TextCodec::setCodecForCStrings codec

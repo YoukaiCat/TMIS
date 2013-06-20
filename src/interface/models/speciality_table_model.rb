@@ -10,6 +10,11 @@ class SpecialityTableModel < Qt::AbstractTableModel
     @view = parent
   end
 
+  def refresh
+    @specialities = Speciality.all
+    emit layoutChanged()
+  end
+
   def rowCount(parent)
     @specialities.size
   end
@@ -66,19 +71,15 @@ class SpecialityTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @specialities.prepend(Speciality.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@specialities.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @specialities[@view.currentIndex.row].try(:destroy)
       @specialities.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@specialities.size, 1))
+      emit layoutChanged()
     end
   end
 

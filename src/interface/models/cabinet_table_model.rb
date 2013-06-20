@@ -4,11 +4,18 @@ require_relative '../../engine/models/cabinet'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CabinetTableModel < Qt::AbstractTableModel
 
+  signals 'updated()'
+
   def initialize(cabinets, parent)
     super()
     @cabinets = cabinets
     @view = parent
     @view.setItemDelegateForColumn(1, RadioButtonDelegate.new(self))
+  end
+
+  def refresh
+    @cabinets = Cabinet.all
+    emit layoutChanged()
   end
 
   def rowCount(parent)
@@ -20,19 +27,6 @@ class CabinetTableModel < Qt::AbstractTableModel
   end
 
   def data(index, role = Qt::DisplayRole)
-    #invalid = Qt::Variant.new
-    #return invalid unless role == Qt::DisplayRole or role == Qt::EditRole
-    #cabinet = @cabinets[index.row]
-    #return invalid if cabinet.nil?
-    #v = case index.column
-    #    when 0
-    #      cabinet.title
-    #    when 1
-    #      cabinet.with_computers
-    #    else
-    #      raise "invalid column #{index.column}"
-    #    end || ''
-    #Qt::Variant.new(v)
     cabinet = @cabinets[index.row]
     default = Qt::Variant.new
     case role
@@ -95,19 +89,16 @@ class CabinetTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    beginInsertRows(createIndex(0, 0), 0, 0)
     @cabinets.prepend(Cabinet.new)
-    emit dataChanged(createIndex(0, 0), createIndex(@cabinets.size, 1))
-    endInsertRows
+    emit layoutChanged()
   end
 
   def remove_current
     if @view.currentIndex.valid?
-      beginRemoveRows(createIndex(@view.currentIndex.row - 1, @view.currentIndex.column - 1), @view.currentIndex.row, @view.currentIndex.row)
       @cabinets[@view.currentIndex.row].try(:destroy)
       @cabinets.delete_at(@view.currentIndex.row)
-      endRemoveRows
-      emit dataChanged(createIndex(0, 0), createIndex(@cabinets.size, 1))
+      emit layoutChanged()
+      emit updated
     end
   end
 

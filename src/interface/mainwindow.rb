@@ -121,6 +121,9 @@ class MainWindow < Qt::MainWindow
   slots 'on_addSubjectPushButton_clicked()'
   slots 'on_removeSubjectPushButton_clicked()'
 
+  slots 'on_tabWidget_currentChanged(int)'
+  slots 'on_dataTabWidget_currentChanged(int)'
+
 
   def initialize(parent = nil)
     super(parent)
@@ -331,10 +334,17 @@ class MainWindow < Qt::MainWindow
   end
 
   class EntityItemModel < Qt::AbstractItemModel
-    def initialize(entities, parent = nil)
+    def initialize(lambda, parent = nil)
       super(parent)
-      @entities = entities
+      @get_entities = lambda
+      @entities = @get_entities.()
       @size = @entities.size
+    end
+
+    def refresh
+      @entities = @get_entities.()
+      @size = @entities.size
+      emit layoutChanged()
     end
 
     def index(row, column, parent)
@@ -392,13 +402,13 @@ class MainWindow < Qt::MainWindow
     @tables_views_to_hide.each(&:show)
     @widgets_to_disable.each{ |x| x.enabled = true }
     #@ui.studiesTableView.setSpan(0, 0, 1, 3)
-    model =  EntityItemModel.new(Subject.all, self)
+    model =  EntityItemModel.new(->(){ Subject.all }, self)
     @ui.subjectsListView.setModel model
     @ui.subjectsListView.show
-    model =  EntityItemModel.new(Lecturer.all, self)
+    model =  EntityItemModel.new(->(){ Lecturer.all }, self)
     @ui.lecturersListView.setModel model
     @ui.lecturersListView.show
-    model =  EntityItemModel.new(Cabinet.all, self)
+    model =  EntityItemModel.new(->(){ Cabinet.all }, self)
     @ui.cabinetsListView.setModel model
     @ui.cabinetsListView.show
   end
@@ -504,133 +514,93 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_addCabinetPushButton_clicked
-    model = @ui.cabinetsTableView.model.sourceModel
-    model.insert_new
-    @ui.cabinetsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.cabinetsTableView.model.sourceModel.insert_new
   end
 
   def on_removeCabinetPushButton_clicked
-    model = @ui.cabinetsTableView.model.sourceModel
-    model.remove_current
-    @ui.cabinetsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.cabinetsTableView.model.sourceModel.remove_current
   end
 
   def on_addCoursePushButton_clicked
-    model = @ui.coursesTableView.model.sourceModel
-    model.insert_new
-    @ui.coursesTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.coursesTableView.model.sourceModel.insert_new
   end
 
   def on_removeCoursePushButton_clicked
-    model = @ui.coursesTableView.model.sourceModel
-    model.remove_current
-    @ui.coursesTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.coursesTableView.model.sourceModel.remove_current
   end
 
   def on_addGroupPushButton_clicked
-    model = @ui.groupsTableView.model.sourceModel
-    model.insert_new
-    @ui.groupsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.groupsTableView.model.sourceModel.insert_new
   end
 
   def on_removeGroupPushButton_clicked
-    model = @ui.groupsTableView.model.sourceModel
-    model.remove_current
-    @ui.groupsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.groupsTableView.model.sourceModel.remove_current
   end
 
   def on_addLecturerPushButton_clicked
-    model = @ui.lecturersTableView.model.sourceModel
-    model.insert_new
-    @ui.lecturersTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.lecturersTableView.model.sourceModel.insert_new
   end
 
   def on_removeLecturerPushButton_clicked
-    model = @ui.lecturersTableView.model.sourceModel
-    model.remove_current
-    @ui.lecturersTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.lecturersTableView.model.sourceModel.remove_current
   end
 
   def on_addSemesterPushButton_clicked
-    model = @ui.semestersTableView.model.sourceModel
-    model.insert_new
-    @ui.semestersTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.semestersTableView.model.sourceModel.insert_new
   end
 
   def on_removeSemesterPushButton_clicked
-    model = @ui.semestersTableView.model.sourceModel
-    model.remove_current
-    @ui.semestersTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.semestersTableView.model.sourceModel.remove_current
   end
 
   def on_addSpecialitysubjectPushButton_clicked
-    model = @ui.specialitysubjectsTableView.model.sourceModel
-    model.insert_new
-    @ui.specialitysubjectsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.specialitysubjectsTableView.model.sourceModel.insert_new
   end
 
   def on_removeSpecialitysubjectPushButton_clicked
-    model = @ui.specialitysubjectsTableView.model.sourceModel
-    model.remove_current
-    @ui.specialitysubjectsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.specialitysubjectsTableView.model.sourceModel.remove_current
   end
 
   def on_addSpecialityPushButton_clicked
-    model = @ui.specialitiesTableView.model.sourceModel
-    model.insert_new
-    @ui.specialitiesTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.specialitiesTableView.model.sourceModel.insert_new
   end
 
   def on_removeSpecialityPushButton_clicked
-    model = @ui.specialitiesTableView.model.sourceModel
-    model.remove_current
-    @ui.specialitiesTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.specialitiesTableView.model.sourceModel.remove_current
   end
 
   def on_addSubgroupPushButton_clicked
-    model = @ui.subgroupsTableView.model.sourceModel
-    model.insert_new
-    @ui.subgroupsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.subgroupsTableView.model.sourceModel.insert_new
   end
 
   def on_removeSubgroupPushButton_clicked
-    model = @ui.subgroupsTableView.model.sourceModel
-    model.remove_current
-    @ui.subgroupsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.subgroupsTableView.model.sourceModel.remove_current
   end
 
   def on_addSubjectPushButton_clicked
-    model = @ui.subjectsTableView.model.sourceModel
-    model.insert_new
-    @ui.subjectsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.subjectsTableView.model.sourceModel.insert_new
   end
 
   def on_removeSubjectPushButton_clicked
-    model = @ui.subjectsTableView.model.sourceModel
-    model.remove_current
-    @ui.subjectsTableView.model.sourceModel = model
-    refresh_all_study_models
+    @ui.subjectsTableView.model.sourceModel.remove_current
   end
 
-  def refresh_all_study_models
-    @study_table_models.each(&:refresh)
+  def on_dataTabWidget_currentChanged(index)
+    @table_views.each do |c, m, view|
+      model = view.model.sourceModel
+      view.model.dispose
+      model.refresh
+      proxy_model = Qt::SortFilterProxyModel.new(model)
+      proxy_model.setSourceModel(model)
+      view.model = proxy_model
+    end
+  end
+
+  def on_tabWidget_currentChanged(index)
+    if index == 0
+      @study_table_models.each(&:refresh)
+      [@ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView].each{|view| view.model.refresh }
+    end
   end
 
 end
