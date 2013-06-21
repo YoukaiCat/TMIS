@@ -26,7 +26,7 @@ FactoryGirl.define do
 
   factory :lecturer do |t|
     surname %w[ Иванов Петров Сидоров ].sample
-    name %w[ Иван Петр Алесей ].sample
+    name %w[ Иван Петр Алексей ].sample
     patronymic %w[ Иванович Петрович Алексеевич ].sample
   end
 

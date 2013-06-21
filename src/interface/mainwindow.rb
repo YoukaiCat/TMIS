@@ -243,7 +243,7 @@ class MainWindow < Qt::MainWindow
   def on_closeAction_triggered
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
-    Database.instance.disconnect
+    Database.instance.disconnect unless $TESTING
   end
 
   def on_quitAction_triggered

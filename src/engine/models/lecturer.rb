@@ -12,7 +12,7 @@ class Lecturer < ActiveRecord::Base
 
   Contract None => String
   def to_s
-    "#{self.surname} #{self.name unless self.name.nil?} #{self.patronymic unless self.patronymic.nil?}"
+    "#{surname}#{(name.nil? ? '' : " #{name[0].mb_chars.capitalize.to_s}.")}#{(patronymic.nil? ? '' : " #{patronymic[0].mb_chars.capitalize.to_s}.")}"
   end
 
   def set_stubs_for_studies

@@ -12,6 +12,8 @@ require_relative '../src/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 Encoding.default_external = 'UTF-8'
 
+$TESTING = true
+
 SimpleCov.command_name('Rspec')
 SimpleCov.start do
   add_filter 'spec/'

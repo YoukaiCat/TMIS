@@ -22,7 +22,7 @@ describe Lecturer do
   end
 
   it 'should print surname with initials' do
-    @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\s[[:alpha:]]+/
+    @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\.\s[[:alpha:]]+\./
   end
 
   after(:all) do
