@@ -5,6 +5,7 @@ include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Lecturer < ActiveRecord::Base
   has_many :studies
+  has_many :speciality_subjects
   has_many :emails, :as => :emailable, :dependent => :destroy
 
   before_destroy :set_stubs_for_studies

@@ -61,6 +61,5 @@ FactoryGirl.define do
     subject
     semester
     speciality
-    hours { rand(20..300) }
   end
 end

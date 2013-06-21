@@ -113,14 +113,16 @@ class MainWindow < Qt::MainWindow
   slots 'on_removeLecturerPushButton_clicked()'
   slots 'on_addSemesterPushButton_clicked()'
   slots 'on_removeSemesterPushButton_clicked()'
-  slots 'on_addSpecialitySubjectPushButton_clicked()'
-  slots 'on_removeSpecialitySubjectPushButton_clicked()'
   slots 'on_addSpecialityPushButton_clicked()'
   slots 'on_removeSpecialityPushButton_clicked()'
   slots 'on_addSubgroupPushButton_clicked()'
   slots 'on_removeSubgroupPushButton_clicked()'
   slots 'on_addSubjectPushButton_clicked()'
   slots 'on_removeSubjectPushButton_clicked()'
+  slots 'on_addSpecialitySubjectPushButton_clicked()'
+  slots 'on_removeSpecialitySubjectPushButton_clicked()'
+  #connect(@ui.addSpecialitySubjectPushButton, SLOT('clicked()'), self, SLOT('on_addSpecialitySubjectPushButton_clicked()'))
+  #connect(@ui.removeSpecialitySubjectPushButton, SLOT('clicked()'), self, SLOT('on_removeSpecialitySubjectPushButton_clicked()'))
 
   slots 'on_tabWidget_currentChanged(int)'
   slots 'on_dataTabWidget_currentChanged(int)'
@@ -557,12 +559,12 @@ class MainWindow < Qt::MainWindow
     @ui.semestersTableView.model.sourceModel.remove_current
   end
 
-  def on_addSpecialitysubjectPushButton_clicked
-    @ui.specialitysubjectsTableView.model.sourceModel.insert_new
+  def on_addSpecialitySubjectPushButton_clicked
+    @ui.specialitySubjectsTableView.model.sourceModel.insert_new
   end
 
-  def on_removeSpecialitysubjectPushButton_clicked
-    @ui.specialitysubjectsTableView.model.sourceModel.remove_current
+  def on_removeSpecialitySubjectPushButton_clicked
+    @ui.specialitySubjectsTableView.model.sourceModel.remove_current
   end
 
   def on_addSpecialityPushButton_clicked
