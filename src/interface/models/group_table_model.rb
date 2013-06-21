@@ -7,7 +7,7 @@ class GroupTableModel < Qt::AbstractTableModel
   def initialize(groups, parent)
     super()
     @groups = groups
-    @size = @groups.size
+    @groups.size
     @view = parent
     @SpecialityComboBoxDelegate = SpecialityComboBoxDelegate.new(self)
     @CourseComboBoxDelegate = CourseComboBoxDelegate.new(self)
@@ -17,14 +17,13 @@ class GroupTableModel < Qt::AbstractTableModel
 
   def refresh
     @groups = Group.all
-    @size = @groups.size
     @SpecialityComboBoxDelegate.setup
     @CourseComboBoxDelegate.setup
     emit layoutChanged()
   end
 
   def rowCount(parent)
-    @size
+    @groups.size
   end
 
   def columnCount(parent)

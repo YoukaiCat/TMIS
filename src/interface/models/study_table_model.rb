@@ -15,14 +15,14 @@ class StudyTableModel < Qt::AbstractTableModel
     super()
     @view = parent
     @date = date
-    @studies = get_studies
-    @groups = Group.all.sort_by(&:title_for_sort)
-    @titles = @groups.map(&:title)
+    @studies = setup
     @colors_for_studies = {}
     @colors_for_cabinets = {}
   end
 
-  def get_studies
+  def setup
+    @groups = Group.all.sort_by(&:title_for_sort)
+    @titles = @groups.map(&:title)
     Hash[ Group.all.map{|g| [g, []]} ].
       merge(Study.of_groups_and_its_subgroups(Group.scoped).
       where(date: @date).
@@ -37,7 +37,8 @@ class StudyTableModel < Qt::AbstractTableModel
   end
 
   def refresh
-    @studies = get_studies
+    @studies = setup
+    emit layoutChanged()
   end
 
   def rowCount(parent = self)
@@ -63,6 +64,11 @@ class StudyTableModel < Qt::AbstractTableModel
       rescue NoMethodError
         default
       end
+      #if index.column.even?
+      #  @studies[index.column / 2].try(:at, 1).try(:fetch, (index.row / 2) + 1, nil).try(:at, index.row % 2).try(:to_s)
+      #else
+      #  @studies[index.column / 2].try(:at, 1).try(:fetch, (index.row / 2) + 1, nil).try(:at, index.row % 2).try(:cabinet).try(:title)
+      #end.try(:to_v) || default
     when  Qt::BackgroundRole #Qt::TextColorRole
       begin
         if index.column.even?

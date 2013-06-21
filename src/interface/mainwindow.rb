@@ -173,6 +173,7 @@ class MainWindow < Qt::MainWindow
   def on_newAction_triggered
     Database.instance.connect_to(@temp.())
     create_stubs
+    Group.create(title: 'New')
     show_tables
   end
 
