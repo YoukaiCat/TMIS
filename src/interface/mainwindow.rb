@@ -159,9 +159,15 @@ class MainWindow < Qt::MainWindow
     @temp = ->(){ "#{Dir.mktmpdir('tmis')}/temp.sqlite" }
     connect(@ui.aboutQtAction, SIGNAL('triggered()')){ Qt::Application.aboutQt }
     connect(@ui.aboutProgramAction, SIGNAL('triggered()')){ AboutDialog.new.exec }
-    connect(@ui.exportGeneralAction, SIGNAL('triggered()')){ ExportGeneralTimetableDialog.new.exec }
-    connect(@ui.exportForLecturersAction, SIGNAL('triggered()')){ ExportLecturerTimetableDialog.new.exec }
-    connect(@ui.exportForGroupsAction, SIGNAL('triggered()')){ ExportGroupTimetableDialog.new.exec }
+    connect(@ui.exportGeneralAction, SIGNAL('triggered()')) do
+      ExportGeneralTimetableDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))).exec
+    end
+    connect(@ui.exportForLecturersAction, SIGNAL('triggered()')) do
+      ExportLecturerTimetableDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))).exec
+    end
+    connect(@ui.exportForGroupsAction, SIGNAL('triggered()')) do
+      ExportGroupTimetableDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))).exec
+    end
     connect(@ui.settingsAction, SIGNAL('triggered()')){ SettingsDialog.new.exec }
     connect(@ui.expandChangesAction, SIGNAL('triggered()')){ ExpandChangesDialog.new(self).exec }
     @clear_recent_action = Qt::Action.new('Очистить', self)
@@ -212,12 +218,21 @@ class MainWindow < Qt::MainWindow
   def on_importAction_triggered
     please_wait do
       if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
-        (id = ImportDialog.new).exec
+        if Database.instance.connected?
+          (id = ImportDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)))).exec
+        else
+          (id = ImportDialog.new(Date.today)).exec
+        end
         unless id.params.empty?
           sheet = SpreadsheetCreater.create filename
           reader = TimetableReader.new(sheet, id.params[:sheet])
-          Database.instance.connect_to(@temp.())
-          create_stubs
+          monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
+          if Database.instance.connected?
+            Database.instance.transaction do Study.where(date: (monday..(monday + 6))).each(&:delete) end
+          else
+            Database.instance.connect_to(@temp.())
+            create_stubs
+          end
           TimetableManager.new(reader, id.params[:date]).save_to_db
           show_tables
         end

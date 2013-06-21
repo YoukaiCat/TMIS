@@ -19,11 +19,11 @@ class ExportLecturerTimetableDialog < Qt::Dialog
   slots 'on_deselectAllPushButton_pressed()'
   slots 'on_saveCheckBox_toggled(bool)'
 
-  def initialize(parent = nil)
+  def initialize(initial_date, parent = nil)
     super parent
     @ui = Ui::ExportLecturerTimetableDialog.new
     @ui.setup_ui self
-    @ui.dayDateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
+    @ui.dayDateEdit.setDate(Qt::Date.fromString(initial_date.to_s, Qt::ISODate))
     @ui.progressBar.visible = false
     Lecturer.all.each do |l|
       item = Qt::ListWidgetItem.new(l.to_s, @ui.lecturersListWidget)
@@ -40,6 +40,8 @@ class ExportLecturerTimetableDialog < Qt::Dialog
     if checked
       if (path = Qt::FileDialog::getExistingDirectory(self, 'Open Directory', '/home', Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks))
         @ui.folderPathLineEdit.text = path # force_encoding doesn't help because Qt changes the encoding to ASCII anyway
+      else
+        @ui.folderPathLineEdit.text = Dir.home
       end
     else
        @ui.folderPathLineEdit.text = ''
@@ -56,12 +58,9 @@ class ExportLecturerTimetableDialog < Qt::Dialog
 
   def on_exportButtonBox_accepted
     if @ui.modeComboBox.currentIndex == 0
-      if (date = Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate))).monday?
-        export(date..date + 5)
-        close
-      else
-        show_message 'Дата не соответствует понедельнику'
-      end
+      date = Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate)).monday
+      export(date..date + 5)
+      close
     elsif @ui.modeComboBox.currentIndex == 1
       export([Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate))])
       close
@@ -74,23 +73,30 @@ class ExportLecturerTimetableDialog < Qt::Dialog
     @ui.progressBar.visible = true
     @ui.progressBar.setRange(0, @ui.lecturersListWidget.count)
     if @ui.saveCheckBox.checkState == Qt::Checked and @ui.mailCheckBox.checkState == Qt::Checked
-      @ui.lecturersListWidget.count.times do |i|
-        @ui.progressBar.setValue(i)
-        Qt::Application::processEvents
-        if @ui.lecturersListWidget.item(i).checkState == Qt::Checked
-          id = @ui.lecturersListWidget.item(i).data(Qt::UserRole)
-          lecturer = Lecturer.where(id: id.to_i).first
-          filename = File.join(File.expand_path(@ui.folderPathLineEdit.text.force_encoding('UTF-8')), "#{lecturer.surname}_timetable.xls")
-          if File.exist? filename
-            File.delete filename
-            spreadsheet = SpreadsheetCreater.create filename
-          else
-            spreadsheet = SpreadsheetCreater.create filename
+      #if !@ui.folderPathLineEdit.text.empty? && Dir.exist?(File.expand_path(@ui.folderPathLineEdit.text.force_encoding('UTF-8')))
+        @ui.lecturersListWidget.count.times do |i|
+          @ui.progressBar.setValue(i)
+          Qt::Application::processEvents
+          if @ui.lecturersListWidget.item(i).checkState == Qt::Checked
+            id = @ui.lecturersListWidget.item(i).data(Qt::UserRole)
+            lecturer = Lecturer.where(id: id.to_i).first
+            path = @ui.folderPathLineEdit.text.force_encoding('UTF-8')
+            if File.writable? path
+              filename = File.join(path, "#{lecturer.surname}_timetable.xls")
+              if File.exist? filename
+                File.delete filename
+                spreadsheet = SpreadsheetCreater.create filename
+              else
+                spreadsheet = SpreadsheetCreater.create filename
+              end
+              TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
+              mail(lecturer, filename)
+            end
           end
-          TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
-          mail(lecturer, filename)
         end
-      end
+      #else
+      #  show_message 'Директория не существует выберите другую.'
+      #end
     elsif @ui.saveCheckBox.checkState == Qt::Checked
       @ui.lecturersListWidget.count.times do |i|
         @ui.progressBar.setValue(i)
@@ -98,14 +104,17 @@ class ExportLecturerTimetableDialog < Qt::Dialog
         if @ui.lecturersListWidget.item(i).checkState == Qt::Checked
           id = @ui.lecturersListWidget.item(i).data(Qt::UserRole)
           lecturer = Lecturer.where(id: id.to_i).first
-          filename = File.join(File.expand_path(@ui.folderPathLineEdit.text.force_encoding('UTF-8')), "#{lecturer.surname}_timetable.xls")
-          if File.exist? filename
-            File.delete filename
-            spreadsheet = SpreadsheetCreater.create filename
-          else
-            spreadsheet = SpreadsheetCreater.create filename
+          path = @ui.folderPathLineEdit.text.force_encoding('UTF-8')
+          if File.writable? path
+            filename = File.join(path, "#{lecturer.surname}_timetable.xls")
+            if File.exist? filename
+              File.delete filename
+              spreadsheet = SpreadsheetCreater.create filename
+            else
+              spreadsheet = SpreadsheetCreater.create filename
+            end
+            mail(lecturer, filename)
           end
-          TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
         end
       end
     elsif @ui.mailCheckBox.checkState == Qt::Checked
@@ -127,7 +136,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
   end
 
   def mail(lecturer, filename)
-    lecturer.emails.each do |email|
+    lecturer.emails.select(&:email_valid?).each do |email|
       text = "Здравствуйте, #{lecturer.to_s}! Ваши пары на этой неделе:\n\n"
       grouped = lecturer.studies.group(:date, :number).group_by(&:date)
       grouped.each do |date, studies|

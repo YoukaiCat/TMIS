@@ -19,11 +19,11 @@ class ExportGroupTimetableDialog < Qt::Dialog
   slots 'on_deselectAllPushButton_pressed()'
   slots 'on_saveCheckBox_toggled(bool)'
 
-  def initialize(parent = nil)
+  def initialize(initial_date, parent = nil)
     super parent
     @ui = Ui::ExportGroupTimetableDialog.new
     @ui.setup_ui self
-    @ui.dayDateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
+    @ui.dayDateEdit.setDate(Qt::Date.fromString(initial_date.to_s, Qt::ISODate))
     @ui.progressBar.visible = false
     Group.all.each do |g|
       item = Qt::ListWidgetItem.new(g.to_s, @ui.groupsListWidget)
@@ -40,6 +40,8 @@ class ExportGroupTimetableDialog < Qt::Dialog
     if checked
       if (path = Qt::FileDialog::getExistingDirectory(self, 'Open Directory', '/home', Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks))
         @ui.folderPathLineEdit.text = path # force_encoding doesn't help because Qt changes the encoding to ASCII anyway
+      else
+        @ui.folderPathLineEdit.text = Dir.home
       end
     else
        @ui.folderPathLineEdit.text = ''
@@ -56,12 +58,9 @@ class ExportGroupTimetableDialog < Qt::Dialog
 
   def on_exportButtonBox_accepted
     if @ui.modeComboBox.currentIndex == 0
-      if (date = Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate))).monday?
-        export(date..date + 5)
-        close
-      else
-        show_message 'Дата не соответствует понедельнику'
-      end
+      date = Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate)).monday
+      export(date..date + 5)
+      close
     elsif @ui.modeComboBox.currentIndex == 1
       export([Date.parse(@ui.dayDateEdit.date.toString(Qt::ISODate))])
       close
@@ -80,15 +79,17 @@ class ExportGroupTimetableDialog < Qt::Dialog
         if @ui.groupsListWidget.item(i).checkState == Qt::Checked
           id = @ui.groupsListWidget.item(i).data(Qt::UserRole)
           group = Group.where(id: id.to_i).first
-          filename = File.join(File.expand_path(@ui.folderPathLineEdit.text.force_encoding('UTF-8')), "#{group.title}_timetable.xls")
-          if File.exist? filename
-            File.delete filename
-            spreadsheet = SpreadsheetCreater.create filename
-          else
-            spreadsheet = SpreadsheetCreater.create filename
+          path = @ui.folderPathLineEdit.text.force_encoding('UTF-8')
+          if File.writable? path
+            filename = File.join(path, "#{group.title}_timetable.xls")
+            if File.exist? filename
+              File.delete filename
+              spreadsheet = SpreadsheetCreater.create filename
+            else
+              spreadsheet = SpreadsheetCreater.create filename
+            end
+            mail(group, filename)
           end
-          TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new(dates, group)).export.save
-          mail(group, filename)
         end
       end
     elsif @ui.saveCheckBox.checkState == Qt::Checked
@@ -98,14 +99,17 @@ class ExportGroupTimetableDialog < Qt::Dialog
         if @ui.groupsListWidget.item(i).checkState == Qt::Checked
           id = @ui.groupsListWidget.item(i).data(Qt::UserRole)
           group = Group.where(id: id.to_i).first
-          filename = File.join(File.expand_path(@ui.folderPathLineEdit.text.force_encoding('UTF-8')), "#{group.title}_timetable.xls")
-          if File.exist? filename
-            File.delete filename
-            spreadsheet = SpreadsheetCreater.create filename
-          else
-            spreadsheet = SpreadsheetCreater.create filename
+          path = @ui.folderPathLineEdit.text.force_encoding('UTF-8')
+          if File.writable? path
+            filename = File.join(path, "#{group.title}_timetable.xls")
+            if File.exist? filename
+              File.delete filename
+              spreadsheet = SpreadsheetCreater.create filename
+            else
+              spreadsheet = SpreadsheetCreater.create filename
+            end
+            mail(group, filename)
           end
-          TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new(dates, group)).export.save
         end
       end
     elsif @ui.mailCheckBox.checkState == Qt::Checked
@@ -127,7 +131,7 @@ class ExportGroupTimetableDialog < Qt::Dialog
   end
 
   def mail(group, filename)
-    group.emails.each do |email|
+    group.emails.select(&:email_valid?).each do |email|
       text = "Здравствуйте, куратор группы #{group.to_s}!\n" +
              "В прикреплённой электронной таблице находится расписание для вашей группы.\n"
       Mailer.new(Settings[:mailer, :email], Settings[:mailer, :password]) do

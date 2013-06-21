@@ -12,4 +12,8 @@ class Email < ActiveRecord::Base
   def to_lecturer?
     emailable_type == 'Lecturer'
   end
+
+  def email_valid?
+    /[\w\d._-]+@[\w\d.-]+[.][\w\d.-]+/i.bmatch email
+  end
 end

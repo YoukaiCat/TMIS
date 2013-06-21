@@ -14,24 +14,20 @@ class ImportDialog < Qt::Dialog
   slots 'on_buttonBox_accepted()'
   slots 'on_buttonBox_rejected()'
 
-  def initialize(parent = nil)
+  def initialize(initial_date, parent = nil)
     super parent
     @ui = Ui::ImportDialog.new
     @ui.setup_ui self
-    @ui.dateEdit.setDate(Qt::Date.fromString(Date.parse('monday').to_s, Qt::ISODate))
+    monday = Qt::Date.fromString(initial_date.monday.to_s, Qt::ISODate)
+    @ui.dateEdit.setDate(monday)
     @params = {}
   end
 
   def on_buttonBox_accepted
-    if (date = Date.parse(@ui.dateEdit.date.toString(Qt::ISODate))).monday?
-      @params[:sheet] = @ui.sheetNumberSpinBox.value
-      @params[:date] = date
-      close
-    else
-      box = Qt::MessageBox.new
-      box.setText('Дата не соответствует понедельнику')
-      box.exec
-    end
+    date = Date.parse(@ui.dateEdit.date.toString(Qt::ISODate)).monday
+    @params[:sheet] = @ui.sheetNumberSpinBox.value
+    @params[:date] = date
+    close
   end
 
   def on_buttonBox_rejected

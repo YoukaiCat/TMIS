@@ -27,8 +27,8 @@ class TimetableManager
   def save_to_db
     Database.instance.transaction do
       create_subgroups
-      (1..4).each{ |n| Course.create(number: n) }
-      Course.all.zip(Course.all).flatten.each_with_index { |c, i| Semester.create(title: i, course: c) }
+      (1..4).each{ |n| add(Course, number: n) }
+      Course.all.zip(Course.all).flatten.each_with_index { |c, i| add(Semester, {title: i, course_id: c}) }
     end
   end
 
@@ -36,8 +36,8 @@ private
   Contract None => Any
   def create_subgroups
     @reader.groups.each do |data|
-      group = Group.create(title: data[:title])
-      subgroups = (1..2).map{ |i| Subgroup.create(group: group, number: i) }
+      group = add(Group, title: data[:title])
+      subgroups = (1..2).map{ |i| add(Subgroup, {group_id: group, number: i}) }
       create_studies(data, group, subgroups)
     end
   end

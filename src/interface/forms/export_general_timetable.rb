@@ -15,25 +15,30 @@ class ExportGeneralTimetableDialog < Qt::Dialog
   slots 'on_exportButtonBox_rejected()'
   slots 'on_browsePushButton_clicked()'
 
-  def initialize(parent = nil)
+  def initialize(initial_date, parent = nil)
     super parent
     @ui = Ui::ExportGeneralTimetableDialog.new
     @ui.setup_ui self
-    @ui.dateDateEdit.setDate Qt::Date.fromString(Date.today.to_s, Qt::ISODate)
+    @ui.dateDateEdit.setDate Qt::Date.fromString(initial_date.to_s, Qt::ISODate)
   end
 
   def on_browsePushButton_clicked
-    @ui.pathLineEdit.text = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'XLS Spreadsheet(*.xls)')
+    @ui.pathLineEdit.text = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable', 'XLS Spreadsheet(*.xls)')
   end
 
   def on_exportButtonBox_accepted
-    if (filename = @ui.pathLineEdit.text).empty?
+    filename = @ui.pathLineEdit.text.force_encoding 'UTF-8'
+    if filename.empty?
       show_message 'Выберите путь к файлу'
     else
-      date = Date.parse @ui.dateDateEdit.date.toString(Qt::ISODate)
-      filename = @ui.pathLineEdit.text.force_encoding 'UTF-8'
-      export(date, filename)
-      close
+      path = Pathname.new(filename)
+      if path.dirname.writable?
+        date = Date.parse @ui.dateDateEdit.date.toString(Qt::ISODate)
+        export(date, path)
+        close
+      else
+        show_message 'Файл не может быть записан!'
+      end
     end
   end
 
@@ -41,12 +46,12 @@ class ExportGeneralTimetableDialog < Qt::Dialog
     close
   end
 
-  def export(date, filename)
-    if File.exist? filename
-      File.delete filename
-      spreadsheet = SpreadsheetCreater.create filename
+  def export(date, path)
+    if path.exist?
+      path.delete
+      spreadsheet = SpreadsheetCreater.create path.to_s
     else
-      spreadsheet = SpreadsheetCreater.create filename
+      spreadsheet = SpreadsheetCreater.create path.to_s
     end
     if @ui.weeklyRadioButton.isChecked
       TimetableExporter.new(spreadsheet, GeneralTimetableExportStratagy.new(date.monday..date.monday + 5)).export.save
