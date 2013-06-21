@@ -982,8 +982,9 @@
      <addaction name="separator"/>
      <addaction name="cancelVerifyingAction"/>
     </widget>
-    <addaction name="settingsAction"/>
     <addaction name="verifyMenu"/>
+    <addaction name="expandChangesAction"/>
+    <addaction name="settingsAction"/>
    </widget>
    <widget class="QMenu" name="editMenu">
     <property name="title">
@@ -1196,6 +1197,11 @@
   <action name="allAction">
    <property name="text">
     <string>Все проверки</string>
+   </property>
+  </action>
+  <action name="expandChangesAction">
+   <property name="text">
+    <string>Распространить изменения</string>
    </property>
   </action>
  </widget>

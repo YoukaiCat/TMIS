@@ -48,6 +48,7 @@ require_relative 'forms/console'
 require_relative 'forms/export_general_timetable'
 require_relative 'forms/export_lecturer_timetable'
 require_relative 'forms/export_group_timetable'
+require_relative 'forms/expand_changes'
 require_relative 'models/cabinet_table_model'
 require_relative 'models/course_table_model'
 require_relative 'models/group_table_model'
@@ -124,6 +125,7 @@ class MainWindow < Qt::MainWindow
   slots 'on_tabWidget_currentChanged(int)'
   slots 'on_dataTabWidget_currentChanged(int)'
 
+  attr_reader :ui
 
   def initialize(parent = nil)
     super(parent)
@@ -145,7 +147,7 @@ class MainWindow < Qt::MainWindow
                      @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
                      @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6,
                      @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView]
-    @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction]
+    @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction, @ui.expandChangesAction]
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
     modeActionGroup = Qt::ActionGroup.new(self)
@@ -159,6 +161,7 @@ class MainWindow < Qt::MainWindow
     connect(@ui.exportForLecturersAction, SIGNAL('triggered()')){ ExportLecturerTimetableDialog.new.exec }
     connect(@ui.exportForGroupsAction, SIGNAL('triggered()')){ ExportGroupTimetableDialog.new.exec }
     connect(@ui.settingsAction, SIGNAL('triggered()')){ SettingsDialog.new.exec }
+    connect(@ui.expandChangesAction, SIGNAL('triggered()')){ ExpandChangesDialog.new(self).exec }
     @clear_recent_action = Qt::Action.new('Очистить', self)
     @clear_recent_action.setData Qt::Variant.new('clear')
     connect(@clear_recent_action, SIGNAL('triggered()'), self, SLOT('clear_recent_files()'))
