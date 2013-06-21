@@ -243,7 +243,7 @@ class MainWindow < Qt::MainWindow
   def on_closeAction_triggered
     @tables_views_to_hide.each &:hide
     @widgets_to_disable.each{ |x| x.enabled = false }
-    #@db.disconnect
+    Database.instance.disconnect
   end
 
   def on_quitAction_triggered
@@ -607,20 +607,26 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_dataTabWidget_currentChanged(index)
-    @table_views.each do |c, m, view|
-      model = view.model.sourceModel
-      view.model.dispose
-      model.refresh
-      proxy_model = Qt::SortFilterProxyModel.new(model)
-      proxy_model.setSourceModel(model)
-      view.model = proxy_model
+    if Database.instance.connected?
+      p :test
+      @table_views.each do |c, m, view|
+        model = view.model.sourceModel
+        view.model.dispose
+        model.refresh
+        proxy_model = Qt::SortFilterProxyModel.new(model)
+        proxy_model.setSourceModel(model)
+        view.model = proxy_model
+      end
     end
   end
 
   def on_tabWidget_currentChanged(index)
-    if index == 0
-      @study_table_models.each(&:refresh)
-      [@ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView].each{|view| view.model.refresh }
+    if Database.instance.connected?
+      p :test
+      if index == 0
+        @study_table_models.each(&:refresh)
+        [@ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView].each{|view| view.model.refresh }
+      end
     end
   end
 
