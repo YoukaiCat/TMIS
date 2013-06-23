@@ -6,6 +6,7 @@ require_relative '../forms/edit_study'
 class StudyTableModel < Qt::AbstractTableModel
 
   signals 'studySaved(QVariant)'
+  signals 'refreshTarification(QModelIndex)'
   slots 'editStudy(QModelIndex)'
   slots 'removeData()'
   slots 'displayMenu(QPoint)'
@@ -70,9 +71,24 @@ class StudyTableModel < Qt::AbstractTableModel
       #end.try(:to_v) || default
     when Qt::UserRole
       begin
-        if (study = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2])
-          Base64.encode64(Marshal.dump(study)).to_v
-        elsif (group = @studies[index.column / 2][0])
+        if (st = @studies[index.column / 2])
+          if (st = st[1])
+            if (st = st[(index.row / 2) + 1])
+              if (study = st[index.row % 2])
+                Base64.encode64(Marshal.dump(study)).to_v
+              else
+                group = @groups[index.column / 2]
+                Base64.encode64(Marshal.dump(group)).to_v
+              end
+            else
+              group = @groups[index.column / 2]
+              Base64.encode64(Marshal.dump(group)).to_v
+            end
+          else
+            group = @groups[index.column / 2]
+            Base64.encode64(Marshal.dump(group)).to_v
+          end
+        elsif (group = @groups[index.column / 2])
           Base64.encode64(Marshal.dump(group)).to_v
         else
           default
@@ -159,6 +175,7 @@ class StudyTableModel < Qt::AbstractTableModel
         if (study = studies[index.row % 2])
           study.delete
           refresh
+          emit refreshTarification(index) if $TARIFICATION_MODE
           emit dataChanged(index, createIndex(index.row, index.column + 1))
         end
       end
@@ -253,6 +270,7 @@ class StudyTableModel < Qt::AbstractTableModel
     study.save
     refresh
     table_model.refresh if table_model && table_model != self
+    emit refreshTarification(index) if $TARIFICATION_MODE
     emit dataChanged(index, index)
     true
   end

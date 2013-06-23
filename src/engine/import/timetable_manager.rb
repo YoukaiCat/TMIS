@@ -28,7 +28,7 @@ class TimetableManager
     Database.instance.transaction do
       create_subgroups
       (1..4).each{ |n| add(Course, number: n) }
-      Course.all.zip(Course.all).flatten.each_with_index { |c, i| add(Semester, {title: i, course_id: c}) }
+      Course.all.zip(Course.all).flatten.each_with_index { |c, i| add(Semester, {title: i + 1, course_id: c}) }
     end
   end
 

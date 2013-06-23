@@ -160,7 +160,7 @@ class MainWindow < Qt::MainWindow
                      @ui.lecturersTableView, @ui.semestersTableView, @ui.specialitySubjectsTableView,
                      @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
                      @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6,
-                     @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView]
+                     @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView, @ui.tarificationCheckBox]
     @widgets_to_disable = [@ui.findMenu, @ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction, @ui.expandChangesAction]
     @tables_views_to_hide.each(&:hide)
     @widgets_to_disable.each{ |x| x.enabled = false }
@@ -535,48 +535,65 @@ class MainWindow < Qt::MainWindow
       @ui.lecturersListView.show
     else
       entity = Marshal.load(Base64.decode64(string))
+      p entity
       if entity.class == Study
         group = entity.groupable.get_group
         course = group.course
-        return false if course.nil?
-        semester = course.current_semester
-        get_subjects = ->() do
-          if entity.lecturer
-            SpecialitySubject.where(lecturer_id: entity.lecturer, speciality_id: group.speciality, semester_id: semester).map(&:subject)
-          else
-            SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:subject)
+        if course.nil?
+          model =  EntityItemModel.new(->(){ [] }, self)
+          @ui.subjectsListView.setModel model
+          @ui.subjectsListView.show
+          model =  EntityItemModel.new(->(){ [] }, self)
+          @ui.lecturersListView.setModel model
+          @ui.lecturersListView.show
+        else
+          semester = course.current_semester
+          get_subjects = ->() do
+            if entity.lecturer && entity.subject.stub
+              SpecialitySubject.where(lecturer_id: entity.lecturer, speciality_id: group.speciality, semester_id: semester).map(&:subject)
+            else
+              SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:subject)
+            end
           end
-        end
-        get_lecturers = ->() do
-          if entity.subject
-            SpecialitySubject.where(subject_id: entity.subject, speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
-          else
-            SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
+          get_lecturers = ->() do
+            if entity.subject && entity.lecturer.stub
+              SpecialitySubject.where(subject_id: entity.subject, speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
+            else
+              SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
+            end
           end
+          model =  EntityItemModel.new(get_subjects, self)
+          @ui.subjectsListView.setModel model
+          @ui.subjectsListView.show
+          model =  EntityItemModel.new(get_lecturers, self)
+          @ui.lecturersListView.setModel model
+          @ui.lecturersListView.show
         end
-        model =  EntityItemModel.new(get_subjects, self)
-        @ui.subjectsListView.setModel model
-        @ui.subjectsListView.show
-        model =  EntityItemModel.new(get_lecturers, self)
-        @ui.lecturersListView.setModel model
-        @ui.lecturersListView.show
       elsif entity.class == Group
         group = entity
         course = group.course
-        return false if course.nil?
-        semester = course.current_semester
-        get_subjects = ->() do
-          SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:subject)
+        if course.nil?
+          model =  EntityItemModel.new(->(){ [] }, self)
+          @ui.subjectsListView.setModel model
+          @ui.subjectsListView.show
+          model =  EntityItemModel.new(->(){ [] }, self)
+          @ui.lecturersListView.setModel model
+          @ui.lecturersListView.show
+        else
+          semester = course.current_semester
+          get_subjects = ->() do
+            SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:subject)
+          end
+          get_lecturers = ->() do
+            SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
+          end
+          model =  EntityItemModel.new(get_subjects, self)
+          @ui.subjectsListView.setModel model
+          @ui.subjectsListView.show
+          model =  EntityItemModel.new(get_lecturers, self)
+          @ui.lecturersListView.setModel model
+          @ui.lecturersListView.show
         end
-        get_lecturers = ->() do
-          SpecialitySubject.where(speciality_id: group.speciality, semester_id: semester).map(&:lecturer)
-        end
-        model =  EntityItemModel.new(get_subjects, self)
-        @ui.subjectsListView.setModel model
-        @ui.subjectsListView.show
-        model =  EntityItemModel.new(get_lecturers, self)
-        @ui.lecturersListView.setModel model
-        @ui.lecturersListView.show
       end
     end
   end
@@ -599,8 +616,10 @@ class MainWindow < Qt::MainWindow
       view.disconnect(SIGNAL('doubleClicked(QModelIndex)'))
       view.disconnect(SIGNAL('customContextMenuRequested(QPoint)'))
       view.disconnect(SIGNAL('clicked(QModelIndex)'))
+      model.disconnect(SIGNAL('refreshTarification(QModelIndex)'))
       connect(view, SIGNAL('customContextMenuRequested(QPoint)'), model, SLOT('displayMenu(QPoint)'))
       connect(view, SIGNAL('clicked(QModelIndex)')){ |index| setupListViews(index) }
+      connect(model, SIGNAL('refreshTarification(QModelIndex)')){ |index| setupListViews(index) }
       connect(view, SIGNAL('doubleClicked(QModelIndex)'), model, SLOT('editStudy(QModelIndex)'))
       #connect(model, SIGNAL('studySaved(QString)')){|study64| filterListViews(study64) }
       connect(model, SIGNAL('studySaved(QVariant)'), self, SLOT('refreshTableViewModel(QVariant)'))
