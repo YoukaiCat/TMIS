@@ -12,10 +12,12 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
     @subjectComboBoxDelegate = SubjectComboBoxDelegate.new(self)
     @semesterComboBoxDelegate = SemesterComboBoxDelegate.new(self)
     @specialityComboBoxDelegate = SpecialityComboBoxDelegate.new(self)
+    @facultativeRadioButtonDelegate = RadioButtonDelegate.new(self)
     @view.setItemDelegateForColumn(0, @lecturerComboBoxDelegate)
     @view.setItemDelegateForColumn(1, @subjectComboBoxDelegate)
     @view.setItemDelegateForColumn(2, @semesterComboBoxDelegate)
     @view.setItemDelegateForColumn(3, @specialityComboBoxDelegate)
+    @view.setItemDelegateForColumn(9, @facultativeRadioButtonDelegate)
   end
 
   def refresh
@@ -32,7 +34,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
   end
 
   def columnCount(parent)
-    9
+    10
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -59,6 +61,8 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
         speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
       when 8
         speciality_subject.preffered_days
+      when 9
+        speciality_subject.facultative
       else
         raise "invalid column #{index.column}"
       end.try(:to_v) || default
@@ -82,6 +86,8 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
         speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
       when 8
         speciality_subject.preffered_days
+      when 9
+        speciality_subject.facultative
       else
         raise "invalid column #{index.column}"
       end.try(:to_v) || default
@@ -95,7 +101,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          ['Преподаватель', 'Предмет', 'Семестр', 'Специальность', 'Лекционные часы', 'Практические часы', 'Консультации', 'Всего', 'Рекомендуемые дни'][section]
+          ['Преподаватель', 'Предмет', 'Семестр', 'Специальность', 'Лекционные часы', 'Практические часы', 'Консультации', 'Всего', 'Рекомендуемые дни', 'Факультатив'][section]
         else
           ''
         end
@@ -128,6 +134,8 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
         true
       when 8
         speciality_subject.preffered_days = variant.toString.force_encoding('UTF-8').split(/,\s*/).select{|x| x[/^[1-7]$/]}.uniq.join(', ')
+      when 9
+        speciality_subject.facultative = variant.toBool
       else
         raise "invalid column #{index.column}"
       end

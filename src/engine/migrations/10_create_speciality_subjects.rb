@@ -9,6 +9,7 @@ class CreateSpecialitySubjects < ActiveRecord::Migration
       t.integer :practical_hours
       t.integer :consultations_hours
       t.string  :preffered_days
+      t.boolean :facultative
 
       t.timestamps
     end
