@@ -98,6 +98,7 @@ class SubgroupTableModel < Qt::AbstractTableModel
       @subgroups[@view.currentIndex.row].try(:destroy)
       @subgroups.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

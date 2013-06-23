@@ -119,6 +119,7 @@ class GroupTableModel < Qt::AbstractTableModel
       @groups[@view.currentIndex.row].try(:destroy)
       @groups.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

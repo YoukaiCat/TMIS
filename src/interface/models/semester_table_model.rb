@@ -99,6 +99,7 @@ class SemesterTableModel < Qt::AbstractTableModel
       @semesters[@view.currentIndex.row].try(:destroy)
       @semesters.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

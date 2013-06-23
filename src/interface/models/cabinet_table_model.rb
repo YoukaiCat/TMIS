@@ -4,8 +4,6 @@ require_relative '../../engine/models/cabinet'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CabinetTableModel < Qt::AbstractTableModel
 
-  signals 'updated()'
-
   def initialize(cabinets, parent)
     super()
     @cabinets = cabinets
@@ -98,7 +96,7 @@ class CabinetTableModel < Qt::AbstractTableModel
       @cabinets[@view.currentIndex.row].try(:destroy)
       @cabinets.delete_at(@view.currentIndex.row)
       emit layoutChanged()
-      emit updated
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

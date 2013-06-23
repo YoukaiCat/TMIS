@@ -23,7 +23,7 @@ class Mailer
 
   Contract String => Bool
   def self.email_valid?(email)
-    /[\w\d._-]+@[\w\d.-]+[.][\w\d.-]+/i.bmatch email
+    /[\w\d\._\-]+@[\w\d\.\-]+[\.][\w\d\.\-]+/i.bmatch email
   end
 
   Contract None => Any

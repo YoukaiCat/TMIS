@@ -80,6 +80,7 @@ class SpecialityTableModel < Qt::AbstractTableModel
       @specialities[@view.currentIndex.row].try(:destroy)
       @specialities.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

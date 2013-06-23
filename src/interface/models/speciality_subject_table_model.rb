@@ -56,7 +56,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       when 6
         speciality_subject.consultations_hours
       when 7
-        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours).try(:+, speciality_subject.consultations_hours)
+        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
       when 8
         speciality_subject.preffered_days
       else
@@ -79,7 +79,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       when 6
         speciality_subject.consultations_hours
       when 7
-        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours).try(:+, speciality_subject.consultations_hours)
+        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
       when 8
         speciality_subject.preffered_days
       else
@@ -95,7 +95,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          ['Преподаватель', 'Предмет', 'Семестр', 'Специальность', 'Лекционные часы', 'Практические часы', 'Консультации', 'Всего', 'Рекомендуемый день'][section]
+          ['Преподаватель', 'Предмет', 'Семестр', 'Специальность', 'Лекционные часы', 'Практические часы', 'Консультации', 'Всего', 'Рекомендуемые дни'][section]
         else
           ''
         end
@@ -127,7 +127,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       when 7
         true
       when 8
-        speciality_subject.preffered_days = variant.toString
+        speciality_subject.preffered_days = variant.toString.force_encoding('UTF-8').split(/,\s*/).select{|x| x[/^[1-7]$/]}.uniq.join(', ')
       else
         raise "invalid column #{index.column}"
       end
@@ -149,6 +149,7 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       @speciality_subjects[@view.currentIndex.row].try(:destroy)
       @speciality_subjects.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 

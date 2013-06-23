@@ -150,7 +150,7 @@ class MainWindow < Qt::MainWindow
                      @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6,
                      @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView]
     @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction, @ui.expandChangesAction]
-    @tables_views_to_hide.each &:hide
+    @tables_views_to_hide.each(&:hide)
     @widgets_to_disable.each{ |x| x.enabled = false }
     modeActionGroup = Qt::ActionGroup.new(self)
     modeActionGroup.setExclusive(true)
@@ -241,7 +241,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_closeAction_triggered
-    @tables_views_to_hide.each &:hide
+    @tables_views_to_hide.each(&:hide)
     @widgets_to_disable.each{ |x| x.enabled = false }
     Database.instance.disconnect unless $TESTING
   end
@@ -458,17 +458,25 @@ class MainWindow < Qt::MainWindow
 
   def setup_study_table_view(view, date)
     model = StudyTableModel.new(date, view)
-    view = setup_table_view(view, model, Qt::HeaderView::Interactive)
+    view = setup_table_view2(view, model, Qt::HeaderView::Interactive)
     model.columnCount.times{ |i| i.odd? ? view.setColumnWidth(i, 50) : view.setColumnWidth(i, 150) }
     model.rowCount.times{ |i| view.setRowHeight(i, 50) }
     model
+  end
+
+  def setup_table_view2(table_view, table_model, resize_mode)
+    table_view.setModel(table_model)
+    table_view.horizontalHeader.setResizeMode(resize_mode)
+    table_view.verticalHeader.setResizeMode(resize_mode)
+    table_view.show
+    table_view
   end
 
   #Contract IsA[Qt::TableView], IsA[Qt::AbstractTableModel], IsA[Qt::Enum] => IsA[Qt::TableView]
   def setup_table_view(table_view, table_model, resize_mode)
     table_view.setModel(table_model)
     table_view.horizontalHeader.setResizeMode(resize_mode)
-    table_view.verticalHeader.setResizeMode(resize_mode)
+    table_view.verticalHeader.setResizeMode(Qt::HeaderView::ResizeToContents)
     table_view.show
     table_view
   end
@@ -608,7 +616,6 @@ class MainWindow < Qt::MainWindow
 
   def on_dataTabWidget_currentChanged(index)
     if Database.instance.connected?
-      p :test
       @table_views.each do |c, m, view|
         model = view.model.sourceModel
         view.model.dispose
@@ -622,7 +629,6 @@ class MainWindow < Qt::MainWindow
 
   def on_tabWidget_currentChanged(index)
     if Database.instance.connected?
-      p :test
       if index == 0
         @study_table_models.each(&:refresh)
         [@ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView].each{|view| view.model.refresh }

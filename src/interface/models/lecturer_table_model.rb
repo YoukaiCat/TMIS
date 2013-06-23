@@ -97,6 +97,7 @@ class LecturerTableModel < Qt::AbstractTableModel
       @lecturers[@view.currentIndex.row].try(:destroy)
       @lecturers.delete_at(@view.currentIndex.row)
       emit layoutChanged()
+      @view.currentIndex = createIndex(-1, -1)
     end
   end
 
