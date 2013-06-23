@@ -42,6 +42,7 @@ require_relative '../engine/models/subject'
 require_relative '../engine/models/subgroup'
 require_relative 'ui_mainwindow'
 require_relative 'forms/about'
+require_relative 'forms/find'
 require_relative 'forms/settings'
 require_relative 'forms/import'
 require_relative 'forms/console'
@@ -127,7 +128,12 @@ class MainWindow < Qt::MainWindow
   slots 'on_tabWidget_currentChanged(int)'
   slots 'on_dataTabWidget_currentChanged(int)'
 
+  slots 'on_findByLecturerAction_triggered()'
+  slots 'on_findBySubjectAction_triggered()'
+  slots 'on_findByCabinetAction_triggered()'
+
   attr_reader :ui
+  attr_reader :study_table_models
 
   def initialize(parent = nil)
     super(parent)
@@ -149,7 +155,7 @@ class MainWindow < Qt::MainWindow
                      @ui.specialitiesTableView, @ui.subgroupsTableView, @ui.subjectsTableView, @ui.dateDateEdit,
                      @ui.dayLabel, @ui.dayLabel2, @ui.dayLabel3, @ui.dayLabel4, @ui.dayLabel5, @ui.dayLabel6,
                      @ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView]
-    @widgets_to_disable = [@ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction, @ui.expandChangesAction]
+    @widgets_to_disable = [@ui.findMenu, @ui.exportMenu, @ui.verifyMenu, @ui.saveAsAction, @ui.expandChangesAction]
     @tables_views_to_hide.each(&:hide)
     @widgets_to_disable.each{ |x| x.enabled = false }
     modeActionGroup = Qt::ActionGroup.new(self)
@@ -634,6 +640,18 @@ class MainWindow < Qt::MainWindow
         [@ui.subjectsListView, @ui.lecturersListView, @ui.cabinetsListView].each{|view| view.model.refresh }
       end
     end
+  end
+
+  def on_findByLecturerAction_triggered
+    FindDialog.new(:lecturer, self).show
+  end
+
+  def on_findBySubjectAction_triggered
+    FindDialog.new(:subject, self).show
+  end
+
+  def on_findByCabinetAction_triggered
+    FindDialog.new(:cabinet, self).show
   end
 
 end

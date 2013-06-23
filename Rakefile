@@ -12,6 +12,7 @@ task :compile do
   compile_form 'src/interface/forms/console.ui'
   compile_form 'src/interface/forms/about.ui'
   compile_form 'src/interface/forms/expand_changes.ui'
+  compile_form 'src/interface/forms/find.ui'
 end
 
 task :clean do
@@ -25,6 +26,7 @@ task :clean do
   rm 'src/interface/forms/ui_console.rb'
   rm 'src/interface/forms/ui_about.rb'
   rm 'src/interface/forms/ui_expand_changes.rb'
+  rm 'src/interface/forms/ui_find.rb'
 end
 
 task :rspec do

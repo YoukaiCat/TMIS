@@ -990,6 +990,14 @@
     <property name="title">
      <string>Правка</string>
     </property>
+    <widget class="QMenu" name="findMenu">
+     <property name="title">
+      <string>Поиск</string>
+     </property>
+     <addaction name="findByLecturerAction"/>
+     <addaction name="findBySubjectAction"/>
+     <addaction name="findByCabinetAction"/>
+    </widget>
     <addaction name="undoAction"/>
     <addaction name="redoAction"/>
     <addaction name="separator"/>
@@ -999,6 +1007,8 @@
     <addaction name="deleteAction"/>
     <addaction name="separator"/>
     <addaction name="selectAllAction"/>
+    <addaction name="separator"/>
+    <addaction name="findMenu"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="editMenu"/>
@@ -1202,6 +1212,21 @@
   <action name="expandChangesAction">
    <property name="text">
     <string>Распространить изменения</string>
+   </property>
+  </action>
+  <action name="findByLecturerAction">
+   <property name="text">
+    <string>По преподавателю</string>
+   </property>
+  </action>
+  <action name="findBySubjectAction">
+   <property name="text">
+    <string>По предмету</string>
+   </property>
+  </action>
+  <action name="findByCabinetAction">
+   <property name="text">
+    <string>По кабинету</string>
    </property>
   </action>
  </widget>
