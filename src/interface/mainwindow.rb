@@ -398,10 +398,28 @@ class MainWindow < Qt::MainWindow
     @console.browser.append showSubjectsStubs
   end
 
-  def on_verifyAction_triggered
-    #- группа и подгруппы в разных кабинетах
-    #- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах
-  end
+  #def groupAndSubgroup
+  #  date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+  #  dates = date.monday..date.monday + 6
+  #  v = Verificator.new(dates)
+  #  res = v.verify(:group_and_subgroup).map do |k, v|
+  #    date = k[0]
+  #    lecturer = Lecturer.where(id: k[1]).first
+  #    number = k[2]
+  #    if lecturer.stub
+  #      nil
+  #    else
+  #      v.each{ |study| @study_table_models[date.cwday - 1].setColor(study.id Qt::red) }
+  #      "#{date} | #{lecturer} ведёт несколько пар одновременно! Номер пары: #{number}"
+  #    end
+  #  end
+  #end
+  #
+  #def on_verifyGroupAndSubgroup
+  #  @console.browser.clear
+  #  @console.show
+  #  @console.browser.append groupAndSubgroup
+  #end
 
   class EntityItemModel < Qt::AbstractItemModel
     def initialize(lambda, parent = nil)
