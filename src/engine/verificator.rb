@@ -14,10 +14,10 @@ class Verificator
       cabinet_studies
     when :lecturer_stubs
       lecturer_stubs
-    #when :cabinet_stubs
-    #  cabinet_stubs
-    #when :subject_stubs
-    #  subject_stubs
+    when :cabinet_stubs
+      cabinet_stubs
+    when :subject_stubs
+      subject_stubs
     else
       raise ArgumentError, 'No such verification'
     end
@@ -41,6 +41,18 @@ private
   def lecturer_stubs
     @dates.map do |date|
       [date, Study.joins(:lecturer).where('lecturers.stub = ?', true).where(date: date)]
+    end
+  end
+
+  def cabinet_stubs
+    @dates.map do |date|
+      [date, Study.joins(:cabinet).where('cabinets.stub = ?', true).where(date: date)]
+    end
+  end
+
+  def subject_stubs
+    @dates.map do |date|
+      [date, Study.joins(:subject).where('subjects.stub = ?', true).where(date: date)]
     end
   end
 end

@@ -9,6 +9,8 @@ include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class ConsoleDialog < Qt::Dialog
 
+  signals 'dialogClosed()'
+
   attr_accessor :browser
 
   def initialize(parent = nil)
@@ -16,6 +18,11 @@ class ConsoleDialog < Qt::Dialog
     @ui = Ui::ConsoleDialog.new
     @ui.setup_ui self
     @browser = @ui.textBrowser
+  end
+
+  def closeEvent(event)
+    emit dialogClosed
+    event.accept
   end
 
 end

@@ -132,6 +132,10 @@ class MainWindow < Qt::MainWindow
   slots 'on_findBySubjectAction_triggered()'
   slots 'on_findByCabinetAction_triggered()'
 
+  slots 'on_allAction_triggered()'
+  slots 'on_allCoincidenceAction_triggered()'
+  slots 'on_allNotAssignedAction_triggered()'
+
   attr_reader :ui
   attr_reader :study_table_models
 
@@ -185,6 +189,8 @@ class MainWindow < Qt::MainWindow
     @ui.recentMenu.addActions([@clear_recent_action] + Settings[:recent, :files].split.map{ |path| create_recent_action(path) })
     #Settings[:app, :first_run] = ''
     Settings.set_defaults_if_first_run
+    @console = ConsoleDialog.new self
+    connect(@console, SIGNAL('dialogClosed()')){ @study_table_models.each(&:cancelColoring) }
   end
 
   def on_newAction_triggered
@@ -260,7 +266,34 @@ class MainWindow < Qt::MainWindow
     Qt::Application.quit
   end
 
-  def on_verifyLecturersAction_triggered
+  def on_allAction_triggered
+    p :test
+    @console.browser.clear
+    @console.show
+    @console.browser.append verifyLecturers
+    @console.browser.append verifyCabinets
+    @console.browser.append showLecturerStubs
+    @console.browser.append showCabinetStubs
+    @console.browser.append showSubjectsStubs
+  end
+
+  def on_allCoincidenceAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append verifyLecturers
+    @console.browser.append verifyCabinets
+
+  end
+
+  def on_allNotAssignedAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append showLecturerStubs
+    @console.browser.append showCabinetStubs
+    @console.browser.append showSubjectsStubs
+  end
+
+  def verifyLecturers
     date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     dates = date.monday..date.monday + 6
     v = Verificator.new(dates)
@@ -276,13 +309,15 @@ class MainWindow < Qt::MainWindow
       end
     end
     res = res.compact.join("\n")
-    console = ConsoleDialog.new self
-    connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
-    console.show
-    console.browser.append res
   end
 
-  def on_verifyCabinetsAction_triggered
+  def on_verifyLecturersAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append verifyLecturers
+  end
+
+  def verifyCabinets
     date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     dates = date.monday..date.monday + 6
     v = Verificator.new(dates)
@@ -298,13 +333,15 @@ class MainWindow < Qt::MainWindow
       end
     end
     res = res.compact.join("\n")
-    console = ConsoleDialog.new self
-    connect(@ui.verifyCabinetsAction, SIGNAL('triggered()'), console, SLOT('close()'))
-    console.show
-    console.browser.append res
   end
 
-  def on_showLecturerStubsAction_triggered
+  def on_verifyCabinetsAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append verifyCabinets
+  end
+
+  def showLecturerStubs
     date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
     dates = date.monday..date.monday + 6
     v = Verificator.new(dates)
@@ -315,44 +352,50 @@ class MainWindow < Qt::MainWindow
       end.join("\n")
     end
     res = res.compact.join("\n")
-    console = ConsoleDialog.new self
-    connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
-    console.show
-    console.browser.append res
+  end
+
+  def on_showLecturerStubsAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append showLecturerStubs
+  end
+
+  def showCabinetStubs
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:cabinet_stubs).map do |date, studies|
+      studies.map do |study|
+        @study_table_models[date.cwday - 1].setColorCabinet(study.id, Qt::green)
+        "#{date} | Не назначен кабинет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+      end.join("\n")
+    end
+    res = res.compact.join("\n")
   end
 
   def on_showCabinetStubsAction_triggered
-    #date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
-    #dates = date.monday..date.monday + 6
-    #v = Verificator.new(dates)
-    #res = v.verify(:cabinet_stubs).map do |date, studies|
-    #  studies.map do |study|
-    #    @study_table_models[date.cwday - 1].setColorCabinet(study.groupable.get_group, study.number, Qt::green)
-    #    "#{date} | Не назначен кабинет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
-    #  end.join("\n")
-    #end
-    #res = res.compact.join("\n")
-    #console = ConsoleDialog.new self
-    #connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
-    #console.show
-    #console.browser.append res
+    @console.browser.clear
+    @console.show
+    @console.browser.append showCabinetStubs
+  end
+
+  def showSubjectsStubs
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:subject_stubs).map do |date, studies|
+      studies.map do |study|
+        @study_table_models[date.cwday - 1].setColor(study.id, Qt::green)
+        "#{date} | Не назначен предмет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+      end.join("\n")
+    end
+    res = res.compact.join("\n")
   end
 
   def on_showSubjectsStubsAction_triggered
-    #date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
-    #dates = date.monday..date.monday + 6
-    #v = Verificator.new(dates)
-    #res = v.verify(:subject_stubs).map do |date, studies|
-    #  studies.map do |study|
-    #    @study_table_models[date.cwday - 1].setColor(study.groupable.get_group, study.number, Qt::green)
-    #    "#{date} | Не назначен предмет! Группа: #{study.get_group.title} Номер пары: #{study.number}"
-    #  end.join("\n")
-    #end
-    #res = res.compact.join("\n")
-    #console = ConsoleDialog.new self
-    #connect(@ui.verifyLecturersAction, SIGNAL('triggered()'), console, SLOT('close()'))
-    #console.show
-    #console.browser.append res
+    @console.browser.clear
+    @console.show
+    @console.browser.append showSubjectsStubs
   end
 
   def on_verifyAction_triggered
