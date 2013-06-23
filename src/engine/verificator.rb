@@ -18,8 +18,12 @@ class Verificator
       cabinet_stubs
     when :subject_stubs
       subject_stubs
-    when :group_and_subgroup
-      group_and_subgroup
+    when :group_and_subgroups
+      group_and_subgroups
+    when :preferred_days
+      preferred_days
+    when :computer_cabinets
+      computer_cabinet
     else
       raise ArgumentError, 'No such verification'
     end
@@ -58,10 +62,22 @@ private
     end
   end
 
+  def computer_cabinet
+    @dates.map do |date|
+      [date, Study.joins(:cabinet).where(groupable_type: 'Subgroup').where("cabinets.with_computers = ?", false).where(date: date)]
+    end
+  end
+
+  def preferred_days
+    @dates.map do |date|
+      [date, Study.joins(:lecturer).where(date: date).where("NOT instr(preferred_days, strftime('%w', date))")]
+    end
+  end
+
   #- занятия для группы и подгруппы на одной паре
   #def group_and_subgroup
   #  @dates.map do |date|
-  #    Study.select('date, number, group_id, count(*)').where(date: date).group('number, cabinet_id').having('count(*) > 1')
+  #    Study.select('date, number, groupable_type, count(*)').where(date: date).group('number, groupable_type').having('count(*) > 1')
   #  end.flatten.map{|x| Study.where(date: x.date, number: x.number, cabinet_id: x.cabinet_id )}.flatten.group_by{|x| [x.date, x.cabinet_id, x.number] }
   #end
 end
@@ -72,4 +88,3 @@ end
 # having count(surname) > 1
 # Lecturer.select('surname, count(surname)').group(:surname).having('count(surname) > 1')
 # select lecturer_id, number, count(*) from studies where date = '2013-06-03' group by number, lecturer_id having count(*) > 1
-#- проверка предметов всегда или никогда не проводимых в компьютерных кабинетах

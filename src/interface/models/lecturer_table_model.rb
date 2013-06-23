@@ -21,7 +21,7 @@ class LecturerTableModel < Qt::AbstractTableModel
   end
 
   def columnCount(parent)
-    4
+    5
   end
 
   def data(index, role = Qt::DisplayRole)
@@ -38,6 +38,8 @@ class LecturerTableModel < Qt::AbstractTableModel
           lecturer.patronymic
         when 3
           lecturer.emails.map(&:email).join(', ')
+        when 4
+          lecturer.preferred_days
         else
           raise "invalid column #{index.column}"
         end || ''
@@ -49,7 +51,7 @@ class LecturerTableModel < Qt::AbstractTableModel
     return invalid unless role == Qt::DisplayRole
     v = case orientation
         when Qt::Horizontal
-          %w(Фамилия Имя Отчество Email)[section]
+          ['Фамилия', 'Имя', 'Отчество', 'Email', 'Предпочитаемые дни'][section]
         else
           ''
         end
@@ -76,6 +78,8 @@ class LecturerTableModel < Qt::AbstractTableModel
         emails.each do |email|
           lecturer.emails.create(email: email)
         end
+      when 4
+        lecturer.preferred_days = variant.toString.force_encoding('UTF-8').split(/,\s*/).select{|x| x[/^[1-7]$/]}.uniq.join(', ')
       else
         raise "invalid column #{index.column}"
       end

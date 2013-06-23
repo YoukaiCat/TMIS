@@ -1032,7 +1032,11 @@
      <addaction name="showCabinetStubsAction"/>
      <addaction name="showSubjectsStubsAction"/>
      <addaction name="separator"/>
+     <addaction name="verifyComputerCabinetsAction"/>
+     <addaction name="verifyPreferredDaysAction"/>
+     <addaction name="separator"/>
      <addaction name="cancelVerifyingAction"/>
+     <addaction name="separator"/>
     </widget>
     <addaction name="verifyMenu"/>
     <addaction name="expandChangesAction"/>
@@ -1279,6 +1283,16 @@
   <action name="findByCabinetAction">
    <property name="text">
     <string>По кабинету</string>
+   </property>
+  </action>
+  <action name="verifyComputerCabinetsAction">
+   <property name="text">
+    <string>Занятия в компьютерных кабинетах</string>
+   </property>
+  </action>
+  <action name="verifyPreferredDaysAction">
+   <property name="text">
+    <string>Предпочитаемые дни</string>
    </property>
   </action>
  </widget>

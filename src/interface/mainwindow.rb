@@ -95,6 +95,8 @@ class MainWindow < Qt::MainWindow
   slots 'on_showLecturerStubsAction_triggered()'
   slots 'on_showCabinetStubsAction_triggered()'
   slots 'on_showSubjectsStubsAction_triggered()'
+  slots 'on_verifyComputerCabinetsAction_triggered()'
+  slots 'on_verifyPreferredDaysAction_triggered()'
   # Main
   slots 'on_dateDateEdit_dateChanged()'
   # Self
@@ -274,9 +276,11 @@ class MainWindow < Qt::MainWindow
     @console.show
     @console.browser.append verifyLecturers
     @console.browser.append verifyCabinets
+    @console.browser.append showComputerCabinets
     @console.browser.append showLecturerStubs
     @console.browser.append showCabinetStubs
     @console.browser.append showSubjectsStubs
+    @console.browser.append showPreferredDays
   end
 
   def on_allCoincidenceAction_triggered
@@ -284,7 +288,6 @@ class MainWindow < Qt::MainWindow
     @console.show
     @console.browser.append verifyLecturers
     @console.browser.append verifyCabinets
-
   end
 
   def on_allNotAssignedAction_triggered
@@ -398,6 +401,44 @@ class MainWindow < Qt::MainWindow
     @console.browser.clear
     @console.show
     @console.browser.append showSubjectsStubs
+  end
+
+  def showComputerCabinets
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:computer_cabinets).map do |date, studies|
+      studies.map do |study|
+        @study_table_models[date.cwday - 1].setColorCabinet(study.id, Qt::yellow)
+        "#{date} | Занятие подгруппы проходит не в компьютерном кабинете! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+      end.join("\n")
+    end
+    res = res.compact.join("\n")
+  end
+
+  def on_verifyComputerCabinetsAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append showComputerCabinets
+  end
+
+  def showPreferredDays
+    date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    dates = date.monday..date.monday + 6
+    v = Verificator.new(dates)
+    res = v.verify(:preferred_days).map do |date, studies|
+      studies.map do |study|
+        @study_table_models[date.cwday - 1].setColorCabinet(study.id, Qt::yellow)
+        "#{date} | #{study.lecturer.to_s} предпочитает вести занятия в другой день! Группа: #{study.get_group.title} Номер пары: #{study.number}"
+      end.join("\n")
+    end
+    res = res.compact.join("\n")
+  end
+
+  def on_verifyPreferredDaysAction_triggered
+    @console.browser.clear
+    @console.show
+    @console.browser.append showPreferredDays
   end
 
   #def groupAndSubgroup
