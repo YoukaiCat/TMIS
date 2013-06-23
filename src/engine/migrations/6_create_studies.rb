@@ -7,6 +7,7 @@ class CreateStudies < ActiveRecord::Migration
       t.integer :cabinet_id
       t.integer :number
       t.date    :date
+      t.string  :color
 
       t.timestamps
     end

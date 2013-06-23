@@ -13,6 +13,8 @@ include Contracts
 class EditStudyDialog < Qt::Dialog
 
   slots 'on_groupComboBox_currentIndexChanged(int)'
+  slots 'on_selectColorPushButton_clicked()'
+  slots 'on_defaultColorPushButton_clicked()'
   slots 'reset()'
   slots 'save()'
 
@@ -26,6 +28,9 @@ class EditStudyDialog < Qt::Dialog
   def setupData(study)
     @study = study
     setWindowTitle 'Новое занятие' if @study.new_record?
+    @color = Qt::Color.new(study.color || "#ffffff")
+    p @color
+    @ui.selectColorPushButton.setPalette(Qt::Palette.new(@color))
     # set group
     Group.all.sort_by(&:title_for_sort).each{|x| @ui.groupComboBox.addItem(x.title, x.id.to_v)}
     @ui.groupComboBox.setCurrentIndex(@ui.groupComboBox.findData(@study.groupable.get_group.id.to_v))
@@ -80,8 +85,22 @@ class EditStudyDialog < Qt::Dialog
     @study.cabinet = Cabinet.where(id: @ui.cabinetComboBox.itemData(@ui.cabinetComboBox.currentIndex).to_i).first
     @study.number = @ui.numberComboBox.currentIndex + 1
     @study.date = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate))
+    @study.color = @color.name
     @study.save
     close
+  end
+
+  def on_defaultColorPushButton_clicked
+    @color = Qt::Color.new("#ffffff")
+    @ui.selectColorPushButton.setPalette(Qt::Palette.new(@color))
+  end
+
+  def on_selectColorPushButton_clicked
+    color = Qt::ColorDialog.getColor(@color, self)
+    if color.valid?
+      @ui.selectColorPushButton.setPalette(Qt::Palette.new(color))
+      @color =  color
+    end
   end
 
   def show_message(text)

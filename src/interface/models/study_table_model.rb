@@ -72,9 +72,23 @@ class StudyTableModel < Qt::AbstractTableModel
     when  Qt::BackgroundRole #Qt::TextColorRole
       begin
         if index.column.even?
-          @colors_for_studies[@studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].id].to_v
+          study = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2]
+          if @colors_for_studies[study.id]
+            @colors_for_studies[study.id].to_v
+          elsif study.color
+            Qt::Variant.fromValue(Qt::Color.new(study.color))
+          else
+            default
+          end
         else
-          @colors_for_cabinets[@studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2].id].to_v
+          study = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2]
+          if @colors_for_cabinets[study.id]
+            @colors_for_cabinets[study.id].to_v
+          elsif study.color
+            Qt::Variant.fromValue(Qt::Color.new(study.color))
+          else
+            default
+          end
         end
       rescue NoMethodError
         default
