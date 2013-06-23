@@ -53,7 +53,6 @@ class StudyTableModel < Qt::AbstractTableModel
     default = Qt::Variant.new
     return default unless index.valid?
     case role
-    #when Qt::UserRole # for future use
     when Qt::DisplayRole || Qt::EditRole
       begin
         if index.column.even?
@@ -69,6 +68,18 @@ class StudyTableModel < Qt::AbstractTableModel
       #else
       #  @studies[index.column / 2].try(:at, 1).try(:fetch, (index.row / 2) + 1, nil).try(:at, index.row % 2).try(:cabinet).try(:title)
       #end.try(:to_v) || default
+    when Qt::UserRole
+      begin
+        if (study = @studies[index.column / 2][1][(index.row / 2) + 1][index.row % 2])
+          Base64.encode64(Marshal.dump(study)).to_v
+        elsif (group = @studies[index.column / 2][0])
+          Base64.encode64(Marshal.dump(group)).to_v
+        else
+          default
+        end
+      rescue NoMethodError
+        default
+      end
     when  Qt::BackgroundRole #Qt::TextColorRole
       begin
         if index.column.even?

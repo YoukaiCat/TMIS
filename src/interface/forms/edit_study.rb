@@ -29,7 +29,6 @@ class EditStudyDialog < Qt::Dialog
     @study = study
     setWindowTitle 'Новое занятие' if @study.new_record?
     @color = Qt::Color.new(study.color || "#ffffff")
-    p @color
     @ui.selectColorPushButton.setPalette(Qt::Palette.new(@color))
     # set group
     Group.all.sort_by(&:title_for_sort).each{|x| @ui.groupComboBox.addItem(x.title, x.id.to_v)}
