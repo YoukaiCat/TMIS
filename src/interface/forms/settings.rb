@@ -99,17 +99,19 @@ class SettingsDialog < Qt::Dialog
   end
 
   def restore
-    case @ui.stackedWidget.currentWidget.objectName
-    when 'database'
-      Settings.reset! :stubs
-    when 'email'
-      Settings.reset! :mailer
-    when 'interface'
-    when 'verify'
-    when 'export'
-    when 'import'
-    else
-    end
+    #case @ui.stackedWidget.currentWidget.objectName
+    #when 'database'
+    #  Settings.reset! :stubs
+    #when 'email'
+    #  Settings.reset! :mailer
+    #when 'interface'
+    #when 'verify'
+    #when 'export'
+    #when 'import'
+    #else
+    #end
+    Settings.reset! :stubs
+    Settings.reset! :mailer
   end
 
   def help

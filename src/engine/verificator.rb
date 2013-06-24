@@ -70,7 +70,13 @@ private
 
   def preferred_days
     @dates.map do |date|
-      [date, Study.joins(:lecturer).where(date: date).where("NOT instr(preferred_days, strftime('%w', date))")]
+      #[date, Study.joins(:lecturer).where(date: date).where("NOT instr(preferred_days, strftime('%w', date))")] # doesn't work on windows
+      #[date, Study.joins(:lecturer).where(date: date).where("NOT preferred_days like strftime('%w', date)")]
+      [date, Lecturer.all.map do |l|
+        if l.preferred_days
+          l.studies.where(date: date).where("NOT strftime('%w', date) in (#{l.preferred_days.split(/,\s*/).map{|s| '\'' << s << '\''  }.join(',')})", ).to_a
+        end
+      end.flatten.compact]
     end
   end
 

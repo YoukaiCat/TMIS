@@ -113,6 +113,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
             else
               spreadsheet = SpreadsheetCreater.create filename
             end
+            TimetableExporter2.new(spreadsheet, LecturerTimetableExportStratagy2.new(dates, lecturer)).export.save
             mail(lecturer, filename)
           end
         end

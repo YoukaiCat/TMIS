@@ -88,6 +88,7 @@ class ExportGroupTimetableDialog < Qt::Dialog
             else
               spreadsheet = SpreadsheetCreater.create filename
             end
+            TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new(dates, group)).export.save
             mail(group, filename)
           end
         end
@@ -108,6 +109,7 @@ class ExportGroupTimetableDialog < Qt::Dialog
             else
               spreadsheet = SpreadsheetCreater.create filename
             end
+            TimetableExporter.new(spreadsheet, GroupTimetableExportStratagy.new(dates, group)).export.save
             mail(group, filename)
           end
         end
