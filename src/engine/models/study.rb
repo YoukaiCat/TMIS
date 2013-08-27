@@ -10,7 +10,7 @@ class Study < ActiveRecord::Base
   belongs_to :cabinet
 
   # Use Model#scoped instead of Model#all
-  Contract ActiveRecord::Relation => ActiveRecord::Relation
+  #Contract ActiveRecord::Relation => ActiveRecord::Relation::ActiveRecord_Relation_Group
   def self.of_groups_and_its_subgroups(groups)
     where_groups_or_subgroups(groups.select(:id), Subgroup.where(group_id: groups.select(:id)))
   end

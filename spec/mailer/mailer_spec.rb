@@ -31,7 +31,7 @@ describe Mailer do
   end
 
   it 'should return parts of email' do
-    Mailer.new('name@domain.com', 'secret') {}.email_parts[:local].should eq('name')
-    Mailer.new('name@domain.com', 'secret') {}.email_parts[:domain].should eq('domain.com')
+    Mailer.new('name@domain.com', 'secret') {}.send(:email_parts)[:local].should eq('name')
+    Mailer.new('name@domain.com', 'secret') {}.send(:email_parts)[:domain].should eq('domain.com')
   end
 end
