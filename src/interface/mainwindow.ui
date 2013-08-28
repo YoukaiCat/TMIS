@@ -1041,6 +1041,8 @@
     <addaction name="verifyMenu"/>
     <addaction name="expandChangesAction"/>
     <addaction name="settingsAction"/>
+    <addaction name="separator"/>
+    <addaction name="debugConsoleAction"/>
    </widget>
    <widget class="QMenu" name="editMenu">
     <property name="title">
@@ -1293,6 +1295,11 @@
   <action name="verifyPreferredDaysAction">
    <property name="text">
     <string>Предпочитаемые дни</string>
+   </property>
+  </action>
+  <action name="debugConsoleAction">
+   <property name="text">
+    <string>Консоль отладки</string>
    </property>
   </action>
  </widget>

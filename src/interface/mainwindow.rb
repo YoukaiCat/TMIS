@@ -46,6 +46,7 @@ require_relative 'forms/find'
 require_relative 'forms/settings'
 require_relative 'forms/import'
 require_relative 'forms/console'
+require_relative 'forms/debug_console'
 require_relative 'forms/export_general_timetable'
 require_relative 'forms/export_lecturer_timetable'
 require_relative 'forms/export_group_timetable'
@@ -139,6 +140,8 @@ class MainWindow < Qt::MainWindow
   slots 'on_allNotAssignedAction_triggered()'
 
   slots 'on_tarificationCheckBox_toggled(bool)'
+
+  slots 'on_debugConsoleAction_triggered()'
 
   attr_reader :ui
   attr_reader :study_table_models
@@ -315,7 +318,12 @@ class MainWindow < Qt::MainWindow
       if lecturer.stub
         nil
       else
-        v.each{ |study| @study_table_models[date.cwday - 1].setColor(study.id Qt::red) }
+        p :test
+        v.each do |study|
+          tst = @study_table_models[date.cwday - 1]
+          tst.setColor(study.id Qt::red)
+        end
+        p :test
         "#{date} | #{lecturer} ведёт несколько пар одновременно! Номер пары: #{number}"
       end
     end
@@ -868,6 +876,10 @@ class MainWindow < Qt::MainWindow
 
   def on_findByCabinetAction_triggered
     FindDialog.new(:cabinet, self).show
+  end
+
+  def on_debugConsoleAction_triggered
+    DebugConsoleDialog.new(self).show
   end
 
 end

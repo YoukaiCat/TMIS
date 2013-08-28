@@ -211,7 +211,7 @@ class StudyTableModel < Qt::AbstractTableModel
     subject_id = data.data('application/subject').data if data.hasFormat('application/subject')
     lecturer_id = data.data('application/lecturer').data if data.hasFormat('application/lecturer')
     cabinet_id = data.data('application/cabinet').data if data.hasFormat('application/cabinet')
-    # date почему-то содержит "application/subject" с какимто мусором если drag осуществляется из табицы
+    # date почему-то содержит "application/subject" с каким-то мусором, если drag осуществляется из табицы
     return false if !index.valid? || data.hasFormat('application/empty')
     if data.hasFormat('application/study')
       study = Marshal.load(Base64.decode64(data.data('application/study').data))
