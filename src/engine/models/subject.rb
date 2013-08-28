@@ -9,6 +9,7 @@ class Subject < ActiveRecord::Base
   end
 
   def set_stubs_for_studies
+    raise "Stub can't be destroyed!" if self.stub
     stub = Subject.where(stub: true).first
     studies.each do |s|
       s.subject = stub

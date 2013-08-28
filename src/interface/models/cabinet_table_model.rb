@@ -93,10 +93,13 @@ class CabinetTableModel < Qt::AbstractTableModel
 
   def remove_current
     if @view.currentIndex.valid?
-      @cabinets[@view.currentIndex.row].try(:destroy)
-      @cabinets.delete_at(@view.currentIndex.row)
-      emit layoutChanged()
-      @view.currentIndex = createIndex(-1, -1)
+      cabinet = @cabinets[@view.currentIndex.row]
+      unless cabinet.stub
+        cabinet.try(:destroy)
+        @cabinets.delete_at(@view.currentIndex.row)
+        emit layoutChanged()
+        @view.currentIndex = createIndex(-1, -1)
+      end
     end
   end
 

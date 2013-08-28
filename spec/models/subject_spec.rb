@@ -27,6 +27,12 @@ describe Subject do
     end
   end
 
+  it 'Stubs should not be deleted' do
+    s = Subject.create(title: "test", stub: true)
+    expect { s.destroy }.to raise_error
+    s.delete
+  end
+
   after(:all) do
     Subject.delete_all
   end

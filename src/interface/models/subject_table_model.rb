@@ -77,10 +77,13 @@ class SubjectTableModel < Qt::AbstractTableModel
 
   def remove_current
     if @view.currentIndex.valid?
-      @subjects[@view.currentIndex.row].try(:destroy)
-      @subjects.delete_at(@view.currentIndex.row)
-      emit layoutChanged()
-      @view.currentIndex = createIndex(-1, -1)
+      subject = @subjects[@view.currentIndex.row]
+      unless subject.stub
+        subject.try(:destroy)
+        @subjects.delete_at(@view.currentIndex.row)
+        emit layoutChanged()
+        @view.currentIndex = createIndex(-1, -1)
+      end
     end
   end
 

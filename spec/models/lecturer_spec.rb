@@ -25,6 +25,12 @@ describe Lecturer do
     @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\.\s[[:alpha:]]+\./
   end
 
+  it 'Stubs should not be deleted' do
+    s = Lecturer.create(surname: "test", stub: true)
+    expect { s.destroy }.to raise_error
+    s.delete
+  end
+
   after(:all) do
     Lecturer.delete_all
   end

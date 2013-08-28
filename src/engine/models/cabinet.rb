@@ -8,6 +8,7 @@ class Cabinet < ActiveRecord::Base
   end
 
   def set_stubs_for_studies
+    raise "Stub can't be destroyed!" if self.stub
     stub = Cabinet.where(stub: true).first
     studies.each do |s|
       s.cabinet = stub

@@ -98,10 +98,13 @@ class LecturerTableModel < Qt::AbstractTableModel
 
   def remove_current
     if @view.currentIndex.valid?
-      @lecturers[@view.currentIndex.row].try(:destroy)
-      @lecturers.delete_at(@view.currentIndex.row)
-      emit layoutChanged()
-      @view.currentIndex = createIndex(-1, -1)
+      lecturer = @lecturers[@view.currentIndex.row]
+      unless lecturer.stub
+        lecturer.try(:destroy)
+        @lecturers.delete_at(@view.currentIndex.row)
+        emit layoutChanged()
+        @view.currentIndex = createIndex(-1, -1)
+      end
     end
   end
 
