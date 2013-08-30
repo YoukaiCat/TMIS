@@ -28,6 +28,7 @@ private
   Contract [Pos, Pos] => Array
   def get_days(cols)
     (7..84).each_slice(13).map{ |i| [i[1], i.last] }.map do |rows|
+      p @table[rows.first, 1]
       { name: @table[rows.first, 1], studies: get_studies(rows, cols) }
     end
   end
@@ -38,7 +39,11 @@ private
       study_rows.each_with_index.map do |row, index|
         cabinet = @table[row, cols.last]
         { info: parse_info(@table[row, cols.first]),
-          cabinet: (cabinet.nil? || cabinet.empty?) ? @table[row - index, cols.last] : cabinet }
+          cabinet: if cabinet.nil? || if cabinet.kind_of?(String); cabinet.empty?; else; false end;
+                     @table[row - index, cols.last]
+                   else
+                     cabinet
+                   end }
       end.reject{ |s| s[:info].nil? }
     end
   end
@@ -64,9 +69,10 @@ private
           )?
           (?<title>.*)/mx
       data = r.match(reversed_info.strip)
-      { subject: data[:title].split.reverse.join(' ').strip,
+      res = { subject: data[:title].split.reverse.join(' ').strip,
         lecturer: { surname: data[:surname], name: data[:name], patronymic: data[:patronymic] },
         subgroup: data[:subgroup] }
+      res
     end
   end
 end

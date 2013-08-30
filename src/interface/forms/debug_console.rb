@@ -23,8 +23,7 @@ class DebugConsoleDialog < Qt::Dialog
     res = '$'
     begin
       res = "#{Database.instance.instance_eval(@ui.lineEdit.text)}"
-      p res
-    rescue
+    rescue Exception => detail
       @ui.textEdit.setText("Error on #{@ui.lineEdit.text}")
     end
     @ui.textEdit.setText(res)

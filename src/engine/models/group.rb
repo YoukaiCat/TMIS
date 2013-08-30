@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
   end
 
   def title_for_sort
-    title[/(.*)-(.*)/i]; "#{$2}-#{$1}"
+    self.title[/(.*)-(.*)/i]; "#{$2}-#{$1}"
   end
 
   def to_s

@@ -250,20 +250,30 @@ class MainWindow < Qt::MainWindow
           (id = ImportDialog.new(Date.today)).exec
         end
         unless id.params.empty?
-          sheet = SpreadsheetCreater.create filename
-          reader = TimetableReader.new(sheet, id.params[:sheet])
-          monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
-          if Database.instance.connected?
-            Database.instance.transaction do Study.where(date: (monday..(monday + 6))).each(&:delete) end
-          else
-            Database.instance.connect_to(@temp.())
-            create_stubs
+          begin
+            sheet = SpreadsheetCreater.create filename
+            reader = TimetableReader.new(sheet, id.params[:sheet])
+            monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
+            if Database.instance.connected?
+              Database.instance.transaction do Study.where(date: (monday..(monday + 6))).each(&:delete) end
+            else
+              Database.instance.connect_to(@temp.())
+              create_stubs
+            end
+            TimetableManager.new(reader, id.params[:date]).save_to_db
+            show_tables
+          rescue => e
+            show_message "При импорте произошли ошибки,\nтаблица не была импортирована.\nПроверьте структуру таблицы."
           end
-          TimetableManager.new(reader, id.params[:date]).save_to_db
-          show_tables
         end
       end
     end
+  end
+
+  def show_message(text)
+    box = Qt::MessageBox.new
+    box.setText text
+    box.exec
   end
 
   def on_closeAction_triggered

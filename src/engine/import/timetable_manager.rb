@@ -36,7 +36,7 @@ private
   Contract None => Any
   def create_subgroups
     @reader.groups.each do |data|
-      group = add(Group, title: data[:title])
+      group = add(Group, title: data[:title] || "")
       subgroups = (1..2).map{ |i| add(Subgroup, {group_id: group, number: i}) }
       create_studies(data, group, subgroups)
     end
@@ -48,7 +48,12 @@ private
       day[:studies].each_with_index do |study, number|
         if study.size == 1
           if (s = study.first[:info][:subgroup])
-            Study.create( get_study_options(study[0], day[:name], number.succ, subgroups[s.to_i - 1]) )
+            s = s.to_i
+            if s > 0 && s < 3
+              Study.create( get_study_options(study[0], day[:name], number.succ, subgroups[s.to_i - 1]) )
+            else
+              next
+            end
           else
             Study.create( get_study_options(study[0], day[:name], number.succ, group) )
           end
