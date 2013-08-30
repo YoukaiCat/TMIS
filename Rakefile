@@ -28,7 +28,7 @@ task :clean do
   rm 'src/interface/forms/ui_about.rb'
   rm 'src/interface/forms/ui_expand_changes.rb'
   rm 'src/interface/forms/ui_find.rb'
-  rm 'src/interface/forms/ui_debud_console.rb'
+  rm 'src/interface/forms/ui_debug_console.rb'
 end
 
 task :rspec do
