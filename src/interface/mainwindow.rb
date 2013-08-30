@@ -291,30 +291,42 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_allAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append verifyLecturers
-    @console.browser.append verifyCabinets
-    @console.browser.append showComputerCabinets
-    @console.browser.append showLecturerStubs
-    @console.browser.append showCabinetStubs
-    @console.browser.append showSubjectsStubs
-    @console.browser.append showPreferredDays
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append verifyLecturers
+      @console.browser.append verifyCabinets
+      @console.browser.append showComputerCabinets
+      @console.browser.append showLecturerStubs
+      @console.browser.append showCabinetStubs
+      @console.browser.append showSubjectsStubs
+      @console.browser.append showPreferredDays
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def on_allCoincidenceAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append verifyLecturers
-    @console.browser.append verifyCabinets
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append verifyLecturers
+      @console.browser.append verifyCabinets
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def on_allNotAssignedAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showLecturerStubs
-    @console.browser.append showCabinetStubs
-    @console.browser.append showSubjectsStubs
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showLecturerStubs
+      @console.browser.append showCabinetStubs
+      @console.browser.append showSubjectsStubs
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def verifyLecturers
@@ -328,12 +340,10 @@ class MainWindow < Qt::MainWindow
       if lecturer.stub
         nil
       else
-        p :test
         v.each do |study|
           tst = @study_table_models[date.cwday - 1]
-          tst.setColor(study.id Qt::red)
+          tst.setColor(study.id, Qt::red)
         end
-        p :test
         "#{date} | #{lecturer} ведёт несколько пар одновременно! Номер пары: #{number}"
       end
     end
@@ -341,9 +351,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyLecturersAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append verifyLecturers
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append verifyLecturers
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def verifyCabinets
@@ -365,9 +379,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyCabinetsAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append verifyCabinets
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append verifyCabinets
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def showLecturerStubs
@@ -384,9 +402,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_showLecturerStubsAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showLecturerStubs
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showLecturerStubs
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def showCabinetStubs
@@ -403,9 +425,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_showCabinetStubsAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showCabinetStubs
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showCabinetStubs
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def showSubjectsStubs
@@ -422,9 +448,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_showSubjectsStubsAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showSubjectsStubs
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showSubjectsStubs
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def showComputerCabinets
@@ -441,9 +471,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyComputerCabinetsAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showComputerCabinets
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showComputerCabinets
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   def showPreferredDays
@@ -460,9 +494,13 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_verifyPreferredDaysAction_triggered
-    @console.browser.clear
-    @console.show
-    @console.browser.append showPreferredDays
+    begin
+      @console.browser.clear
+      @console.show
+      @console.browser.append showPreferredDays
+    rescue
+      show_message "При проверке произошли ошибки.\nПроверьте таблицы данных и расписание"
+    end
   end
 
   #def groupAndSubgroup
