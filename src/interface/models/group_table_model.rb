@@ -110,7 +110,9 @@ class GroupTableModel < Qt::AbstractTableModel
   end
 
   def insert_new
-    @groups.prepend(Group.new)
+    new_group = Group.new
+    @groups.prepend(new_group)
+    (1..2).map{ |i| Subgroup.create(group: new_group, number: i) }
     emit layoutChanged()
   end
 
