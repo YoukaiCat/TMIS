@@ -1,3 +1,4 @@
+# coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
 require 'config'
@@ -22,7 +23,7 @@ describe Lecturer do
   end
 
   it 'should print surname with initials' do
-    @lecturer.to_s.should =~ /[[:alpha:]]+\s[[:alpha:]]+\.\s[[:alpha:]]+\./
+    @lecturer.to_s.should match(/[[:alpha:]]+\s[[:alpha:]]+\.[[:alpha:]]+\./)
   end
 
   it 'Stubs should not be deleted' do
