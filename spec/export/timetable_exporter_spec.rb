@@ -1,9 +1,9 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/export/timetable_exporter'
+require 'tmis/engine/export/timetable_exporter'
 require_relative 'timetable_exporter_mocks'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 #describe AbstractTimetableExporter do

@@ -1,10 +1,10 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/database'
-require_relative '../../src/engine/models/lecturer'
+require 'tmis/engine/database'
+require 'tmis/engine/models/lecturer'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Lecturer do
   before(:all) do

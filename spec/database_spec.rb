@@ -1,8 +1,8 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
-require_relative '../src/engine/database'
+require_relative 'config'
+require 'tmis/engine/database'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 FactoryGirl.find_definitions
 

@@ -1,10 +1,10 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative 'timetable_importer_mocks'
-require_relative '../../src/engine/import/spreadsheet_roo'
+require 'tmis/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe MockNotImplementedSpreadsheet do
   let(:ssheet) { MockNotImplementedSpreadsheet.new('') }

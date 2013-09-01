@@ -1,9 +1,9 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/database'
-require_relative '../../src/engine/models/speciality_subject'
+require 'tmis/engine/database'
+require 'tmis/engine/models/speciality_subject'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe SpecialitySubject do
 end

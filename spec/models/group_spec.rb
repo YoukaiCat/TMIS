@@ -1,9 +1,9 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/database'
-require_relative '../../src/engine/models/group'
+require 'tmis/engine/database'
+require 'tmis/engine/models/group'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Group do
   before(:all) do

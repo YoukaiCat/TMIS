@@ -1,11 +1,11 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/import/timetable_manager'
-require_relative '../../src/engine/import/timetable_reader'
-require_relative '../../src/engine/import/spreadsheet_roo'
+require 'tmis/engine/import/timetable_manager'
+require 'tmis/engine/import/timetable_reader'
+require 'tmis/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 #describe TimetableManager do
 #  it "mustn't raise exception" do

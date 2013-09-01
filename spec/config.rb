@@ -5,10 +5,10 @@ require 'rspec'
 require 'simplecov'
 require 'factory_girl'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../src/engine/database'
-require_relative '../src/engine/import/timetable_manager'
-require_relative '../src/engine/import/timetable_reader'
-require_relative '../src/engine/import/spreadsheet_roo'
+require 'tmis/engine/database'
+require 'tmis/engine/import/timetable_manager'
+require 'tmis/engine/import/timetable_reader'
+require 'tmis/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 Encoding.default_external = 'UTF-8'
 

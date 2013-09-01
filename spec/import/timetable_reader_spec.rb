@@ -1,10 +1,10 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/import/timetable_reader'
-require_relative '../../src/engine/import/spreadsheet_roo'
+require 'tmis/engine/import/timetable_reader'
+require 'tmis/engine/import/spreadsheet_roo'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe TimetableReader do
   before(:all) do
@@ -15,9 +15,10 @@ describe TimetableReader do
     expect { TimetableReader.new(@sheet, 1) }.to_not raise_error
   end
 
-  it 'must raise exception' do
-    expect { TimetableReader.new(@sheet, 0) }.to raise_error
-  end
+  #it 'must raise exception' do
+  #  contracts disabled
+  #  expect { TimetableReader.new(@sheet, 0) }.to raise_error
+  #end
 
   it 'must parse info right' do
     TimetableReader.new(@sheet, 1).send(:parse_info, (nil)).should eq(nil)

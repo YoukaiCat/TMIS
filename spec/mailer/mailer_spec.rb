@@ -1,9 +1,9 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/mailer/mailer'
+require 'tmis/engine/mailer/mailer'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Mailer do
   it 'should initialize' do

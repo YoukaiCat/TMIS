@@ -1,9 +1,9 @@
 # coding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative 'config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../src/interface/mainwindow'
+require 'tmis/interface/mainwindow'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe MainWindow do
   before(:all) do

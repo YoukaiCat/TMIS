@@ -1,9 +1,9 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require 'rspec'
-require 'config'
+require_relative '../config'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-require_relative '../../src/engine/database'
-require_relative '../../src/engine/models/semester'
+require 'tmis/engine/database'
+require 'tmis/engine/models/semester'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 describe Semester do
   before(:all) do
