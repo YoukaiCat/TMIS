@@ -52,6 +52,7 @@ private
   def parse_info(info)
     unless info.nil? || info.empty?
       reversed_info = info.split(/[\s\n\.\(\)\-_,]/).reverse.join(' ')
+      # TODO Переписать регулярку с использованием условий в движке Onigmo (Ruby 2.0)
       r = /
           (
             ([Пп]|[Пп][Гг]|[Пп][Оо][Дд][Гг][Рр]|[Пп][Оо][Дд][Гг][Рр][Уу][Пп][Пп][Аа])*\s*

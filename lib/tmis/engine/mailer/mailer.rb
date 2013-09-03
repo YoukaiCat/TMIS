@@ -5,12 +5,6 @@ require 'mail'
 require 'contracts'
 #include Contracts
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-class Regexp
-  def bmatch(str)
-    str =~ self ? true : false
-  end
-end
-
 class Mailer
   #Contract String, String, Proc => Any
   def initialize(email, password, &block)
@@ -23,7 +17,7 @@ class Mailer
 
   #Contract String => Bool
   def self.email_valid?(email)
-    /[\w\d\._\-]+@[\w\d\.\-]+[\.][\w\d\.\-]+/i.bmatch email
+    true & (/[\w\d\._\-]+@[\w\d\.\-]+[\.][\w\d\.\-]+/i =~ email)
   end
 
   #Contract None => Any

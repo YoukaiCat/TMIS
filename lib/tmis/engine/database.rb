@@ -52,8 +52,7 @@ private
   def connect(path)
     ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: path)
     ActiveRecord::Base.timestamped_migrations = false
-    puts `pwd`
-    ActiveRecord::Migrator.up '/home/natsuo/Develop/Current/Github/TMIS/Code/tmis/lib/tmis/engine/migrations/'
+    ActiveRecord::Migrator.up (File.dirname(__FILE__) << '/migrations')
     self
   end
 end

@@ -14,6 +14,6 @@ class Email < ActiveRecord::Base
   end
 
   def email_valid?
-    /[\w\d._-]+@[\w\d.-]+[.][\w\d.-]+/i.bmatch email
+    true & (/[\w\d._-]+@[\w\d.-]+[.][\w\d.-]+/i =~ email)
   end
 end

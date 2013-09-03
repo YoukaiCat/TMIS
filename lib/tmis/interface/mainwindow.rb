@@ -250,7 +250,7 @@ class MainWindow < Qt::MainWindow
           (id = ImportDialog.new(Date.today)).exec
         end
         unless id.params.empty?
-          #begin
+          begin
             sheet = SpreadsheetCreater.create filename
             reader = TimetableReader.new(sheet, id.params[:sheet])
             monday = Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)).monday
@@ -262,9 +262,9 @@ class MainWindow < Qt::MainWindow
             end
             TimetableManager.new(reader, id.params[:date]).save_to_db
             show_tables
-          #rescue => e
-          #  show_message "При импорте произошли ошибки,\nтаблица не была импортирована.\nПроверьте структуру таблицы."
-          #end
+          rescue => e
+            show_message "При импорте произошли ошибки,\nтаблица не была импортирована.\nПроверьте структуру таблицы."
+          end
         end
       end
     end
