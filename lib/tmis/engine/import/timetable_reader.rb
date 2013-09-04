@@ -28,7 +28,6 @@ private
   #Contract [Pos, Pos] => Array
   def get_days(cols)
     (7..84).each_slice(13).map{ |i| [i[1], i.last] }.map do |rows|
-      p @table[rows.first, 1]
       { name: @table[rows.first, 1], studies: get_studies(rows, cols) }
     end
   end

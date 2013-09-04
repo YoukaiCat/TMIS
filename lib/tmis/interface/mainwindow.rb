@@ -222,6 +222,7 @@ class MainWindow < Qt::MainWindow
 
   def on_openAction_triggered
     if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'TMIS databases (SQLite3)(*.sqlite)'))
+      filename = filename.force_encoding("UTF-8")
       Database.instance.connect_to filename
       update_recent filename
       show_tables
@@ -244,6 +245,7 @@ class MainWindow < Qt::MainWindow
   def on_importAction_triggered
     please_wait do
       if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
+        filename = filename.force_encoding('UTF-8')
         if Database.instance.connected?
           (id = ImportDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)))).exec
         else

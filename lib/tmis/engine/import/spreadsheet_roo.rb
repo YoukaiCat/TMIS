@@ -14,8 +14,8 @@ class SpreadsheetRoo < AbstractSpreadsheet
 
   ##Contract String => Any
   def initialize(filepath)
-    @filepath = filepath
-    @sheet = Roo::Spreadsheet.open(filepath)
+    @filepath = filepath.force_encoding("UTF-8")
+    @sheet = Roo::Spreadsheet.open(@filepath)
     @sheet.default_sheet = 0
   end
 
@@ -57,7 +57,7 @@ class SpreadsheetSpreadsheet < AbstractSpreadsheet
 
   #Contract String => Any
   def initialize(filepath)
-    @filepath = filepath
+    @filepath = filepath.force_encoding("UTF-8")
     Spreadsheet.client_encoding = 'UTF-8'
     if File.file?(@filepath)
       @book = Spreadsheet.open(@filepath)
@@ -127,6 +127,7 @@ end
 class SpreadsheetCreater
   #Contract String => Or[IsA[AbstractSpreadsheet], IsA[WritableSpreadsheet]]
   def self.create(filename)
+    filename = filename.force_encoding("UTF-8")
     if filename =~ /.*.csv/
       SpreadsheetRoo.new(File.expand_path(filename))
     else
