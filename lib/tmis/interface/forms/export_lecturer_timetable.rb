@@ -38,7 +38,7 @@ class ExportLecturerTimetableDialog < Qt::Dialog
 
   def on_saveCheckBox_toggled(checked)
     if checked
-      if (path = Qt::FileDialog::getExistingDirectory(self, 'Open Directory', '/home', Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks))
+      if (path = Qt::FileDialog::getExistingDirectory(self, 'Open Directory', Dir.home, Qt::FileDialog::ShowDirsOnly | Qt::FileDialog::DontResolveSymlinks))
         @ui.folderPathLineEdit.text = path # force_encoding doesn't help because Qt changes the encoding to ASCII anyway
       else
         @ui.folderPathLineEdit.text = Dir.home

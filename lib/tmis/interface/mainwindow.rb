@@ -221,7 +221,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_openAction_triggered
-    if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'TMIS databases (SQLite3)(*.sqlite)'))
+    if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', Dir.home, 'TMIS databases (SQLite3)(*.sqlite)'))
       filename = filename.force_encoding("UTF-8")
       Database.instance.connect_to filename
       update_recent filename
@@ -233,7 +233,7 @@ class MainWindow < Qt::MainWindow
   end
 
   def on_saveAsAction_triggered
-    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable.sqlite', 'TMIS databases (SQLite3)(*.sqlite)'))
+    if (filename = Qt::FileDialog::getSaveFileName(self, 'Save File', "#{Dir.home}/NewTimetable.sqlite", 'TMIS databases (SQLite3)(*.sqlite)'))
       filename.force_encoding('UTF-8')
       FileUtils.cp(Database.instance.path, filename) unless Database.instance.path == filename
       Database.instance.connect_to filename
@@ -244,7 +244,7 @@ class MainWindow < Qt::MainWindow
 
   def on_importAction_triggered
     please_wait do
-      if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', '', 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
+      if (filename = Qt::FileDialog::getOpenFileName(self, 'Open File', Dir.home, 'Spreadsheets(*.xls *.xlsx *.ods *.csv)'))
         filename = filename.force_encoding('UTF-8')
         if Database.instance.connected?
           (id = ImportDialog.new(Date.parse(@ui.dateDateEdit.date.toString(Qt::ISODate)))).exec

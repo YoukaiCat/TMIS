@@ -23,7 +23,7 @@ class ExportGeneralTimetableDialog < Qt::Dialog
   end
 
   def on_browsePushButton_clicked
-    @ui.pathLineEdit.text = Qt::FileDialog::getSaveFileName(self, 'Save File', 'NewTimetable', 'XLS Spreadsheet(*.xls)')
+    @ui.pathLineEdit.text = Qt::FileDialog::getSaveFileName(self, 'Save File', "#{Dir.home}/NewTimetable", 'XLS Spreadsheet(*.xls)')
   end
 
   def on_exportButtonBox_accepted
