@@ -58,7 +58,10 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       when 6
         speciality_subject.consultations_hours
       when 7
-        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
+        [speciality_subject.lecture_hours,
+         speciality_subject.practical_hours,
+         speciality_subject.consultations_hours ].
+        keep_if{|x| x.respond_to?(:+) }.inject(:+)
       when 8
         speciality_subject.preffered_days
       when 9
@@ -83,7 +86,10 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
       when 6
         speciality_subject.consultations_hours
       when 7
-        speciality_subject.lecture_hours.try(:+, speciality_subject.practical_hours || 0)
+        [speciality_subject.lecture_hours,
+         speciality_subject.practical_hours,
+         speciality_subject.consultations_hours ].
+        keep_if{|x| x.respond_to?(:+) }.inject(:+)
       when 8
         speciality_subject.preffered_days
       when 9
