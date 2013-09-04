@@ -8,7 +8,7 @@ app['compile'].invoke
 
 Gem::Specification.new do |spec|
   spec.name        = 'tmis'
-  spec.version     = '0.1.3'
+  spec.version     = '0.1.4'
   spec.date        = '2013-01-09'
   spec.summary     = "TMIS"
   spec.description = "Timetable management information system"
