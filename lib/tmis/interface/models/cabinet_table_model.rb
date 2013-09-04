@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/cabinet'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CabinetTableModel < Qt::AbstractTableModel
 
@@ -103,31 +104,4 @@ class CabinetTableModel < Qt::AbstractTableModel
     end
   end
 
-end
-
-class RadioButtonDelegate < Qt::ItemDelegate
-
-  def initialize(parent)
-    super
-  end
-
-  def createEditor(parent, option, index)
-    Qt::CheckBox.new(parent)
-  end
-
-  def setEditorData(editor, index)
-    value = index.data.toBool #index.model.data(index, Qt::EditRole)
-    button = editor
-    button.checked = value # button.setValue(value)
-  end
-
-  def setModelData(editor, model, index)
-    button = editor
-    value = button.isChecked # button.value
-    model.setData(index, value.to_v, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
 end

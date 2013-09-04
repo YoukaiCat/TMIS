@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/speciality_subject'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SpecialitySubjectTableModel < Qt::AbstractTableModel
 
@@ -8,10 +9,10 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
     super()
     @speciality_subjects = speciality_subjects
     @view = parent
-    @lecturerComboBoxDelegate = LecturerComboBoxDelegate.new(self)
-    @subjectComboBoxDelegate = SubjectComboBoxDelegate.new(self)
-    @semesterComboBoxDelegate = SemesterComboBoxDelegate.new(self)
-    @specialityComboBoxDelegate = SpecialityComboBoxDelegate.new(self)
+    @lecturerComboBoxDelegate = ARComboBoxDelegate.new(self, Lecturer, :surname)
+    @subjectComboBoxDelegate = ARComboBoxDelegate.new(self, Subject, :title)
+    @semesterComboBoxDelegate = ARComboBoxDelegate.new(self, Semester, :title)
+    @specialityComboBoxDelegate = ARComboBoxDelegate.new(self, Speciality, :title)
     @facultativeRadioButtonDelegate = RadioButtonDelegate.new(self)
     @view.setItemDelegateForColumn(0, @lecturerComboBoxDelegate)
     @view.setItemDelegateForColumn(1, @subjectComboBoxDelegate)
@@ -167,128 +168,4 @@ class SpecialitySubjectTableModel < Qt::AbstractTableModel
     end
   end
 
-end
-
-class LecturerComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @lecturers = Lecturer.all.sort_by(&:surname)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @lecturers.each{ |x| editor.addItem(x.surname.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
-end
-
-class SubjectComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @subjects = Subject.all.sort_by(&:title)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @subjects.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
-end
-
-class SemesterComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @semesters = Semester.all.sort_by(&:title)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @semesters.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
-end
-
-class SpecialityComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @specialities = Speciality.all.sort_by(&:title)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @specialities.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
 end

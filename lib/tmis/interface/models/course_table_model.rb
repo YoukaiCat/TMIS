@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/course'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class CourseTableModel < Qt::AbstractTableModel
 

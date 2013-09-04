@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/semester'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SemesterTableModel < Qt::AbstractTableModel
 
@@ -8,7 +9,7 @@ class SemesterTableModel < Qt::AbstractTableModel
     super()
     @semesters = semesters
     @view = parent
-    @CourseComboBoxDelegate = CourseComboBoxDelegate.new(self)
+    @CourseComboBoxDelegate = ARComboBoxDelegate.new(self, Course, :number)
     @view.setItemDelegateForColumn(1, @CourseComboBoxDelegate)
   end
 
@@ -103,35 +104,4 @@ class SemesterTableModel < Qt::AbstractTableModel
     end
   end
 
-end
-
-class CourseComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @courses = Course.all.sort_by(&:number)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @courses.each{ |x| editor.addItem(x.number.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
 end

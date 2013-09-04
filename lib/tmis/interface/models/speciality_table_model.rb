@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/speciality'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SpecialityTableModel < Qt::AbstractTableModel
 

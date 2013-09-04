@@ -2,6 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/lecturer'
 require_relative '../../engine/models/email'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class LecturerTableModel < Qt::AbstractTableModel
 

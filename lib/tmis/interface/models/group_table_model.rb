@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/group'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class GroupTableModel < Qt::AbstractTableModel
 
@@ -9,8 +10,8 @@ class GroupTableModel < Qt::AbstractTableModel
     @groups = groups
     @groups.size
     @view = parent
-    @SpecialityComboBoxDelegate = SpecialityComboBoxDelegate.new(self)
-    @CourseComboBoxDelegate = CourseComboBoxDelegate.new(self)
+    @SpecialityComboBoxDelegate = ARComboBoxDelegate.new(self, Speciality, :title)
+    @CourseComboBoxDelegate = ARComboBoxDelegate.new(self, Course, :number)
     @view.setItemDelegateForColumn(1, @SpecialityComboBoxDelegate)
     @view.setItemDelegateForColumn(2, @CourseComboBoxDelegate)
   end
@@ -125,66 +126,4 @@ class GroupTableModel < Qt::AbstractTableModel
     end
   end
 
-end
-
-class SpecialityComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @specialities = Speciality.all.sort_by(&:title)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @specialities.each{ |x| editor.addItem(x.title.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
-end
-
-class CourseComboBoxDelegate < Qt::ItemDelegate
-  def initialize(parent)
-    super
-    setup
-  end
-
-  def setup
-    @courses = Course.all.sort_by(&:number)
-  end
-
-  def createEditor(parent, option, index)
-    editor = Qt::ComboBox.new(parent)
-    @courses.each{ |x| editor.addItem(x.number.to_s, x.id.to_v) }
-    editor
-  end
-
-  def setEditorData(editor, index)
-    value = index.data
-    editor.setCurrentIndex(editor.findData(value))
-  end
-
-  def setModelData(editor, model, index)
-    value = editor.itemData(editor.currentIndex)
-    model.setData(index, value, Qt::EditRole)
-  end
-
-  def updateEditorGeometry(editor, option, index)
-    editor.setGeometry(option.rect)
-  end
 end

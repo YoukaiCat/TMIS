@@ -62,18 +62,6 @@ require_relative 'models/study_table_model'
 require_relative 'models/subject_table_model'
 require_relative 'models/subgroup_table_model'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
-#class Object
-#  def to_v
-#    Qt::Variant.new object_id
-#  end
-#end
-#
-#class Qt::Variant
-#  def to_o
-#    ObjectSpace._id2ref to_int
-#  end
-#end
-
 class Object
   def to_v
     Qt::Variant.new(self)

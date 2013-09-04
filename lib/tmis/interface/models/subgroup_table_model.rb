@@ -1,6 +1,7 @@
 # encoding: UTF-8
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 require_relative '../../engine/models/subgroup'
+require 'tmis/interface/delegates'
 #~~~~~~~~~~~~~~~~~~~~~~~~~~
 class SubgroupTableModel < Qt::AbstractTableModel
 
@@ -8,7 +9,7 @@ class SubgroupTableModel < Qt::AbstractTableModel
     super()
     @subgroups = subgroups
     @view = parent
-    @GroupComboBoxDelegate = GroupComboBoxDelegate.new(self)
+    @GroupComboBoxDelegate = ARComboBoxDelegate.new(self, Group, :title)
     @view.setItemDelegateForColumn(1, @GroupComboBoxDelegate)
   end
 
